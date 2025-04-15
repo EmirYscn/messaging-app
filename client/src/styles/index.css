@@ -80,9 +80,9 @@
 
 * {
   /* Creating animations for dark mode */
-  transition: background-color 0.3s, border 0.3s;
+  transition: all 0.3s ease-in-out;
 }
 
 html body {
-  background-color: #e0f2fe;
+  background-color: var(--color-grey-100);
 }
