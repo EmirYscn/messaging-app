@@ -5,7 +5,7 @@ function Searchbar() {
   const [searchValue, setSearchValue] = useState("");
 
   return (
-    <div className="flex gap-4 items-center bg-[var(--color-grey-100)] px-4 py-1 rounded-2xl ">
+    <div className="flex gap-4 items-center bg-[var(--color-grey-100)] px-4 py-1 rounded-2xl shadow-sm">
       <label htmlFor="searchbar">
         {searchValue ? <FaArrowLeft /> : <FaSearch />}
       </label>
