@@ -1,8 +1,10 @@
+import { Link, NavLink, useNavigate } from "react-router";
 import Searchbar from "./Searchbar";
 
 function Chats({ onToggleChats }) {
+  const navigate = useNavigate();
   return (
-    <div className=" p-4 flex flex-col gap-4 h-full">
+    <div className="p-4 flex flex-col gap-4 h-full">
       <div className="flex justify-between items-center">
         <h2 className="text-4xl font-semibold mb-4">Chats</h2>
         <button className="md:hidden" onClick={onToggleChats}>
@@ -10,10 +12,50 @@ function Chats({ onToggleChats }) {
         </button>
       </div>
       <Searchbar />
-      <div>
-        <p className="text-sm">Chat 1</p>
-        <p className="text-sm">Chat 2</p>
-        <p className="text-sm">Chat 3</p>
+      <div className="flex flex-col gap-3 ">
+        <NavLink
+          to={"/"}
+          className={({ isActive }) =>
+            `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
+              isActive ? "bg-[var(--color-grey-100)] font-semibold" : ""
+            }`
+          }
+        >
+          <span>Home</span>
+        </NavLink>
+        <NavLink
+          to={"/chat/225cddc9-f874-42e3-ba3c-3fe880dcfd4c"}
+          className={({ isActive }) =>
+            `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
+              isActive ? "bg-[var(--color-grey-100)] font-semibold" : ""
+            }`
+          }
+        >
+          <span>Photo</span>
+          <span>Yusuf</span>
+        </NavLink>
+        <NavLink
+          to={"/chat/2"}
+          className={({ isActive }) =>
+            `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
+              isActive ? "bg-[var(--color-grey-100)] font-semibold" : ""
+            }`
+          }
+        >
+          <span>Photo</span>
+          <span>Chat1</span>
+        </NavLink>
+        <NavLink
+          to={"/chat/3"}
+          className={({ isActive }) =>
+            `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
+              isActive ? "bg-[var(--color-grey-100)] font-semibold" : ""
+            }`
+          }
+        >
+          <span>Photo</span>
+          <span>Chat1</span>
+        </NavLink>
       </div>
     </div>
   );

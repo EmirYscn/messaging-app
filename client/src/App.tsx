@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 import { ThemeContextProvider } from "./contexts/DarkMode/ThemeContextProvider";
 import Home from "./pages/Home";
+import Chat from "./pages/ChatPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,6 +27,7 @@ function App() {
           <Routes>
             <Route element={<AppLayout />}>
               <Route path="/" element={<Home />} />
+              <Route path="/chat/:chatId" element={<Chat />} />
               {/* <Route path="/dashboard" element={<div>Dashboard</div>} />
             <Route path="/settings" element={<div>Settings</div>} />
             <Route path="/messages" element={<div>Messages</div>} />

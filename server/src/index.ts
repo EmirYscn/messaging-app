@@ -1,12 +1,25 @@
-import express, { Express, Request, Response, Application } from "express";
+import express, {
+  Express,
+  Request,
+  Response,
+  Application,
+  NextFunction,
+} from "express";
 import path from "node:path";
 import morgan from "morgan";
 import helmet from "helmet";
+import cors from "cors";
 import { rateLimit } from "express-rate-limit";
 
 import config from "./config/config";
 
+import { router as chatRouter } from "./routes/chat.routes";
+import AppError from "./utils/appError";
+import { globalErrorHandler } from "./controllers/error.controller";
+
 const app: Application = express();
+
+app.use(cors({ origin: "http://localhost:5173" }));
 
 // Set security HTTP headers
 app.use(helmet());
@@ -30,8 +43,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to Express & TypeScript Server");
-});
+// Routes
+app.use("/api/v1/chats", chatRouter);
+
+// Handle undefined routes
+
+// app.all("*", (req: Request, res: Response, next: NextFunction) => {
+//   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+// });
+
+// // Global error handler
+// app.use(globalErrorHandler);
 
 export default app;

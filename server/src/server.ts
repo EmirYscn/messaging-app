@@ -1,8 +1,6 @@
 import { Server } from "socket.io";
 import { createServer } from "node:http";
 
-import cors from "cors";
-
 import config from "./config/config";
 import app from "./index";
 import { registerSocketHandlers } from "./sockets";
@@ -27,8 +25,6 @@ const server = createServer(app);
 // };
 
 // app.use(cors(corsOptions));
-
-app.use(cors());
 
 const io = new Server(server, {
   cors: {
