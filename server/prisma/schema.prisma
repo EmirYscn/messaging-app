@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ROLE {
+  ADMIN
+  USER
+}
+
+enum CHAT_TYPE {
+  GROUP
+  PRIVATE
+}
+
+enum MESSAGE_STATUS {
+  SENT
+  DELIVERED
+  READ
+}
+enum MESSAGE_TYPE {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+}
+
+model Profile {
+  id  String  @id @default(uuid())
+  bio String?
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime? // Soft delete timestamp
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+}
+
+model User {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  username String?
+  password String?
+  role     ROLE    @default(USER)
+  avatar   String? // Direct URL to avatar image
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime? // Soft delete timestamp
+
+  resetPasswordToken   String?   @unique // Token for password reset
+  resetPasswordExpires DateTime? // Expiration date for the token
+
+  profile  Profile?
+  chats    Chat[]
+  messages Message[]
+}
+
+model Chat {
+  id   String  @id @default(uuid())
+  name String?
+  type CHAT_TYPE // Type of chat (e.g., group, private)
+
+  isDeleted Boolean   @default(false) // Indicates if the chat is deleted
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime? // Soft delete timestamp
+
+  lastMessage   Message? @relation("ChatLastMessage", fields: [lastMessageId], references: [id], onDelete: Cascade)
+  lastMessageId String?  @unique // ID of the last message sent in the chat
+
+  users    User[]
+  messages Message[]
+}
+
+model Message {
+  id      String @id @default(uuid())
+  content String
+  type MESSAGE_TYPE @default(TEXT)
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime? // Soft delete timestamp
+
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId String
+
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId String
+
+  chatAsLastMessage Chat? @relation("ChatLastMessage")
+}
