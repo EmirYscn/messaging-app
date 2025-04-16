@@ -2,8 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
-// import Spinner from "../ui/Spinner";
+import Spinner from "../ui/Spinner";
 
 function AuthSuccess() {
   const [searchParams] = useSearchParams();
@@ -35,14 +34,13 @@ function AuthSuccess() {
         setTimeout(() => {
           navigate("/", { replace: true });
         }, 300);
-      } catch (error) {
+      } catch (error: unknown) {
         navigate("/login?error=invalid_data", { replace: true });
       }
     }
   }, [searchParams, navigate, queryClient]);
 
-  // return <Spinner />;
-  return <div>lalal</div>;
+  return <Spinner />;
 }
 
 export default AuthSuccess;

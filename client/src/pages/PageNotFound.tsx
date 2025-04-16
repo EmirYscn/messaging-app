@@ -1,42 +1,16 @@
-// import Heading from "../ui/Heading";
-// import BackButton from "../ui/BackButton";
-
-// const StyledPageNotFound = styled.main`
-//   height: 100vh;
-//   background-color: var(--color-grey-50);
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   padding: 4.8rem;
-// `;
-
-// const Box = styled.div`
-//   background-color: var(--color-grey-0);
-//   border: 1px solid var(--color-grey-100);
-//   border-radius: var(--border-radius-md);
-
-//   padding: 4.8rem;
-//   flex: 0 1 96rem;
-//   text-align: center;
-
-//   & h1 {
-//     margin-bottom: 3.2rem;
-//   }
-// `;
+import BackButton from "../ui/BackButton";
 
 function PageNotFound() {
-  // return (
-  //   <StyledPageNotFound>
-  //     <Box>
-  //       <Heading as="h1">
-  //         The page you are looking for could not be found 😢
-  //       </Heading>
-  //       <BackButton />
-  //     </Box>
-  //   </StyledPageNotFound>
-  // );
-
-  return <div>Page not found</div>;
+  return (
+    <main className="h-screen bg-[var(--color-grey-50)] text-[var(--color-grey-900)] flex items-center justify-center p-12">
+      <div className="bg-[var(--color-grey-0)] border border-[var(--color-grey-100)] rounded-md p-12 max-w-[96rem] flex-1 text-center">
+        <header className="text-2xl mb-8">
+          The page you are looking for could not be found 😢
+        </header>
+        <BackButton />
+      </div>
+    </main>
+  );
 }
 
 export default PageNotFound;

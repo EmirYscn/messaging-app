@@ -14,8 +14,11 @@ import { rateLimit } from "express-rate-limit";
 import config from "./config/config";
 
 import { router as chatRouter } from "./routes/chat.routes";
-import AppError from "./utils/appError";
-import { globalErrorHandler } from "./controllers/error.controller";
+import { router as authRouter } from "./routes/auth.routes";
+import { router as userRouter } from "./routes/user.routes";
+
+// import AppError from "./utils/appError";
+// import { globalErrorHandler } from "./controllers/error.controller";
 
 const app: Application = express();
 
@@ -44,7 +47,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
 
 // Routes
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/chats", chatRouter);
+app.use("/api/v1/users", userRouter);
 
 // Handle undefined routes
 
