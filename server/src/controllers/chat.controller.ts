@@ -24,9 +24,9 @@ import * as messageQueries from "../db/message.queries";
 
 export const getChat = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { chatId } = req.params;
+    const { id } = req.params;
 
-    const chat = await messageQueries.getChat(chatId);
+    const chat = await messageQueries.getChat(id);
 
     res.status(200).json({ status: "success", chat });
   }
@@ -34,9 +34,9 @@ export const getChat = catchAsync(
 
 export const getMessages = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { chatId } = req.params;
+    const { id } = req.params;
 
-    const { messages, count } = await messageQueries.getMessages(chatId);
+    const { messages, count } = await messageQueries.getMessages(id);
 
     res.status(200).json({ status: "success", messages, count });
   }

@@ -30,6 +30,9 @@
   --color-red-700: #b91c1c;
   --color-red-800: #991b1b;
 
+  --color-brand-50: #1d5d914d;
+  --color-brand-100: #1d5c91;
+
   --backdrop-color: rgba(255, 255, 255, 0.1);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -68,6 +71,9 @@
   --color-red-700: #b91c1c;
   --color-red-800: #991b1b;
 
+  --color-brand-50: #1d5d914d;
+  --color-brand-100: #1d5c91;
+
   --backdrop-color: rgba(0, 0, 0, 0.3);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -94,4 +100,25 @@ html body {
 html.dark-mode body {
   background-color: rgba(0, 0, 0, 0.2); /* fallback tint */
   background-blend-mode: darken;
+}
+
+@layer utilities {
+  @keyframes spin-custom {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  .animate-spin-custom {
+    animation: spin-custom 1.5s linear infinite;
+  }
+
+  .spinner-mask {
+    -webkit-mask-image: radial-gradient(
+      farthest-side,
+      #0000 calc(100% - 10px),
+      #000 0
+    );
+    mask-image: radial-gradient(farthest-side, #0000 calc(100% - 10px), #000 0);
+  }
 }

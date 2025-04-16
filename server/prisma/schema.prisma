@@ -67,7 +67,6 @@ model Chat {
   name String?
   type CHAT_TYPE // Type of chat (e.g., group, private)
 
-  isDeleted Boolean   @default(false) // Indicates if the chat is deleted
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
   deletedAt DateTime? // Soft delete timestamp
