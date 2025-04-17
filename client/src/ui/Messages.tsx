@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useChatMessages } from "../hooks/useChatMessages";
 import Message from "./Message";
-import { useSocket } from "../hooks/useSocket";
 import { socket } from "../services/socket";
+import { Message as MessageType } from "../types/types";
 
 function Messages() {
-  // const socket = useSocket();
   const { messages } = useChatMessages();
   const [localMessages, setLocalMessages] = useState(messages || []);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -17,9 +16,8 @@ function Messages() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleReceiveMessage = (data) => {
+    const handleReceiveMessage = (data: MessageType) => {
       // Handle the received message
-      console.log("Received message:", data);
       setLocalMessages((prev) => [...prev, data]);
     };
 

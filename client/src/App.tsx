@@ -10,9 +10,9 @@ import Home from "./pages/Home";
 import Chat from "./pages/ChatPage";
 import Login from "./pages/Login";
 import ProtectedRoute from "./ui/ProtectedRoute";
-import AsideLayout from "./ui/AsideLayout";
+
 import Signup from "./pages/Signup";
-import Settings from "./ui/Settings";
+
 import { AsideContextProvider } from "./contexts/Aside/AsideContextProvider";
 
 const queryClient = new QueryClient({

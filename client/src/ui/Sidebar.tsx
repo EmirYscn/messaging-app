@@ -8,7 +8,12 @@ import { NavLink } from "react-router";
 import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
 import { ContextTypes } from "../contexts/Aside/AsideContext";
 
-function Sidebar({ onToggleChats, showChats }) {
+function Sidebar({
+  onToggleChats,
+}: {
+  onToggleChats: () => void;
+  showChats: boolean;
+}) {
   const { user } = useUser();
 
   const { context, setContext } = useAsideContext();
