@@ -7,25 +7,6 @@ import { registerSocketHandlers } from "./sockets";
 
 const server = createServer(app);
 
-// // Implement CORS
-// const allowedOrigins = [
-//   process.env.CLIENT_URL,
-//   process.env.CLIENT_AUTHOR_URL,
-// ].filter(Boolean); // remove undefined/null values
-
-// const corsOptions = {
-//   origin: (origin: string | undefined, callback: Function) => {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   credentials: true,
-// };
-
-// app.use(cors(corsOptions));
-
 const io = new Server(server, {
   cors: {
     origin: "*",

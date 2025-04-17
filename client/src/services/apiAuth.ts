@@ -75,3 +75,10 @@ export const login = async (data: LoginCredentials): Promise<User> => {
     throw new Error("An unexpected error occurred.");
   }
 };
+
+export const logout = async (): Promise<void> => {
+  return new Promise((resolve) => {
+    localStorage.removeItem("jwt");
+    resolve();
+  });
+};
