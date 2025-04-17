@@ -3,11 +3,16 @@ import * as socketController from "../controllers/socket.controller";
 
 export const registerSocketHandlers = (io: Server) => {
   io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.id}`);
+    console.log(`User with socket id ${socket.id} connected`);
 
     socket.on("join_room", (data) => {
       console.log(`User with ID: ${socket.id} joined room: ${data.chatId}`);
       socket.join(data.chatId);
+    });
+
+    socket.on("leave_room", (data) => {
+      console.log(`User with ID: ${socket.id} left room: ${data.chatId}`);
+      socket.leave(data.chatId);
     });
 
     socket.on("send_message", (data) =>
@@ -20,7 +25,7 @@ export const registerSocketHandlers = (io: Server) => {
     // });
 
     socket.on("disconnect", () => {
-      console.log("User disconnected");
+      console.log(`User with socket id ${socket.id} disconnected`);
     });
   });
 };

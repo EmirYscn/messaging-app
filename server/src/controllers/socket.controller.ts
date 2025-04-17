@@ -8,6 +8,9 @@ export const sendMessage = async (
   io: TypedIO,
   data: Message
 ) => {
+  console.log(
+    `User with ID: ${socket.id} sent message: ${data.content} to chat: ${data.chatId}`
+  );
   // 1) Store message in database
   await messageQueries.createMessage(data);
   // 2) Emit message

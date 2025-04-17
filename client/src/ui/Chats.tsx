@@ -2,7 +2,7 @@ import { NavLink } from "react-router";
 import Searchbar from "./Searchbar";
 import { useChats } from "../hooks/useChats";
 
-function Chats({ onToggleChats }) {
+function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
   const { chats } = useChats();
 
   return (

@@ -4,9 +4,13 @@ import Searchbar from "./Searchbar";
 import { FaUserCircle } from "react-icons/fa";
 import { PiSignOutBold } from "react-icons/pi";
 import { BsBellFill } from "react-icons/bs";
+import DarkModeToggle from "./DarkModeToggle";
+import { useLogout } from "../hooks/useLogout";
 
 function Settings() {
   const { user } = useUser();
+
+  const { logout, isPending } = useLogout();
 
   return (
     <div className="flex flex-col gap-4 h-full">
@@ -45,10 +49,13 @@ function Settings() {
               <PiSignOutBold />
             </span>
           </div>
-          <div className=" py-4 ">
+          <div className=" py-4 " role="button" onClick={() => logout()}>
             <span>Sign out</span>
           </div>
         </button>
+      </div>
+      <div className="px-6 py-4 text-2xl ">
+        <DarkModeToggle />
       </div>
     </div>
   );

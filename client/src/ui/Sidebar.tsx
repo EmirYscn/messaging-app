@@ -1,28 +1,30 @@
 import { IoMdChatbubbles } from "react-icons/io";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdGroups2 } from "react-icons/md";
-import DarkModeToggle from "./DarkModeToggle";
+
 import { useUser } from "../hooks/useUser";
 import ProfileImage from "./ProfileImage";
 import { NavLink } from "react-router";
 import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
+import { ContextTypes } from "../contexts/Aside/AsideContext";
 
 function Sidebar({ onToggleChats, showChats }) {
   const { user } = useUser();
-  const { setContext } = useAsideContext();
 
-  const handleToggleChats = () => {
+  const { context, setContext } = useAsideContext();
+
+  const handleToggleChats = (newContext: ContextTypes) => {
     onToggleChats();
-    setContext("chats");
+    setContext(newContext);
   };
 
   return (
     <aside className="w-full h-full flex justify-center gap-8 md:flex-row lg:flex-col lg:justify-between items-center p-6 shadow-md">
       <div className="flex lg:flex-col gap-8 items-center text-2xl ">
         <button
-          onClick={handleToggleChats}
-          className={`px-3 py-1 rounded-4xl ${
-            showChats ? "bg-[var(--color-grey-100)]" : ""
+          onClick={() => handleToggleChats("chats")}
+          className={`px-3 py-3 rounded-4xl ${
+            context === "chats" ? "bg-[var(--color-grey-100)]" : ""
           }`}
         >
           <IoMdChatbubbles />
@@ -32,13 +34,22 @@ function Sidebar({ onToggleChats, showChats }) {
         </NavLink>
       </div>
       <div className="flex lg:flex-col gap-8 items-center text-2xl ">
-        <button onClick={() => setContext("settings")}>
+        <button
+          onClick={() => handleToggleChats("settings")}
+          className={`px-3 py-3 rounded-4xl ${
+            context === "settings" ? "bg-[var(--color-grey-100)]" : ""
+          }`}
+        >
           <IoSettingsOutline />
         </button>
-        <DarkModeToggle />
-        <NavLink to="/settings/profile">
+        <button
+          onClick={() => handleToggleChats("profile")}
+          className={`px-3 py-3 rounded-4xl ${
+            context === "profile" ? "bg-[var(--color-grey-100)]" : ""
+          }`}
+        >
           <ProfileImage imgSrc={user?.avatar} size="xs" />
-        </NavLink>
+        </button>
       </div>
     </aside>
   );
