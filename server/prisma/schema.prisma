@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,6 +13,7 @@ enum ROLE {
 }
 
 enum CHAT_TYPE {
+  PUBLIC
   GROUP
   PRIVATE
 }
@@ -64,7 +64,8 @@ model User {
 
 model Chat {
   id   String  @id @default(uuid())
-  name String?
+  name String? 
+  avatar String? // Direct URL to chat avatar image
   type CHAT_TYPE // Type of chat (e.g., group, private)
 
   createdAt DateTime? @default(now())

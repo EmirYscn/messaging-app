@@ -1,6 +1,9 @@
 import { NavLink } from "react-router";
 import Searchbar from "./Searchbar";
 import { useChats } from "../hooks/useChats";
+import ProfileImage from "./ProfileImage";
+
+import { TfiWorld } from "react-icons/tfi";
 
 function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
   const { chats } = useChats();
@@ -19,12 +22,17 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
           to={"/"}
           onClick={onToggleChats}
           className={({ isActive }) =>
-            `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
-              isActive ? "bg-[var(--color-grey-100)] font-semibold" : ""
+            `text-md px-2 py-3 flex items-center gap-4 !transition-none border-b-1 border-[var(--color-grey-300)]  ${
+              isActive
+                ? "bg-[var(--color-blue-100)] font-bold"
+                : "font-semibold"
             }`
           }
         >
-          <span>Home</span>
+          <ProfileImage context="chats" size="xs">
+            <TfiWorld />
+          </ProfileImage>
+          <span>Public Chats</span>
         </NavLink>
         {chats.map((chat) => (
           <NavLink
@@ -37,8 +45,8 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
               }`
             }
           >
-            <span>Photo</span>
-            <span>Yusuf</span>
+            <ProfileImage imgSrc={chat?.avatar} size="xs" />
+            <span>{chat?.name}</span>
           </NavLink>
         ))}
         {/* <NavLink

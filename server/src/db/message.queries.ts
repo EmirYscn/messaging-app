@@ -1,26 +1,6 @@
 import { Message } from "@prisma/client";
 import { prisma } from "./prismaClient";
 
-export const getChat = async (chatId: string) => {
-  const chat = await prisma.chat.findUnique({
-    where: { id: chatId },
-    include: {
-      users: {
-        select: {
-          id: true,
-          username: true,
-          avatar: true,
-          role: true,
-        },
-      },
-      _count: {
-        select: { messages: true, users: true },
-      },
-    },
-  });
-  return chat;
-};
-
 export const getMessages = async (chatId: string) => {
   const totalCount = await prisma.message.count({ where: { chatId } });
   const messages = await prisma.message.findMany({

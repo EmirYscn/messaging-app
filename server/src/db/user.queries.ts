@@ -1,6 +1,5 @@
 import { User } from "@prisma/client";
 import { prisma } from "./prismaClient";
-import { count } from "console";
 
 export const getUsers = async () => {
   const users = await prisma.user.findMany();
@@ -120,22 +119,60 @@ export const findUserByResetToken = async (token: string) => {
 };
 
 export const getChats = async (userId: string) => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
+  const chats = await prisma.chat.findMany({
+    where: {
+      users: {
+        some: { id: userId },
+      },
+    },
     include: {
-      chats: {
+      users: {
+        select: {
+          id: true,
+          username: true,
+          avatar: true,
+        },
+      },
+      lastMessage: {
         include: {
-          users: {
+          sender: {
             select: {
               id: true,
               username: true,
-              avatar: true,
             },
           },
         },
       },
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
-  return { chats: user?.chats ?? [], count: user?.chats.length ?? 0 };
+  // Format the chats to use the opposite user for private chats
+  const formattedChats = chats.map((chat) => {
+    if (chat.type === "PRIVATE") {
+      const otherUser = chat.users.find((u) => u.id !== userId);
+
+      return {
+        id: chat.id,
+        type: chat.type,
+        name: otherUser?.username || "Unknown",
+        avatar: otherUser?.avatar || null,
+        lastMessage: chat.lastMessage,
+        updatedAt: chat.updatedAt,
+      };
+    } else {
+      return {
+        id: chat.id,
+        type: chat.type,
+        name: chat.name || "Unnamed Group",
+        avatar: null, // or use a group avatar if you implement one
+        lastMessage: chat.lastMessage,
+        updatedAt: chat.updatedAt,
+      };
+    }
+  });
+
+  return { chats: formattedChats ?? [], count: formattedChats.length ?? 0 };
 };
