@@ -4,6 +4,7 @@ export enum ROLE {
   AUTHOR = "AUTHOR",
 }
 export enum CHAT_TYPE {
+  PUBLIC = "PUBLIC",
   GROUP = "GROUP",
   PRIVATE = "PRIVATE",
 }
@@ -47,6 +48,7 @@ export type User = {
 export type Chat = {
   id: string;
   name?: string;
+  avatar?: string;
   type: CHAT_TYPE;
 
   createdAt: Date | string;

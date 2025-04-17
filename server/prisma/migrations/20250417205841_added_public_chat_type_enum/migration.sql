@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "CHAT_TYPE" ADD VALUE 'PUBLIC';

@@ -8,10 +8,22 @@ export const registerSocketHandlers = (io: Server) => {
     socket.on("join_room", (data) => {
       console.log(`User with ID: ${socket.id} joined room: ${data.chatId}`);
       socket.join(data.chatId);
+      socket.emit("add_to_active_users", {
+        id: socket.id,
+        username: data.username,
+        avatar: data.avatar,
+        role: data.role,
+      });
     });
 
     socket.on("leave_room", (data) => {
       console.log(`User with ID: ${socket.id} left room: ${data.chatId}`);
+      socket.emit("remove_from_active_users", {
+        id: socket.id,
+        username: data.username,
+        avatar: data.avatar,
+        role: data.role,
+      });
       socket.leave(data.chatId);
     });
 

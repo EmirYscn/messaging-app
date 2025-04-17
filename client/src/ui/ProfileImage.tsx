@@ -1,9 +1,11 @@
+import { useState } from "react";
+
 type ProfileImageProps = {
   children?: React.ReactNode;
   onClick?: () => void;
-  imgSrc: string | undefined | null;
+  imgSrc?: string | undefined | null;
   size?: "xs" | "sm" | "md" | "lg";
-  context?: "header" | "settings";
+  context?: "header" | "settings" | "chats";
 };
 
 const sizeClasses = {
@@ -21,6 +23,11 @@ function ProfileImage({
   onClick,
 }: ProfileImageProps) {
   const sizeClass = sizeClasses[size];
+  const [src, setSrc] = useState(imgSrc || "/default-profile-icon.png");
+
+  const handleError = () => {
+    setSrc("/default-profile-icon.png");
+  };
 
   const baseWrapper =
     "relative overflow-hidden rounded-full cursor-pointer transition duration-300 ease-in-out";
@@ -30,14 +37,23 @@ function ProfileImage({
     "absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 text-white flex items-center justify-center text-sm font-bold opacity-0 transition-opacity duration-300";
   const overlayVisible = context !== "header" ? "group-hover:opacity-100" : "";
 
+  if (context === "chats") {
+    return (
+      <div className="flex items-center justify-center gap-4 cursor-pointer group">
+        <div
+          className={`${baseWrapper} ${sizeClass} flex items-center justify-center text-2xl `}
+          onClick={onClick}
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center gap-4 cursor-pointer group">
       <div className={`${baseWrapper} ${sizeClass}`} onClick={onClick}>
-        <img
-          src={imgSrc || "/default-profile-icon.png"}
-          alt="Profile"
-          className={imageClass}
-        />
+        <img src={src} onError={handleError} className={imageClass} />
         {context === "settings" && (
           <div className={`${overlayBase} ${overlayVisible}`}>Change</div>
         )}
