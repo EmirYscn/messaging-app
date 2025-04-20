@@ -1,3 +1,5 @@
+// This file contains the types and enums used throughout the application.
+
 export enum ROLE {
   ADMIN = "ADMIN",
   USER = "USER",
@@ -17,28 +19,28 @@ export enum MESSAGE_TYPE {
 }
 
 export type Profile = {
-  id: string;
+  readonly id: string;
   bio?: string | null;
 
-  createdAt: Date | string;
-  updatedAt: Date | string;
-  deletedAt?: Date | string | null;
+  readonly createdAt: Date | string;
+  readonly updatedAt: Date | string;
+  readonly deletedAt?: Date | string | null;
 
   userId: string;
   user?: User;
 };
 
 export type User = {
-  id: string;
+  readonly id: string;
   email: string;
   username?: string | null;
   password?: string | null;
   role?: ROLE;
   avatar?: string | null;
 
-  createdAt: Date | string;
-  updatedAt: Date | string;
-  deletedAt?: Date | string | null;
+  readonly createdAt: Date | string;
+  readonly updatedAt: Date | string;
+  readonly deletedAt?: Date | string | null;
 
   profile?: Profile | null;
   chats?: Chat[];
@@ -46,27 +48,27 @@ export type User = {
 };
 
 export type Chat = {
-  id: string;
+  readonly id: string;
   name?: string;
   avatar?: string;
   type: CHAT_TYPE;
 
-  createdAt: Date | string;
-  updatedAt: Date | string;
-  deletedAt?: Date | string | null;
+  readonly createdAt: Date | string;
+  readonly updatedAt: Date | string;
+  readonly deletedAt?: Date | string | null;
 
   lastMessageId?: string;
   lastMessage?: Message;
 };
 
 export type Message = {
-  id: string;
+  readonly id: string;
   content: string;
   type: MESSAGE_TYPE;
 
-  createdAt: Date | string;
-  updatedAt: Date | string;
-  deletedAt?: Date | string | null;
+  readonly createdAt: Date | string;
+  readonly updatedAt: Date | string;
+  readonly deletedAt?: Date | string | null;
 
   senderId: string;
   sender: User;
@@ -85,3 +87,47 @@ export function isAuthor(user: User): boolean {
 }
 
 export type UpdateUser = User & Profile;
+
+type CommonImmutableFields = "id" | "createdAt" | "updatedAt" | "deletedAt";
+
+type ImmutableUserFields =
+  | CommonImmutableFields
+  | "profile"
+  | "chats"
+  | "messages";
+export type CreateUserDTO = Omit<User, ImmutableUserFields>;
+
+export type UpdateUserDTO = Partial<CreateUserDTO>;
+
+type ImmutableMessageFields = CommonImmutableFields | "sender" | "chat";
+export type CreateMessageDTO = Omit<Message, ImmutableMessageFields>;
+export type UpdateMessageDTO = Partial<CreateMessageDTO>;
+
+type ImmutableChatFields =
+  | CommonImmutableFields
+  | "users"
+  | "messages"
+  | "lastMessage"
+  | "lastMessageId";
+export type CreateChatDTO = Omit<Chat, ImmutableChatFields>;
+export type UpdateChatDTO = Partial<CreateChatDTO>;
+
+// Socket.io types
+
+export interface ServerToClientEvents {
+  receive_message: (data: Message) => void;
+  add_to_active_users: (data: User) => void;
+  remove_from_active_users: (data: User) => void;
+  active_users_list: (users: User[]) => void;
+  room_joined: (data: { chatId: string }) => void;
+  chat_created: () => void;
+}
+
+export interface ClientToServerEvents {
+  send_message: (data: CreateMessageDTO) => void;
+  join_room: (data: { chatId: string; chatType: CHAT_TYPE }) => void;
+  leave_room: (data: { chatId: string; chatType: CHAT_TYPE }) => void;
+  add_to_active_users: (data: User) => void;
+  remove_from_active_users: (data: User) => void;
+  active_users_list: (users: User[]) => void;
+}

@@ -17,8 +17,8 @@ import { router as chatRouter } from "./routes/chat.routes";
 import { router as authRouter } from "./routes/auth.routes";
 import { router as userRouter } from "./routes/user.routes";
 
-// import AppError from "./utils/appError";
-// import { globalErrorHandler } from "./controllers/error.controller";
+import AppError from "./utils/appError";
+import { globalErrorHandler } from "./controllers/error.controller";
 
 const app: Application = express();
 
@@ -72,11 +72,11 @@ app.use("/api/v1/users", userRouter);
 
 // Handle undefined routes
 
-// app.all("*", (req: Request, res: Response, next: NextFunction) => {
-//   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-// });
+app.all("/{*any}", (req: Request, res: Response, next: NextFunction) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
 
 // // Global error handler
-// app.use(globalErrorHandler);
+app.use(globalErrorHandler);
 
 export default app;

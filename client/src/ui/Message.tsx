@@ -1,5 +1,6 @@
 import { useUser } from "../hooks/useUser";
 import { Message as MessageType } from "../types/types";
+import { formatDateToHour } from "../utils/formatDateToHour";
 import ProfileImage from "./ProfileImage";
 
 function Message({ message }: { message: MessageType }) {
@@ -32,15 +33,25 @@ function Message({ message }: { message: MessageType }) {
           `}
         />
         <div
-          className={`flex flex-col gap-1 rounded-2xl px-4 py-2 w-max break-words max-w-[12rem] md:max-w-[24rem]
+          className={`relative flex flex-col gap-1 rounded-2xl px-4 py-2 w-max break-words max-w-[12rem] md:max-w-[24rem]
           ${
             isCurrentUser
               ? "bg-[var(--color-blue-500)] text-white border-t-0"
               : "bg-[var(--color-blue-100)] text-[var(--color-grey-800)]"
           }`}
         >
-          <span className="font-bold text-sm">{message?.sender?.username}</span>
+          {!isCurrentUser && (
+            <span className="font-bold text-sm">
+              {message?.sender?.username}
+            </span>
+          )}
+
           <span>{message?.content}</span>
+          <span
+            className={`text-[10px] opacity-70 text-[var(--color-grey-700)] text-right`}
+          >
+            {formatDateToHour(message?.createdAt)}
+          </span>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { api } from "./apiAuth";
-import { Chat } from "../types/types";
+import { Chat, Profile, UpdateUserDTO } from "../types/types";
 
 export const getChats = async (
   userId: string
@@ -13,6 +13,37 @@ export const getChats = async (
     if (axios.isAxiosError(error)) {
       const serverMessage =
         error.response?.data?.message || "Couldn't fetch chats";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};
+
+export const getProfile = async (userId: string): Promise<Profile> => {
+  try {
+    const res = await api.get(`/api/v1/users/${userId}/profile`);
+    return res.data.profile;
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message || "Couldn't fetch profile";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};
+
+export const updateUser = async (userId: string, body: UpdateUserDTO) => {
+  try {
+    await api.patch(`/api/v1/users/${userId}`, body);
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message || "Couldn't update profile";
       throw new Error(serverMessage);
     }
 

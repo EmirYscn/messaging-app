@@ -11,7 +11,7 @@ export const useChats = () => {
     data: { chats, count } = { chats: [], count: 0 },
     error,
   } = useQuery({
-    queryKey: ["chats"],
+    queryKey: ["chats", "private"],
     queryFn: () => getChats(user!.id),
     enabled: !!user?.id,
   });

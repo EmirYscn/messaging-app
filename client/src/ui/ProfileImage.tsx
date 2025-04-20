@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaCamera } from "react-icons/fa";
 
 type ProfileImageProps = {
   children?: React.ReactNode;
@@ -34,7 +35,7 @@ function ProfileImage({
   const imageClass =
     "w-full h-full object-cover rounded-full transition duration-300 ease-in-out";
   const overlayBase =
-    "absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 text-white flex items-center justify-center text-sm font-bold opacity-0 transition-opacity duration-300";
+    "absolute top-0 left-0 w-full h-full bg-black/50 text-white flex flex-col gap-2 items-center justify-center text-sm font-bold opacity-0 transition-opacity duration-300";
   const overlayVisible = context !== "header" ? "group-hover:opacity-100" : "";
 
   if (context === "chats") {
@@ -55,7 +56,14 @@ function ProfileImage({
       <div className={`${baseWrapper} ${sizeClass}`} onClick={onClick}>
         <img src={src} onError={handleError} className={imageClass} />
         {context === "settings" && (
-          <div className={`${overlayBase} ${overlayVisible}`}>Change</div>
+          <div className={`${overlayBase} ${overlayVisible}`}>
+            <span>
+              <FaCamera />
+            </span>
+            <span className="max-w-11/12 text-center">
+              Change Profile Picture
+            </span>
+          </div>
         )}
       </div>
       {context === "settings" && children}

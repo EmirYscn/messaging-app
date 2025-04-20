@@ -3,13 +3,14 @@ import { socket } from "../services/socket";
 import { useUser } from "../hooks/useUser";
 import { FaPlus } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
-import { Chat } from "../types/types";
+import { Chat, MESSAGE_TYPE } from "../types/types";
 
 type MessageInputProps = {
   chat: Chat;
+  isConnected: boolean;
 };
 
-function MessageInput({ chat }: MessageInputProps) {
+function MessageInput({ chat, isConnected }: MessageInputProps) {
   const { user } = useUser();
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -17,11 +18,12 @@ function MessageInput({ chat }: MessageInputProps) {
   function handleMessageSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (message.trim() === "") return; // Prevent sending empty messages
+    if (!user) return;
     const data = {
       content: message,
       chatId: chat?.id,
       senderId: user?.id,
-      type: "TEXT",
+      type: "TEXT" as MESSAGE_TYPE,
     };
     socket.emit("send_message", data);
     setMessage("");
@@ -54,7 +56,7 @@ function MessageInput({ chat }: MessageInputProps) {
       <button
         type="submit"
         className="text-xl disabled:opacity-50"
-        disabled={!message}
+        disabled={!isConnected || !message}
       >
         <IoMdSend />
       </button>

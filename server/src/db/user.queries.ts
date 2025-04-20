@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Profile, User } from "@prisma/client";
 import { prisma } from "./prismaClient";
 
 export const getUsers = async () => {
@@ -36,24 +36,49 @@ export const createUser = async (body: User) => {
   });
 };
 
-// export const getProfile = async (id: string) => {
-//   const profile = await prisma.profile.findUnique({
-//     where: { userId: id },
-//     include: {
-//       user: {
-//         select: {
-//           avatar: true,
-//           email: true,
-//           id: true,
-//           role: true,
-//           username: true,
-//           posts: true,
-//         },
-//       },
-//     },
-//   });
-//   return profile;
-// };
+export const getProfile = async (id: string) => {
+  const profile = await prisma.profile.findUnique({
+    where: { userId: id },
+    include: {
+      user: {
+        select: {
+          avatar: true,
+          email: true,
+          id: true,
+          role: true,
+          username: true,
+        },
+      },
+    },
+  });
+  return profile;
+};
+
+export const updateUser = async (
+  id: string,
+  body: Partial<User & { profile: Partial<Profile> }>
+) => {
+  console.log(body);
+  // Destructure profile fields if present
+  const { profile, ...userFields } = body;
+
+  const updatedUser = await prisma.user.update({
+    where: { id },
+    data: {
+      ...userFields,
+      ...(profile && {
+        profile: {
+          update: profile,
+        },
+      }),
+    },
+    include: {
+      profile: true, // Optional: if you want updated profile data returned
+    },
+  });
+
+  return updatedUser;
+};
 
 // export const updateUser = async (id: string, body: Partial<User & Profile>) => {
 //   let updatedUser = {} as Prisma.UserUpdateInput;

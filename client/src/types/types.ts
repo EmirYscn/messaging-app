@@ -13,4 +13,12 @@ export type {
   Chat,
   Message,
   UpdateUser,
+  CreateUserDTO,
+  UpdateUserDTO,
+  CreateChatDTO,
+  UpdateChatDTO,
+  CreateMessageDTO,
+  UpdateMessageDTO,
+  ClientToServerEvents,
+  ServerToClientEvents,
 } from "../../../shared/types";

@@ -3,11 +3,14 @@ import { useChatMessages } from "../hooks/useChatMessages";
 import Message from "./Message";
 import { socket } from "../services/socket";
 import { Message as MessageType } from "../types/types";
+import { useQueryClient } from "@tanstack/react-query";
 
 function Messages() {
   const { messages } = useChatMessages();
   const [localMessages, setLocalMessages] = useState(messages || []);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (messages) setLocalMessages(messages);
@@ -19,6 +22,7 @@ function Messages() {
     const handleReceiveMessage = (data: MessageType) => {
       // Handle the received message
       setLocalMessages((prev) => [...prev, data]);
+      queryClient.invalidateQueries({ queryKey: ["chats", "private"] });
     };
 
     // Listen for incoming messages

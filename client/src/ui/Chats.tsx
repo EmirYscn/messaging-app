@@ -4,9 +4,12 @@ import { useChats } from "../hooks/useChats";
 import ProfileImage from "./ProfileImage";
 
 import { TfiWorld } from "react-icons/tfi";
+import { useSocketChat } from "../hooks/useSocketChat";
+import { formatDateToHour } from "../utils/formatDateToHour";
 
 function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
   const { chats } = useChats();
+  useSocketChat();
 
   return (
     <div className="p-4 flex flex-col gap-4 h-full">
@@ -46,42 +49,23 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
             }
           >
             <ProfileImage imgSrc={chat?.avatar} size="xs" />
-            <span>{chat?.name}</span>
+            <div className="flex flex-col w-full overflow-hidden">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[15px] truncate">
+                  {chat?.name}
+                </span>
+                {chat?.lastMessage?.createdAt && (
+                  <span className="text-xs opacity-60 whitespace-nowrap">
+                    {formatDateToHour(chat?.lastMessage?.createdAt)}
+                  </span>
+                )}
+              </div>
+              <span className="opacity-70 break-words line-clamp-1">
+                {chat?.lastMessage?.content}
+              </span>
+            </div>
           </NavLink>
         ))}
-        {/* <NavLink
-          to={"/chat/225cddc9-f874-42e3-ba3c-3fe880dcfd4c"}
-          className={({ isActive }) =>
-            `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
-              isActive ? "bg-[var(--color-grey-100)] font-semibold" : ""
-            }`
-          }
-        >
-          <span>Photo</span>
-          <span>Yusuf</span>
-        </NavLink>
-        <NavLink
-          to={"/chat/2"}
-          className={({ isActive }) =>
-            `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
-              isActive ? "bg-[var(--color-grey-100)] font-semibold" : ""
-            }`
-          }
-        >
-          <span>Photo</span>
-          <span>Chat1</span>
-        </NavLink>
-        <NavLink
-          to={"/chat/3"}
-          className={({ isActive }) =>
-            `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
-              isActive ? "bg-[var(--color-grey-100)] font-semibold" : ""
-            }`
-          }
-        >
-          <span>Photo</span>
-          <span>Chat1</span>
-        </NavLink> */}
       </div>
     </div>
   );

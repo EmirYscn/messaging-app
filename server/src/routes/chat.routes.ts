@@ -8,5 +8,6 @@ const router = Router();
 router.get("/public-chats", chatController.getPublicChats);
 router.get("/:id", requireAuth, chatController.getChat);
 router.get("/:id/messages", requireAuth, chatController.getMessages);
+router.post("/", requireAuth, chatController.createChat);
 
 export { router };

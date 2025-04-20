@@ -1,18 +1,21 @@
-import { Server } from "socket.io";
-import * as socketController from "../controllers/socket.controller";
+import { User } from "@prisma/client";
 import jwt from "jsonwebtoken";
+
+import { TypedIO, TypedSocket } from "./types";
+import AppError from "../utils/appError";
+
+import * as socketController from "../controllers/socket.controller";
+import { userSocketMap } from "./socketRegistry";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
-export const registerSocketHandlers = (io: Server) => {
-  io.use((socket, next) => {
-    const authHeader = socket.handshake.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return next(new Error("Unauthorized: No token provided"));
+export const registerSocketHandlers = (io: TypedIO) => {
+  io.use((socket: TypedSocket, next) => {
+    const { token } = socket.handshake.auth;
+    if (!token) {
+      console.log("❌ No token provided");
+      return next(new AppError("Unauthorized: No token provided", 401));
     }
-
-    const token = authHeader.split(" ")[1];
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
@@ -20,53 +23,36 @@ export const registerSocketHandlers = (io: Server) => {
       next();
     } catch (err) {
       console.error("JWT Error:", err);
-      next(new Error("Unauthorized: Invalid token"));
+      next(new AppError("Unauthorized: Invalid token", 401));
     }
   });
 
   io.on("connection", (socket) => {
-    console.log("User", socket.data.user);
-    console.log(`User with socket id ${socket.id} connected`);
+    const user = socket.data.user as User;
+    const userId = user.id;
 
-    socket.on("join_room", async (data) => {
-      console.log(`User with ID: ${socket.id} joined room: ${data.chatId}`);
-      socket.join(data.chatId);
-      const roomSockets = await io.in(data.chatId).fetchSockets(); // gets all sockets in the room
-      console.log(roomSockets);
-      // Map each socket to its user data
-      const activeUsers = roomSockets.map((s) => s.data.user);
-      console.log("active users: ", activeUsers);
+    if (!userSocketMap.has(userId)) {
+      userSocketMap.set(userId, new Set());
+    }
+    userSocketMap.get(userId)?.add(socket.id);
+    console.log("Current socket map:", Array.from(userSocketMap.entries()));
+    console.log("User", user);
+    console.log(`User ${user.username} connected with socket ID ${socket.id}`);
 
-      if (data.chatType === "GROUP" || data.chatType === "PUBLIC") {
-        // Send active users to the newly joined user
-        socket.emit("active_users_list", activeUsers);
+    socket.on("join_room", async (data) =>
+      socketController.joinRoom(socket, io, data)
+    );
 
-        // Notify others in the room about the new user
-        socket.to(data.chatId).emit("add_to_active_users", socket.data.user);
-      }
-    });
-
-    socket.on("leave_room", (data) => {
-      console.log(`User with ID: ${socket.id} left room: ${data.chatId}`);
-      if (data.chatType === "GROUP" || data.chatType === "PUBLIC") {
-        socket
-          .to(data.chatId)
-          .emit("remove_from_active_users", socket.data.user);
-      }
-      socket.leave(data.chatId);
-    });
+    socket.on("leave_room", (data) =>
+      socketController.leaveRoom(socket, io, data)
+    );
 
     socket.on("send_message", (data) =>
       socketController.sendMessage(socket, io, data)
     );
 
-    // socket.on("typing", (data) => {
-    //   console.log(`${data.senderId} is typing...`);
-    //   socket.to(data.chatId).emit("typing", data);
-    // });
-
-    socket.on("disconnect", () => {
-      console.log(`User with socket id ${socket.id} disconnected`);
-    });
+    socket.on("disconnect", () =>
+      socketController.disconnect(socket, io, user)
+    );
   });
 };

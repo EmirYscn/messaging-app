@@ -34,9 +34,6 @@ function Sidebar({
         >
           <IoMdChatbubbles />
         </button>
-        <NavLink to={"/contacts"}>
-          <MdGroups2 />
-        </NavLink>
       </div>
       <div className="flex lg:flex-col gap-8 items-center text-2xl ">
         <button
