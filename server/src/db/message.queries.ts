@@ -10,9 +10,13 @@ export const getMessages = async (chatId: string) => {
         select: { id: true, username: true, avatar: true, role: true },
       },
     },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: "desc" },
+    take: 20,
   });
-  return { messages, count: totalCount };
+
+  const orderedMessages = messages.reverse();
+
+  return { messages: orderedMessages, count: totalCount };
 };
 
 export const createMessage = async (message: Message) => {
@@ -24,6 +28,11 @@ export const createMessage = async (message: Message) => {
         senderId,
         content,
         type,
+      },
+      include: {
+        sender: {
+          select: { id: true, username: true, avatar: true, role: true },
+        },
       },
     });
 
@@ -38,4 +47,6 @@ export const createMessage = async (message: Message) => {
 
     return [newMsg, updatedChat];
   });
+
+  return newMsg;
 };

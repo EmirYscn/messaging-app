@@ -1,13 +1,23 @@
 // socket/types.ts
+import { CHAT_TYPE, Message, User } from "@prisma/client";
 import { Server, Socket } from "socket.io";
 
 export interface ServerToClientEvents {
-  receive_message: (message: any) => void;
+  receive_message: (data: Message) => void;
+  add_to_active_users: (data: User) => void;
+  remove_from_active_users: (data: User) => void;
+  active_users_list: (users: User[]) => void;
+  room_joined: (data: { chatId: string }) => void;
+  chat_created: () => void;
 }
 
 export interface ClientToServerEvents {
-  join_room: (data: { chatId: string }) => void;
-  send_message: (data: any) => void;
+  send_message: (data: Message) => void;
+  join_room: (data: { chatId: string; chatType: CHAT_TYPE }) => void;
+  leave_room: (data: { chatId: string; chatType: CHAT_TYPE }) => void;
+  add_to_active_users: (data: User) => void;
+  remove_from_active_users: (data: User) => void;
+  active_users_list: (users: User[]) => void;
 }
 
 export type TypedSocket = Socket<ClientToServerEvents, ServerToClientEvents>;

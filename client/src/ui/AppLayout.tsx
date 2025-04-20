@@ -4,10 +4,11 @@ import Chats from "./Chats";
 import { useState } from "react";
 import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
 import Settings from "./Settings";
+import Profile from "./Profile";
 
 function AppLayout() {
   const [showChats, setShowChats] = useState(false);
-  const { context, setContext } = useAsideContext();
+  const { context } = useAsideContext();
 
   const renderAsideContent = () => {
     switch (context) {
@@ -16,7 +17,7 @@ function AppLayout() {
       case "settings":
         return <Settings />;
       case "profile":
-        return <div className="p-4">Profile page coming soon...</div>;
+        return <Profile />;
       default:
         return null;
     }

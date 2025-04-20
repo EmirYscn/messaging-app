@@ -51,3 +51,19 @@ export const getMessages = async (
     throw new Error("An unexpected error occurred.");
   }
 };
+
+export const createChat = async (body: string): Promise<string> => {
+  try {
+    const res = await api.post("/api/v1/chats", { userId: body });
+    return (res.data.chat as Chat).id;
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message || "Couldn't create chat";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};

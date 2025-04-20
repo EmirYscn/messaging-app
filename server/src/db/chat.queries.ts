@@ -1,3 +1,4 @@
+import { Chat } from "@prisma/client";
 import { prisma } from "./prismaClient";
 
 export const getChat = async (chatId: string, userId: string) => {
@@ -51,4 +52,27 @@ export const getPublicChats = async () => {
   });
 
   return chats;
+};
+
+export const createChat = async (userIds: string[]) => {
+  const sortedIds = [...userIds].sort();
+  const existingChat = await prisma.chat.findFirst({
+    where: { type: "PRIVATE", users: { every: { id: { in: sortedIds } } } },
+    include: { users: true },
+  });
+
+  if (existingChat) return existingChat;
+
+  const newChat = await prisma.chat.create({
+    data: {
+      type: "PRIVATE",
+      users: {
+        connect: sortedIds.map((userId) => ({ id: userId })),
+      },
+    },
+    include: {
+      users: true,
+    },
+  });
+  return newChat;
 };

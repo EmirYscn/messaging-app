@@ -10,7 +10,7 @@ import { useLogout } from "../hooks/useLogout";
 function Settings() {
   const { user } = useUser();
 
-  const { logout, isPending } = useLogout();
+  const { logout } = useLogout();
 
   return (
     <div className="flex flex-col gap-4 h-full">
