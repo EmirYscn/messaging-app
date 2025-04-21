@@ -1,23 +1,33 @@
 import { CHAT_TYPE, Message, User } from "@prisma/client";
 import * as messageQueries from "../db/message.queries";
 import { v4 as uuidv4 } from "uuid";
-import { TypedIO, TypedSocket } from "../sockets/types";
+import { catchAsyncSocket, TypedIO, TypedSocket } from "../sockets/types";
 import { userSocketMap } from "../sockets/socketRegistry";
 
-export const sendMessage = async (
-  socket: TypedSocket,
-  io: TypedIO,
-  data: Message
-) => {
-  const user = socket.data.user as User;
-  console.log(
-    `User with DBID: ${user.id} sent message: ${data.content} to chat: ${data.chatId}`
-  );
-  // 1) Store message in database
-  const createdMessage = await messageQueries.createMessage(data);
-  // 2) Emit message
-  io.to(data.chatId).emit("receive_message", createdMessage);
-};
+export const sendMessage = catchAsyncSocket(
+  async (socket: TypedSocket, io: TypedIO, data: Message) => {
+    const user = socket.data.user as User;
+    console.log(
+      `User with DBID: ${user.id} sent message: ${data.content} to chat: ${data.chatId}`
+    );
+    // 1) Store message in database
+    const { newMsg: createdMessage, updatedChat } =
+      await messageQueries.createMessage(data);
+    // 2) Emit message
+    io.to(data.chatId).emit("receive_message", createdMessage);
+    // 3) Emit chat updated
+    if (updatedChat.type !== "PUBLIC") {
+      for (const user of updatedChat.users) {
+        const sockets = userSocketMap.get(user.id);
+        if (sockets) {
+          sockets.forEach((socketId) => {
+            io.to(socketId).emit("chat_updated");
+          });
+        }
+      }
+    }
+  }
+);
 
 export const joinRoom = async (
   socket: TypedSocket,
@@ -25,6 +35,12 @@ export const joinRoom = async (
   data: { chatId: string; chatType: CHAT_TYPE }
 ) => {
   const user = socket.data.user as User;
+
+  if (!socket.data.joinedRooms) socket.data.joinedRooms = [];
+  socket.data.joinedRooms.push({
+    chatId: data.chatId,
+    chatType: data.chatType,
+  });
 
   console.log(`User with DBID: ${user.id} joined room: ${data.chatId}`);
 
@@ -85,7 +101,23 @@ export const disconnect = async (
 ) => {
   const userId = user?.id;
 
+  // 👇 Clean up from all rooms
   const sockets = userSocketMap.get(userId);
+  // if (sockets) {
+  //   sockets.forEach((socket) => {
+  //     await leaveRoom(socket, io, room);
+  //   });
+  // }
+  // Leave all joined rooms
+  const joinedRooms = socket.data.joinedRooms || [];
+
+  for (const room of joinedRooms) {
+    await leaveRoom(socket, io, {
+      chatId: room.chatId,
+      chatType: room.chatType,
+    });
+  }
+
   if (sockets) {
     sockets.delete(socket.id);
     if (sockets.size === 0) {

@@ -1,12 +1,11 @@
 import { IoMdChatbubbles } from "react-icons/io";
 import { IoSettingsOutline } from "react-icons/io5";
-import { MdGroups2 } from "react-icons/md";
 
 import { useUser } from "../hooks/useUser";
 import ProfileImage from "./ProfileImage";
-import { NavLink } from "react-router";
 import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
 import { ContextTypes } from "../contexts/Aside/AsideContext";
+import { FaUserFriends } from "react-icons/fa";
 
 function Sidebar({
   onToggleChats,
@@ -33,6 +32,14 @@ function Sidebar({
           }`}
         >
           <IoMdChatbubbles />
+        </button>
+        <button
+          onClick={() => handleToggleChats("friends")}
+          className={`px-3 py-3 rounded-4xl ${
+            context === "friends" ? "bg-[var(--color-grey-100)]" : ""
+          }`}
+        >
+          <FaUserFriends />
         </button>
       </div>
       <div className="flex lg:flex-col gap-8 items-center text-2xl ">

@@ -1,6 +1,12 @@
 import axios from "axios";
 import { api } from "./apiAuth";
-import { Chat, Profile, UpdateUserDTO } from "../types/types";
+import {
+  Chat,
+  FriendRequest,
+  Profile,
+  UpdateUserDTO,
+  User,
+} from "../types/types";
 
 export const getChats = async (
   userId: string
@@ -44,6 +50,76 @@ export const updateUser = async (userId: string, body: UpdateUserDTO) => {
     if (axios.isAxiosError(error)) {
       const serverMessage =
         error.response?.data?.message || "Couldn't update profile";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};
+
+export const updateUserAvatar = async (body: FormData, userId: string) => {
+  try {
+    await api.patch(`/api/v1/users/${userId}/avatar`, body);
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message || "Couldn't update profile";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};
+
+export const getFriends = async (userId: string): Promise<User[]> => {
+  try {
+    const res = await api.get(`/api/v1/users/${userId}/friends`);
+    return res.data.friends;
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message || "Couldn't fetch friends";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};
+
+export const getReceivedFriendRequests = async (
+  userId: string
+): Promise<FriendRequest[]> => {
+  try {
+    const res = await api.get(
+      `/api/v1/users/${userId}/received-friend-requests`
+    );
+    return res.data.friendRequests;
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message ||
+        "Couldn't fetch received friends requests";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};
+
+export const getSentFriendRequests = async (
+  userId: string
+): Promise<FriendRequest[]> => {
+  try {
+    const res = await api.get(`/api/v1/users/${userId}/sent-friend-requests`);
+    return res.data.friendRequests;
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message || "Couldn't fetch sent friend requests";
       throw new Error(serverMessage);
     }
 

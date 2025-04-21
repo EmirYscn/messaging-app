@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Spinner from "../ui/Spinner";
+import { connectSocket } from "../services/socket";
 
 function AuthSuccess() {
   const [searchParams] = useSearchParams();
@@ -23,6 +24,9 @@ function AuthSuccess() {
 
         // Store token in localStorage
         localStorage.setItem("jwt", token);
+
+        // connect socket
+        connectSocket();
 
         // Update React Query cache with user data
         queryClient.setQueryData(["user"], user);

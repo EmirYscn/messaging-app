@@ -20,7 +20,7 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
         </button>
       </div>
       <Searchbar />
-      <div className="flex flex-col gap-3 ">
+      <div className="flex flex-col gap-3 overflow-y-auto">
         <NavLink
           to={"/"}
           onClick={onToggleChats}
@@ -37,6 +37,7 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
           </ProfileImage>
           <span>Public Chats</span>
         </NavLink>
+
         {chats.map((chat) => (
           <NavLink
             to={`/chat/${chat.id}`}

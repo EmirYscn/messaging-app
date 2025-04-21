@@ -201,3 +201,81 @@ export const getChats = async (userId: string) => {
 
   return { chats: formattedChats ?? [], count: formattedChats.length ?? 0 };
 };
+
+export const getFriends = async (userId: string) => {
+  // Fetch friendships where the user is user1
+  const friendshipsAsUser1 = await prisma.friendship.findMany({
+    where: { user1Id: userId },
+    select: {
+      createdAt: true,
+      user2: {
+        select: {
+          id: true,
+          username: true,
+          avatar: true,
+          role: true,
+        },
+      },
+    },
+  });
+
+  // Fetch friendships where the user is user2
+  const friendshipsAsUser2 = await prisma.friendship.findMany({
+    where: { user2Id: userId },
+    select: {
+      createdAt: true,
+      user1: {
+        select: {
+          id: true,
+          username: true,
+          avatar: true,
+          role: true,
+        },
+      },
+    },
+  });
+
+  // Normalize and combine both lists
+  const allFriends = [
+    ...friendshipsAsUser1.map((f) => ({
+      ...f.user2,
+      friendshipCreatedAt: f.createdAt,
+    })),
+    ...friendshipsAsUser2.map((f) => ({
+      ...f.user1,
+      friendshipCreatedAt: f.createdAt,
+    })),
+  ];
+
+  // Sort by newest first
+  const sortedFriends = allFriends.sort(
+    (a, b) => b.friendshipCreatedAt.getTime() - a.friendshipCreatedAt.getTime()
+  );
+
+  return sortedFriends;
+};
+
+export const getReceivedFriendRequests = async (userId: string) => {
+  const friendRequests = await prisma.friendRequest.findMany({
+    where: { receiverId: userId },
+    include: {
+      sender: {
+        select: { id: true, username: true, avatar: true, role: true },
+      },
+    },
+  });
+
+  return friendRequests;
+};
+export const getSentFriendRequests = async (userId: string) => {
+  const friendRequests = await prisma.friendRequest.findMany({
+    where: { senderId: userId },
+    include: {
+      receiver: {
+        select: { id: true, username: true, avatar: true, role: true },
+      },
+    },
+  });
+
+  return friendRequests;
+};

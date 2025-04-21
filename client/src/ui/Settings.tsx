@@ -6,9 +6,11 @@ import { PiSignOutBold } from "react-icons/pi";
 import { BsBellFill } from "react-icons/bs";
 import DarkModeToggle from "./DarkModeToggle";
 import { useLogout } from "../hooks/useLogout";
+import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
 
 function Settings() {
   const { user } = useUser();
+  const { setContext } = useAsideContext();
 
   const { logout } = useLogout();
 
@@ -24,7 +26,10 @@ function Settings() {
           <h2 className="text-xl">{user?.username}</h2>
         </div>
         <div className="flex flex-col gap-3">
-          <button className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)] ">
+          <button
+            onClick={() => setContext("profile")}
+            className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)] "
+          >
             <div className="px-6 py-4">
               <span className="text-2xl">
                 <FaUserCircle />

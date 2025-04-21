@@ -9,6 +9,8 @@ export interface ServerToClientEvents {
   active_users_list: (users: User[]) => void;
   room_joined: (data: { chatId: string }) => void;
   chat_created: () => void;
+  chat_updated: () => void;
+  error_occurred: (message: { message: string }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -22,3 +24,22 @@ export interface ClientToServerEvents {
 
 export type TypedSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 export type TypedIO = Server<ClientToServerEvents, ServerToClientEvents>;
+
+type SocketHandler<T = any> = (
+  socket: TypedSocket,
+  io: TypedIO,
+  data: T
+) => Promise<void>;
+
+export const catchAsyncSocket =
+  <T = any>(handler: SocketHandler<T>): SocketHandler<T> =>
+  async (socket, io, data) => {
+    try {
+      await handler(socket, io, data);
+    } catch (err) {
+      console.error("Socket error:", err);
+      socket.emit("error_occurred", {
+        message: "An internal error occurred.",
+      });
+    }
+  };
