@@ -18,6 +18,12 @@ enum CHAT_TYPE {
   PRIVATE
 }
 
+enum FRIEND_REQUEST_STATUS {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
 enum MESSAGE_STATUS {
   SENT
   DELIVERED
@@ -34,8 +40,8 @@ model Profile {
   id  String  @id @default(uuid())
   bio String?
 
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   deletedAt DateTime? // Soft delete timestamp
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -50,8 +56,8 @@ model User {
   role     ROLE    @default(USER)
   avatar   String? // Direct URL to avatar image
 
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   deletedAt DateTime? // Soft delete timestamp
 
   resetPasswordToken   String?   @unique // Token for password reset
@@ -60,6 +66,10 @@ model User {
   profile  Profile?
   chats    Chat[]
   messages Message[]
+  friends Friendship[] @relation("Friend1")
+  friendOf Friendship[] @relation("Friend2")
+  sentRequests   FriendRequest[] @relation("Sender")
+  receivedRequests FriendRequest[] @relation("Receiver")
 }
 
 model Chat {
@@ -68,8 +78,8 @@ model Chat {
   avatar String? // Direct URL to chat avatar image
   type CHAT_TYPE // Type of chat (e.g., group, private)
 
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   deletedAt DateTime? // Soft delete timestamp
 
   lastMessage   Message? @relation("ChatLastMessage", fields: [lastMessageId], references: [id], onDelete: Cascade)
@@ -84,8 +94,8 @@ model Message {
   content String
   type MESSAGE_TYPE @default(TEXT)
 
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   deletedAt DateTime? // Soft delete timestamp
 
   sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
@@ -95,4 +105,34 @@ model Message {
   chatId String
 
   chatAsLastMessage Chat? @relation("ChatLastMessage")
+}
+
+model Friendship {
+  id      String @id @default(uuid())
+  user1   User   @relation("Friend1", fields: [user1Id], references: [id])
+  user1Id String
+
+  user2   User   @relation("Friend2", fields: [user2Id], references: [id])
+  user2Id String
+
+  createdAt DateTime @default(now())
+
+  @@unique([user1Id, user2Id])
+}
+
+model FriendRequest {
+  id        String  @id @default(uuid())
+  status    FRIEND_REQUEST_STATUS @default(PENDING)  // e.g., "pending", "accepted", "declined"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sender   User   @relation("Sender", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId String
+
+  receiver User   @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId String
+
+  @@index([senderId])
+  @@index([receiverId]) 
+  @@unique([senderId, receiverId]) // Unique constraint to prevent duplicate friend requests
 }

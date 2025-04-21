@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
 import Settings from "./Settings";
 import Profile from "./Profile";
+import Friends from "./Friends";
 
 function AppLayout() {
   const [showChats, setShowChats] = useState(false);
@@ -18,6 +19,8 @@ function AppLayout() {
         return <Settings />;
       case "profile":
         return <Profile />;
+      case "friends":
+        return <Friends />;
       default:
         return null;
     }
@@ -46,28 +49,12 @@ function AppLayout() {
             ${showChats ? "block" : "hidden"}
               lg:block
               transition-all duration-300
-              h-[calc(100dvh-4rem)] overflow-y-auto
+              h-[calc(100dvh-4rem)]
               lg:border-[var(--color-grey-100)] lg:border-r-2
             `}
         >
           {renderAsideContent()}
-          {/* {context === "chats" && <Chats onToggleChats={handleToggleChats} />} */}
-          {/* {context === "settings" && <Settings />} */}
         </div>
-        {/* 
-        {context === "settings" && (
-          <div
-            className={`
-            ${context === "settings" ? "block" : "hidden"}
-            lg:block
-            transition-all duration-300
-            h-[calc(100dvh-9rem)]  lg:h-[calc(100dvh-4rem)] overflow-y-auto
-            lg:border-[var(--color-grey-100)] lg:border-r-2
-          `}
-          >
-            <Settings />
-          </div>
-        )} */}
 
         <main
           className={`

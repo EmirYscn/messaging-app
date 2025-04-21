@@ -14,6 +14,8 @@ import ProtectedRoute from "./ui/ProtectedRoute";
 import Signup from "./pages/Signup";
 
 import { AsideContextProvider } from "./contexts/Aside/AsideContextProvider";
+import { useEffect } from "react";
+import { connectSocket } from "./services/socket";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +26,13 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      connectSocket();
+    }
+  }, []);
+
   return (
     <ThemeContextProvider>
       <AsideContextProvider>

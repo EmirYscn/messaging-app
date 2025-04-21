@@ -9,9 +9,13 @@ export function useSocketChat() {
     socket.on("chat_created", () => {
       queryClient.invalidateQueries({ queryKey: ["chats", "private"] });
     });
+    socket.on("chat_updated", () => {
+      queryClient.invalidateQueries({ queryKey: ["chats", "private"] });
+    });
 
     return () => {
       socket.off("chat_created");
+      socket.off("chat_updated");
     };
   }, [queryClient]);
 }

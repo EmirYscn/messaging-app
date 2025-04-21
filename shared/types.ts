@@ -18,6 +18,12 @@ export enum MESSAGE_TYPE {
   AUDIO = "AUDIO",
 }
 
+export enum FRIEND_REQUEST_STATUS {
+  PENDING = "PENDING",
+  ACCEPTED = "ACCEPTED",
+  DECLINED = "DECLINED",
+}
+
 export type Profile = {
   readonly id: string;
   bio?: string | null;
@@ -77,6 +83,20 @@ export type Message = {
   chat: Chat;
 };
 
+export type FriendRequest = {
+  readonly id: string;
+  status: FRIEND_REQUEST_STATUS;
+
+  readonly createdAt: Date | string;
+  readonly updatedAt: Date | string;
+
+  senderId: string;
+  sender: User;
+
+  receiverId: string;
+  receiver: User;
+};
+
 // Optional: Type guards and utility types
 export function isAdmin(user: User): boolean {
   return user.role === ROLE.ADMIN;
@@ -121,6 +141,8 @@ export interface ServerToClientEvents {
   active_users_list: (users: User[]) => void;
   room_joined: (data: { chatId: string }) => void;
   chat_created: () => void;
+  chat_updated: () => void;
+  error_occurred: (message: { message: string }) => void;
 }
 
 export interface ClientToServerEvents {

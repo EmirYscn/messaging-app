@@ -43,10 +43,17 @@ export const createMessage = async (message: Message) => {
           connect: { id: newMsg.id },
         },
       },
+      include: {
+        users: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
     return [newMsg, updatedChat];
   });
 
-  return newMsg;
+  return { newMsg, updatedChat };
 };

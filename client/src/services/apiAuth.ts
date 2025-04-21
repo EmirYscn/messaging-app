@@ -1,6 +1,6 @@
 import axios from "axios";
 import { User } from "../types/types";
-import { socket } from "./socket";
+import { connectSocket, socket } from "./socket";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
@@ -71,6 +71,9 @@ export const login = async (data: LoginCredentials): Promise<User> => {
     const token = res.data.token;
     localStorage.setItem("jwt", token);
 
+    // connect socket
+    connectSocket();
+
     return res.data.user;
   } catch (error: unknown) {
     // Extract error message from response
@@ -89,6 +92,7 @@ export const login = async (data: LoginCredentials): Promise<User> => {
 export const logout = async (): Promise<void> => {
   return new Promise((resolve) => {
     localStorage.removeItem("jwt");
+    socket.disconnect();
     resolve();
   });
 };
