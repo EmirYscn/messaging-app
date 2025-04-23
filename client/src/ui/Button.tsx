@@ -8,15 +8,9 @@ type ButtonProps = {
     | "icon"
     | "login"
     | "logout"
-    | "iconWithText"
-    | "subscribe"
-    | "tag"
     | "search"
     | "normal"
-    | "action"
-    | "readmore"
-    | "saveDraft"
-    | "publish";
+    | "accept";
   icon?: React.ReactNode;
   children?: React.ReactNode;
   onClick?: (() => void) | ((e: React.MouseEvent<HTMLButtonElement>) => void);
@@ -41,15 +35,9 @@ const variationClasses: Record<
   icon: "p-4 focus:outline-none",
   login: "rounded-md bg-[var(--color-brand-100)] hover:text-brand-600",
   logout: "rounded-md hover:text-brand-600",
-  iconWithText: "rounded-md hover:text-brand-600 focus:outline-none",
-  subscribe: "bg-brand-600 text-white border-0 rounded-r-md",
-  tag: "border-2 border-brand-600 px-4 py-2 rounded-md transition hover:bg-brand-600 hover:text-white",
+  accept: "rounded-md bg-[var(--color-brand-100)] hover:text-brand-600",
   search: "border-none p-2 focus:outline-none hover:text-red-500",
   normal: "rounded-md hover:text-brand-600",
-  action: "rounded-md py-4 hover:text-brand-600 focus:outline-none",
-  readmore: "rounded-md p-0 hover:text-brand-600 focus:outline-none",
-  saveDraft: "bg-yellow-700 text-grey-50 px-3 py-2",
-  publish: "bg-green-700 text-grey-50 px-3 py-2",
 };
 
 function Button({

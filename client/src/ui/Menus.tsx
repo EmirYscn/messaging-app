@@ -305,7 +305,7 @@ function Toggle({ id, children, icon }: ToggleProps) {
       className="w-full bg-none border-none px-4 py-2 hover:bg-[var(--color-grey-100)] focus:outline-none"
     >
       {children || icon || (
-        <HiEllipsisVertical className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+        <HiEllipsisVertical className="w-6 h-6 text-[var(--color-grey-700)] " />
       )}
     </button>
   );

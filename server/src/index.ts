@@ -1,10 +1,4 @@
-import express, {
-  Express,
-  Request,
-  Response,
-  Application,
-  NextFunction,
-} from "express";
+import express, { Request, Response, Application, NextFunction } from "express";
 import path from "node:path";
 import morgan from "morgan";
 import helmet from "helmet";
@@ -21,25 +15,6 @@ import AppError from "./utils/appError";
 import { globalErrorHandler } from "./controllers/error.controller";
 
 const app: Application = express();
-
-// // Implement CORS
-// const allowedOrigins = [
-//   process.env.CLIENT_URL,
-//   process.env.CLIENT_AUTHOR_URL,
-// ].filter(Boolean); // remove undefined/null values
-
-// const corsOptions = {
-//   origin: (origin: string | undefined, callback: Function) => {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   credentials: true,
-// };
-
-// app.use(cors(corsOptions));
 
 app.use(cors({ origin: "http://localhost:5173" }));
 

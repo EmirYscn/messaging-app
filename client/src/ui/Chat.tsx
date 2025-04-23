@@ -1,39 +1,49 @@
-import Messages from "./Messages";
-import { useChat } from "../hooks/useChat";
-import { useEffect } from "react";
+import { BiSelectMultiple } from "react-icons/bi";
+import { RiInfoCardFill } from "react-icons/ri";
 
-import { socket } from "../services/socket";
+import Messages from "./Messages";
 import ActiveUsersPanel from "./ActiveUsersPanel";
 import MessageInput from "./MessageInput";
 import SpinnerMini from "./SpinnerMini";
+
+import { useChat } from "../hooks/useChat";
 import { useSocketConnectionStatus } from "../hooks/useSocketConnectionStatus";
+import { useSocketJoinRoom } from "../hooks/useSocketJoinRoom";
+import Menus from "./Menus";
 
 function Chat() {
   const { chat } = useChat();
-  const isConnected = useSocketConnectionStatus();
+  const { isConnected, errorMessage } = useSocketConnectionStatus();
 
   // Join the room when the component mounts
-  useEffect(() => {
-    if (!chat?.id || !chat?.type) return;
-
-    socket.emit("join_room", { chatId: chat.id, chatType: chat.type });
-
-    return () => {
-      socket.emit("leave_room", { chatId: chat.id, chatType: chat.type });
-    };
-  }, [chat?.id, chat?.type]);
+  useSocketJoinRoom();
 
   return (
     <div className="flex h-full">
       <div className="flex flex-col w-full h-full">
-        <div className="p-4 border-b-2 border-[var(--color-grey-100)] flex items-center gap-4">
+        <div className="px-8 py-4 border-b-2 border-[var(--color-grey-100)] flex justify-between items-center gap-4">
           {isConnected ? (
-            <h2 className="text-4xl font-semibold">{chat?.name}</h2>
+            <h2 className="text-2xl font-semibold">{chat?.name}</h2>
           ) : (
             <>
-              <span>Trying to reconnect...</span>
+              <span>{errorMessage}</span>
               <SpinnerMini />
             </>
+          )}
+          {chat && (
+            <Menus>
+              <Menus.Menu>
+                <Menus.Toggle id={chat.id} />
+                <Menus.List id={chat.id}>
+                  <Menus.Button icon={<RiInfoCardFill />}>
+                    <span className="text-sm">User info</span>
+                  </Menus.Button>
+                  <Menus.Button icon={<BiSelectMultiple />}>
+                    <span className="text-sm">Select Messages</span>
+                  </Menus.Button>
+                </Menus.List>
+              </Menus.Menu>
+            </Menus>
           )}
         </div>
 

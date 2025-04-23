@@ -69,7 +69,11 @@ function LoginForm() {
           variation="login"
           // className="px-5 py-2 rounded-lg  bg-[var(--color-grey-50)] text-[var(--color-grey-900)]"
         >
-          {!isPending ? "Log in" : <SpinnerMini />}
+          {!isPending ? (
+            <span className="text-gray-200">Log in</span>
+          ) : (
+            <SpinnerMini />
+          )}
         </Button>
       </FormRowVertical>
     </form>
