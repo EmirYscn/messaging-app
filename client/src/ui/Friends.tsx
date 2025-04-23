@@ -10,7 +10,6 @@ import { useReceivedFriendRequests } from "../hooks/useReceivedFriendRequests";
 import { IoMdCheckmark, IoMdClose } from "react-icons/io";
 import Button from "./Button";
 import { useSentFriendRequests } from "../hooks/useSentFriendRequests";
-import { FRIEND_REQUEST_STATUS } from "../types/types";
 
 function Friends() {
   const { friends } = useFriends();
@@ -47,10 +46,9 @@ function Friends() {
               </div>
               <div className="px-4 flex gap-1 items-center ">
                 <Button
-                  icon={
-                    <IoMdCheckmark className="text-xl hover:text-green-400" />
-                  }
+                  icon={<IoMdCheckmark className="text-xl hover:scale-115" />}
                   size="small"
+                  variation="accept"
                   //   disabled={isUpdating}
                   //   onClick={handleUpdate}
                 />

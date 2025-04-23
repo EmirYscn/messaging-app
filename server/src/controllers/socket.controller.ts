@@ -1,6 +1,5 @@
 import { CHAT_TYPE, Message, User } from "@prisma/client";
 import * as messageQueries from "../db/message.queries";
-import { v4 as uuidv4 } from "uuid";
 import { catchAsyncSocket, TypedIO, TypedSocket } from "../sockets/types";
 import { userSocketMap } from "../sockets/socketRegistry";
 

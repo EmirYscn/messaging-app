@@ -11,6 +11,7 @@ export interface ServerToClientEvents {
   chat_created: () => void;
   chat_updated: () => void;
   error_occurred: (message: { message: string }) => void;
+  connect_error: (error: Error) => void;
 }
 
 export interface ClientToServerEvents {

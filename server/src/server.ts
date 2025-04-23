@@ -5,10 +5,6 @@ import config from "./config/config";
 import app from "./index";
 import { registerSocketHandlers } from "./sockets";
 
-import AppError from "./utils/appError";
-import { globalErrorHandler } from "./controllers/error.controller";
-import { NextFunction, Request, Response } from "express";
-
 const server = createServer(app);
 
 const io = new Server(server, {
