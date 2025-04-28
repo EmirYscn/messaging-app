@@ -14,7 +14,7 @@ function Login() {
         gap-8
       "
     >
-      <Logo size="md" />
+      <Logo size="lg" />
       <header className="text-3xl font-semibold text-center">
         Log in to your account
       </header>

@@ -1,19 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-
-import { useUser } from "./useUser";
-import { getChats } from "../services/apiUser";
+import { getChats } from "../services/apiChat";
 
 export const useChats = () => {
-  const { user } = useUser();
-
   const {
     isLoading,
     data: { chats, count } = { chats: [], count: 0 },
     error,
   } = useQuery({
     queryKey: ["chats", "private"],
-    queryFn: () => getChats(user!.id),
-    enabled: !!user?.id,
+    queryFn: () => getChats(),
   });
 
   return { isLoading, chats, count, error };

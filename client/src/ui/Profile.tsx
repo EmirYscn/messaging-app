@@ -7,6 +7,13 @@ import { IoMdCheckmark, IoMdClose } from "react-icons/io";
 import { useProfile } from "../hooks/useProfile";
 import { useUpdateUser } from "../hooks/useUpdateUser";
 import Button from "./Button";
+import { Profile as ProfileType } from "../types/types";
+
+type UpdatePayload = {
+  username?: string;
+  profile?: Partial<ProfileType>;
+  [key: string]: unknown;
+};
 
 function Profile() {
   const { profile } = useProfile();
@@ -37,7 +44,7 @@ function Profile() {
   }
 
   function handleUpdate() {
-    const updates: any = {};
+    const updates: UpdatePayload = {};
 
     // Only update username if it's not empty and has changed
     if (

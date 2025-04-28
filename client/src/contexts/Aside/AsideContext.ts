@@ -1,6 +1,11 @@
 import { createContext } from "react";
 
-export type ContextTypes = "chats" | "settings" | "profile" | "friends";
+export type ContextTypes =
+  | "chats"
+  | "settings"
+  | "profile"
+  | "friends"
+  | "friend-add";
 
 export type AsideContextType = {
   context: ContextTypes;

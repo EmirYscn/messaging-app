@@ -1,20 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { useUser } from "./useUser";
-import { getSentFriendRequests } from "../services/apiUser";
+import { getSentFriendRequests } from "../services/apiFriendRequest";
 
 export const useSentFriendRequests = () => {
-  const { user } = useUser();
-
   const {
     isLoading,
     data: sentFriendRequests,
     error,
   } = useQuery({
     queryKey: ["friendRequests", "sent"],
-    queryFn: () => {
-      if (!user) return;
-      return getSentFriendRequests(user?.id);
-    },
+    queryFn: () => getSentFriendRequests(),
   });
 
   return { isLoading, sentFriendRequests, error };

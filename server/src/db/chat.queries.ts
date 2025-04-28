@@ -1,5 +1,65 @@
-import { Chat } from "@prisma/client";
 import { prisma } from "./prismaClient";
+
+export const getChats = async (userId: string) => {
+  const chats = await prisma.chat.findMany({
+    where: {
+      users: {
+        some: { id: userId },
+      },
+    },
+    include: {
+      users: {
+        select: {
+          id: true,
+          username: true,
+          avatar: true,
+        },
+      },
+      lastMessage: {
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  // Format the chats to use the opposite user for private chats
+  const formattedChats = chats.map((chat) => {
+    if (chat.type === "PRIVATE") {
+      const otherUser = chat.users.find((u) => u.id !== userId);
+
+      return {
+        ...chat,
+        id: chat.id,
+        type: chat.type,
+        name: otherUser?.username || "Unknown",
+        avatar: otherUser?.avatar || null,
+        lastMessage: chat.lastMessage,
+        updatedAt: chat.updatedAt,
+      };
+    } else {
+      return {
+        ...chat,
+        id: chat.id,
+        type: chat.type,
+        name: chat.name || "Unnamed Group",
+        avatar: null, // or use a group avatar if you implement one
+        lastMessage: chat.lastMessage,
+        updatedAt: chat.updatedAt,
+      };
+    }
+  });
+
+  return { chats: formattedChats ?? [], count: formattedChats.length ?? 0 };
+};
 
 export const getChat = async (chatId: string, userId: string) => {
   const chat = await prisma.chat.findUnique({

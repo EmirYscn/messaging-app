@@ -48,7 +48,9 @@ function Message({ message }: { message: MessageType }) {
 
           <span>{message?.content}</span>
           <span
-            className={`text-[10px] opacity-70 text-[var(--color-grey-700)] text-right`}
+            className={`text-[10px] opacity-70 ${
+              isCurrentUser ? "" : "text-[var(--color-grey-700)]"
+            }  text-right`}
           >
             {formatDateToHour(message?.createdAt)}
           </span>

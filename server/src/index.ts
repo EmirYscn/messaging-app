@@ -10,6 +10,8 @@ import config from "./config/config";
 import { router as chatRouter } from "./routes/chat.routes";
 import { router as authRouter } from "./routes/auth.routes";
 import { router as userRouter } from "./routes/user.routes";
+import { router as friendRouter } from "./routes/friendship.routes";
+import { router as friendRequestRouter } from "./routes/friendRequests.routes";
 
 import AppError from "./utils/appError";
 import { globalErrorHandler } from "./controllers/error.controller";
@@ -44,6 +46,8 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/chats", chatRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/friends", friendRouter);
+app.use("/api/v1/friendRequests", friendRequestRouter);
 
 // Handle undefined routes
 

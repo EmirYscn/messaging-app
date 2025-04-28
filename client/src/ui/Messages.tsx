@@ -1,34 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { useChatMessages } from "../hooks/useChatMessages";
+
 import Message from "./Message";
-import { socket } from "../services/socket";
-import { Message as MessageType } from "../types/types";
+
+import { useChatMessages } from "../hooks/useChatMessages";
+import { useChat } from "../hooks/useChat";
+import { useReceiveMessage } from "../hooks/useSocketReceiveMessage";
 
 function Messages() {
+  const { chat } = useChat();
   const { messages } = useChatMessages();
   const [localMessages, setLocalMessages] = useState(messages || []);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  useReceiveMessage(setLocalMessages);
+
   useEffect(() => {
     if (messages) setLocalMessages(messages);
   }, [messages]);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleReceiveMessage = (data: MessageType) => {
-      // Handle the received message
-      setLocalMessages((prev) => [...prev, data]);
-    };
-
-    // Listen for incoming messages
-    socket.on("receive_message", handleReceiveMessage);
-
-    // Cleanup function to remove the listeners
-    return () => {
-      socket.off("receive_message", handleReceiveMessage);
-    };
-  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,6 +24,16 @@ function Messages() {
 
   return (
     <div className="flex flex-col gap-4 bg-[var(--color-grey-50)] text-gray-900 p-4">
+      {chat?.type === "PUBLIC" && (
+        <div className="flex items-center justify-center ">
+          <span className="bg-[var(--color-grey-200)] opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold">
+            {localMessages.length > 0
+              ? "Messages from the last 24 hours"
+              : "No messages in the last 24 hours"}
+          </span>
+        </div>
+      )}
+
       {localMessages.map((message) => (
         <Message key={message.id} message={message} />
       ))}

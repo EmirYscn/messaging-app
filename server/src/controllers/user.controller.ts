@@ -3,16 +3,7 @@ import * as userQueries from "../db/user.queries";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import { uploadAvatar } from "../middlewares/supabase";
-
-export const getChats = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-
-    const { chats, count } = await userQueries.getChats(id);
-
-    res.status(200).json({ status: "success", chats, count });
-  }
-);
+import { User } from "@prisma/client";
 
 export const getProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -83,5 +74,33 @@ export const getSentFriendsRequests = catchAsync(
     const friendRequests = await userQueries.getSentFriendRequests(id);
 
     res.status(200).json({ status: "success", friendRequests });
+  }
+);
+
+export type UserQuery = {
+  id?: string;
+  username?: string;
+  email?: string;
+  role?: string;
+};
+
+export const getUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const query = req.query as UserQuery;
+
+    const users = await userQueries.getUsers(query);
+
+    res.status(200).json({ status: "success", users });
+  }
+);
+
+export const addUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { receiverId } = req.params;
+    const { id: senderId } = req.user as User;
+
+    await userQueries.addUser(senderId, receiverId);
+
+    res.status(200).json({ status: "success", message: "Friend request sent" });
   }
 );

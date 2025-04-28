@@ -8,6 +8,16 @@ import * as messageQueries from "../db/message.queries";
 import { TypedIO } from "../sockets/types";
 import { userSocketMap } from "../sockets/socketRegistry";
 
+export const getChats = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id: userId } = req.user as User;
+
+    const { chats, count } = await chatQueries.getChats(userId);
+
+    res.status(200).json({ status: "success", chats, count });
+  }
+);
+
 export const getChat = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
