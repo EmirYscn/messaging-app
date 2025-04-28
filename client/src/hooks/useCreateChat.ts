@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useUser } from "./useUser";
 import { createChat as createChatApi } from "../services/apiChat";
 import { useNavigate } from "react-router";
+import { Chat as ChatType } from "../types/types";
 
 export function useCreateChat() {
   const { user } = useUser();
@@ -11,6 +12,17 @@ export function useCreateChat() {
 
   const { mutate: createChat, isPending: isLoading } = useMutation({
     mutationFn: async (oppositeUserId: string) => {
+      const existingChats = queryClient.getQueryData<{
+        chats: ChatType[];
+        count: number;
+      }>(["chats", "private"]);
+
+      const existingChat = existingChats?.chats?.find((chat) =>
+        chat?.users?.some((p) => p.id === oppositeUserId)
+      );
+      if (existingChat) {
+        return existingChat.id;
+      }
       if (!user) return;
       return await createChatApi(oppositeUserId);
     },

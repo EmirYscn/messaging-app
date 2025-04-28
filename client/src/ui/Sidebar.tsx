@@ -1,5 +1,5 @@
 import { IoMdChatbubbles } from "react-icons/io";
-import { IoSettingsOutline } from "react-icons/io5";
+import { IoPersonAddSharp, IoSettingsOutline } from "react-icons/io5";
 
 import { useUser } from "../hooks/useUser";
 import ProfileImage from "./ProfileImage";
@@ -40,6 +40,14 @@ function Sidebar({
           }`}
         >
           <FaUserFriends />
+        </button>
+        <button
+          onClick={() => handleToggleChats("friend-add")}
+          className={`px-3 py-3 rounded-4xl ${
+            context === "friend-add" ? "bg-[var(--color-grey-100)]" : ""
+          }`}
+        >
+          <IoPersonAddSharp />
         </button>
       </div>
       <div className="flex lg:flex-col gap-8 items-center text-2xl ">

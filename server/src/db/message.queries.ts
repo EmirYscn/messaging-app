@@ -1,10 +1,27 @@
-import { Message } from "@prisma/client";
+import { Message, Prisma } from "@prisma/client";
 import { prisma } from "./prismaClient";
 
 export const getMessages = async (chatId: string) => {
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  const chat = await prisma.chat.findUnique({
+    where: { id: chatId },
+    select: { type: true }, // assuming you have a `type` field like 'public' or 'private'
+  });
+
+  if (!chat) {
+    throw new Error("Chat not found");
+  }
+  const where: Prisma.MessageWhereInput = { chatId };
+
+  if (chat.type === "PUBLIC") {
+    where.createdAt = { gte: twentyFourHoursAgo };
+  }
+
   const totalCount = await prisma.message.count({ where: { chatId } });
+
   const messages = await prisma.message.findMany({
-    where: { chatId },
+    where,
     include: {
       sender: {
         select: { id: true, username: true, avatar: true, role: true },

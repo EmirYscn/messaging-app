@@ -13,7 +13,7 @@ function Signup() {
         gap-8
       "
     >
-      <Logo />
+      <Logo size="lg" />
       <header className="text-3xl font-semibold text-center">
         Create an account
       </header>

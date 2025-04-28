@@ -6,6 +6,7 @@ import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
 import Settings from "./Settings";
 import Profile from "./Profile";
 import Friends from "./Friends";
+import FriendAdd from "./FriendAdd";
 
 function AppLayout() {
   const [showChats, setShowChats] = useState(false);
@@ -21,6 +22,8 @@ function AppLayout() {
         return <Profile />;
       case "friends":
         return <Friends />;
+      case "friend-add":
+        return <FriendAdd />;
       default:
         return null;
     }

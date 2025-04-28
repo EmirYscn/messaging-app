@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import { createServer } from "node:http";
+import { instrument } from "@socket.io/admin-ui";
 
 import config from "./config/config";
 import app from "./index";
@@ -9,9 +10,18 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://admin.socket.io"],
     credentials: true,
   },
+});
+
+instrument(io, {
+  auth: {
+    type: "basic",
+    username: process.env.SOCKET_ADMIN_USERNAME!,
+    password: process.env.SOCKET_ADMIN_PASSWORD!,
+  },
+  mode: process.env.NODE_ENV === "production" ? "production" : "development",
 });
 
 app.locals.io = io; // Make io available in app locals

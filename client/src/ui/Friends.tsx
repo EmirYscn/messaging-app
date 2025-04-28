@@ -1,15 +1,19 @@
+import { BiSolidMessageSquareAdd } from "react-icons/bi";
+
+import { IoMdCheckmark, IoMdClose } from "react-icons/io";
+
 import ProfileImage from "./ProfileImage";
 import Searchbar from "./Searchbar";
+import Menus from "./Menus";
+import Button from "./Button";
 
 import { useFriends } from "../hooks/useFriends";
-import Menus from "./Menus";
-import { BiSolidMessageSquareAdd } from "react-icons/bi";
-import { IoPersonAdd } from "react-icons/io5";
 import { useCreateChat } from "../hooks/useCreateChat";
 import { useReceivedFriendRequests } from "../hooks/useReceivedFriendRequests";
-import { IoMdCheckmark, IoMdClose } from "react-icons/io";
-import Button from "./Button";
 import { useSentFriendRequests } from "../hooks/useSentFriendRequests";
+import { useUpdateFriendRequest } from "../hooks/useUpdateFriendRequest";
+import { useDeleteFriendRequest } from "../hooks/useDeleteFriendRequest";
+import { MdDelete } from "react-icons/md";
 
 function Friends() {
   const { friends } = useFriends();
@@ -17,6 +21,11 @@ function Friends() {
 
   const { receivedFriendRequests } = useReceivedFriendRequests();
   const { sentFriendRequests } = useSentFriendRequests();
+
+  const { update, isLoading: isUpdatingRequest } = useUpdateFriendRequest();
+
+  const { deleteRequest, isLoading: isDeletingRequest } =
+    useDeleteFriendRequest();
 
   const statusClass = {
     PENDING: "bg-[var(--color-brand-100)] text-gray-200",
@@ -29,77 +38,87 @@ function Friends() {
       <div className="flex flex-col gap-4 flex-1">
         <h1 className="px-4 py-6 text-4xl font-semibold">Friends</h1>
         <div className="px-4 ">
-          <Searchbar placeholder="Search in the friends" />
+          <Searchbar placeholder="Search friends" />
         </div>
 
         <div className="flex flex-col gap-1 overflow-y-auto">
-          <h3 className="px-4 py-3 text-xl font-semibold">Received Requests</h3>
           {receivedFriendRequests?.map((request) => (
-            <div className="flex gap-2 border-b-1 border-[var(--color-grey-300)]">
-              <div className="px-4 grow grid grid-cols-[auto_1fr] text-left gap-2 items-center ">
-                <div className="px-3">
-                  <ProfileImage imgSrc={request?.sender.avatar} size="xs" />
+            <>
+              <h3 className="px-4 py-3 text-xl font-semibold">
+                Received Requests
+              </h3>
+              <div className="flex gap-2 border-b-1 border-[var(--color-grey-300)]">
+                <div className="px-4 grow grid grid-cols-[auto_1fr] text-left gap-2 items-center ">
+                  <div className="px-3">
+                    <ProfileImage imgSrc={request?.sender.avatar} size="xs" />
+                  </div>
+                  <div className=" py-4">
+                    <span>{request?.sender.username}</span>
+                  </div>
                 </div>
-                <div className=" py-4">
-                  <span>{request?.sender.username}</span>
-                </div>
-              </div>
-              <div className="px-4 flex gap-1 items-center ">
-                <Button
-                  icon={<IoMdCheckmark className="text-xl hover:scale-115" />}
-                  size="small"
-                  variation="accept"
-                  //   disabled={isUpdating}
-                  //   onClick={handleUpdate}
-                />
-                <Button
-                  icon={
-                    <IoMdClose
-                      className="text-xl hover:text-red-500"
-                      //   onClick={() => handleReset("username")}
-                    />
-                  }
-                  size="small"
-                  //   disabled={isUpdating}
-                />
-              </div>
-            </div>
-          ))}
-
-          <h3 className="px-4 py-6 text-xl font-semibold">Sent Requests</h3>
-          {sentFriendRequests?.map((request) => (
-            <div className="flex items-center gap-2 border-b-1 border-[var(--color-grey-300)]">
-              <div className="px-4 grow grid grid-cols-[auto_1fr_auto] text-left gap-2 items-center ">
-                <div className="px-3">
-                  <ProfileImage imgSrc={request?.sender?.avatar} size="xs" />
-                </div>
-                <div className="py-4">
-                  <span>{request?.receiver?.username}</span>
-                </div>
-                <div
-                  className={`px-3 p-2 rounded-md text-sm ${
-                    statusClass[request.status]
-                  }`}
-                >
-                  {request.status}
-                </div>
-              </div>
-
-              {request.status !== "ACCEPTED" && (
                 <div className="px-4 flex gap-1 items-center ">
+                  <Button
+                    icon={<IoMdCheckmark className="text-xl hover:scale-115" />}
+                    size="small"
+                    variation="accept"
+                    disabled={isUpdatingRequest}
+                    onClick={() =>
+                      update({ requestId: request.id, answer: "ACCEPT" })
+                    }
+                  />
                   <Button
                     icon={
                       <IoMdClose
                         className="text-xl hover:text-red-500"
-                        //   onClick={() => handleReset("username")}
+                        onClick={() =>
+                          update({ requestId: request.id, answer: "DECLINE" })
+                        }
                       />
                     }
                     size="small"
-                    //   disabled={isUpdating}
+                    disabled={isUpdatingRequest}
                   />
                 </div>
-              )}
-            </div>
+              </div>
+            </>
+          ))}
+
+          {sentFriendRequests?.map((request) => (
+            <>
+              <h3 className="px-4 py-6 text-xl font-semibold">Sent Requests</h3>
+              <div className="flex items-center gap-2 border-b-1 border-[var(--color-grey-300)]">
+                <div className="px-4 grow grid grid-cols-[auto_1fr_auto] text-left gap-2 items-center ">
+                  <div className="px-3">
+                    <ProfileImage imgSrc={request?.sender?.avatar} size="xs" />
+                  </div>
+                  <div className="py-4">
+                    <span>{request?.receiver?.username}</span>
+                  </div>
+                  <div
+                    className={`px-3 p-2 rounded-md text-sm ${
+                      statusClass[request.status]
+                    }`}
+                  >
+                    {request.status}
+                  </div>
+                </div>
+
+                {request.status !== "ACCEPTED" && (
+                  <div className="px-4 flex gap-1 items-center ">
+                    <Button
+                      icon={
+                        <IoMdClose
+                          className="text-xl hover:text-red-500"
+                          onClick={() => deleteRequest(request.id)}
+                        />
+                      }
+                      size="small"
+                      disabled={isDeletingRequest}
+                    />
+                  </div>
+                )}
+              </div>
+            </>
           ))}
 
           {friends?.map((friend) => (
@@ -120,13 +139,13 @@ function Friends() {
                 </Menus.Toggle>
 
                 <Menus.List id={friend?.id}>
-                  <Menus.Button icon={<IoPersonAdd />}>Add Friend</Menus.Button>
                   <Menus.Button
                     icon={<BiSolidMessageSquareAdd />}
                     onClick={() => createChat(friend.id)}
                   >
                     Send Message
                   </Menus.Button>
+                  <Menus.Button icon={<MdDelete />}>Remove Friend</Menus.Button>
                 </Menus.List>
               </Menus.Menu>
             </Menus>

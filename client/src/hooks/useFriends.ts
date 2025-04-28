@@ -1,20 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { useUser } from "./useUser";
-import { getFriends } from "../services/apiUser";
+import { getFriends } from "../services/apiFriends";
 
 export const useFriends = () => {
-  const { user } = useUser();
-
   const {
     isLoading,
     data: friends,
     error,
   } = useQuery({
     queryKey: ["friends"],
-    queryFn: () => {
-      if (!user) return;
-      return getFriends(user?.id);
-    },
+    queryFn: () => getFriends(),
   });
 
   return { isLoading, friends, error };

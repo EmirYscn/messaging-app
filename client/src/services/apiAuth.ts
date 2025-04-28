@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { InternalAxiosRequestConfig } from "axios";
 import { User } from "../types/types";
 import { connectSocket, socket } from "./socket";
 
@@ -11,14 +11,14 @@ export const api = axios.create({
 
 // Request interceptor to add authorization header
 api.interceptors.request.use(
-  (config: any) => {
+  (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("jwt");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error: any) => Promise.reject(error)
+  (error: unknown) => Promise.reject(error)
 );
 
 export const getCurrentUser = async (): Promise<User> => {

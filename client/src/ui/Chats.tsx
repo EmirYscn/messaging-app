@@ -45,7 +45,7 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
             onClick={onToggleChats}
             className={({ isActive }) =>
               `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
-                isActive ? "bg-[var(--color-grey-100)] font-semibold" : ""
+                isActive ? "bg-[var(--color-grey-100)]" : ""
               }`
             }
           >

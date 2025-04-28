@@ -25,10 +25,10 @@ function Chat() {
           {isConnected ? (
             <h2 className="text-2xl font-semibold">{chat?.name}</h2>
           ) : (
-            <>
+            <div className="flex items-center gap-2">
               <span>{errorMessage}</span>
               <SpinnerMini />
-            </>
+            </div>
           )}
           {chat && (
             <Menus>

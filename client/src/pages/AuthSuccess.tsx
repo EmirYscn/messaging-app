@@ -38,7 +38,7 @@ function AuthSuccess() {
         setTimeout(() => {
           navigate("/", { replace: true });
         }, 300);
-      } catch (error: unknown) {
+      } catch {
         navigate("/login?error=invalid_data", { replace: true });
       }
     }

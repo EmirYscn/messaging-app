@@ -65,6 +65,8 @@ export type Chat = {
 
   lastMessageId?: string;
   lastMessage?: Message;
+
+  users?: User[];
 };
 
 export type Message = {
