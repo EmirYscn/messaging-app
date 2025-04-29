@@ -14,6 +14,7 @@ import { useSentFriendRequests } from "../hooks/useSentFriendRequests";
 import { useUpdateFriendRequest } from "../hooks/useUpdateFriendRequest";
 import { useDeleteFriendRequest } from "../hooks/useDeleteFriendRequest";
 import { MdDelete } from "react-icons/md";
+import { useRemoveFriend } from "../hooks/useRemoveFriend";
 
 function Friends() {
   const { friends } = useFriends();
@@ -27,6 +28,8 @@ function Friends() {
   const { deleteRequest, isLoading: isDeletingRequest } =
     useDeleteFriendRequest();
 
+  const { removeFriend } = useRemoveFriend();
+
   const statusClass = {
     PENDING: "bg-[var(--color-brand-100)] text-gray-200",
     ACCEPTED: "bg-[var(--color-green-700)] text-[var(--color-grey-50)]",
@@ -34,8 +37,8 @@ function Friends() {
   };
 
   return (
-    <div className="flex flex-col gap-4 h-full">
-      <div className="flex flex-col gap-4 flex-1">
+    <div className="flex flex-col h-full gap-4">
+      <div className="flex flex-col flex-1 gap-4">
         <h1 className="px-4 py-6 text-4xl font-semibold">Friends</h1>
         <div className="px-4 ">
           <Searchbar placeholder="Search friends" />
@@ -52,11 +55,11 @@ function Friends() {
                   <div className="px-3">
                     <ProfileImage imgSrc={request?.sender.avatar} size="xs" />
                   </div>
-                  <div className=" py-4">
+                  <div className="py-4 ">
                     <span>{request?.sender.username}</span>
                   </div>
                 </div>
-                <div className="px-4 flex gap-1 items-center ">
+                <div className="flex items-center gap-1 px-4 ">
                   <Button
                     icon={<IoMdCheckmark className="text-xl hover:scale-115" />}
                     size="small"
@@ -104,7 +107,7 @@ function Friends() {
                 </div>
 
                 {request.status !== "ACCEPTED" && (
-                  <div className="px-4 flex gap-1 items-center ">
+                  <div className="flex items-center gap-1 px-4 ">
                     <Button
                       icon={
                         <IoMdClose
@@ -145,7 +148,12 @@ function Friends() {
                   >
                     Send Message
                   </Menus.Button>
-                  <Menus.Button icon={<MdDelete />}>Remove Friend</Menus.Button>
+                  <Menus.Button
+                    icon={<MdDelete />}
+                    onClick={() => removeFriend(friend?.id)}
+                  >
+                    Remove Friend
+                  </Menus.Button>
                 </Menus.List>
               </Menus.Menu>
             </Menus>
