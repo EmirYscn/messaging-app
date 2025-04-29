@@ -5,10 +5,11 @@ import Message from "./Message";
 import { useChatMessages } from "../hooks/useChatMessages";
 import { useChat } from "../hooks/useChat";
 import { useReceiveMessage } from "../hooks/useSocketReceiveMessage";
+import MessageSkeleton from "./MessageSkeleton";
 
 function Messages() {
   const { chat } = useChat();
-  const { messages } = useChatMessages();
+  const { messages, isLoading } = useChatMessages();
   const [localMessages, setLocalMessages] = useState(messages || []);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -34,9 +35,17 @@ function Messages() {
         </div>
       )}
 
-      {localMessages.map((message) => (
-        <Message key={message.id} message={message} />
-      ))}
+      {isLoading ? (
+        <div className="flex flex-col gap-4 px-4 py-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <MessageSkeleton key={i} isCurrentUser={i % 2 === 1} />
+          ))}
+        </div>
+      ) : (
+        localMessages.map((message) => (
+          <Message key={message.id} message={message} />
+        ))
+      )}
       <div ref={bottomRef} />
     </div>
   );

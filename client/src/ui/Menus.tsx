@@ -315,9 +315,10 @@ function Toggle({ id, children, icon, className }: ToggleProps) {
 type ListProps = {
   id: number | string;
   children: React.ReactNode;
+  className?: string;
 };
 
-function List({ id, children }: ListProps) {
+function List({ id, children, className }: ListProps) {
   const context = useContext(MenusContext);
   if (!context) {
     throw new Error("Toggle must be used within a MenusProvider");
@@ -330,7 +331,7 @@ function List({ id, children }: ListProps) {
 
   return createPortal(
     <ul
-      className={`fixed bg-[var(--color-grey-0)] shadow-xl rounded-[var(--border-radius-md)] z-[200]`}
+      className={`fixed bg-[var(--color-grey-0)] shadow-xl rounded-[var(--border-radius-md)] z-[200] ${className} `}
       style={{ right: `${position?.x}px`, top: `${position?.y}px` }}
       ref={ref}
     >
@@ -346,9 +347,16 @@ type ButtonProps = {
   onClick?: () => void;
   disabled?: boolean | undefined;
   isSelected?: boolean | undefined;
+  className?: string;
 };
 
-function Button({ children, icon, onClick, isSelected }: ButtonProps) {
+function Button({
+  children,
+  icon,
+  onClick,
+  isSelected,
+  className,
+}: ButtonProps) {
   const context = useContext(MenusContext);
   if (!context) {
     throw new Error("Toggle must be used within a MenusProvider");
@@ -370,7 +378,7 @@ function Button({ children, icon, onClick, isSelected }: ButtonProps) {
         onClick={handleClick}
         className={`text-[var(--color-grey-800)] w-full text-left bg-none border-none px-7 py-4 text-sm flex items-center gap-4 hover:bg-[var(--color-grey-100)] [&_svg]:w-[1rem] [&_svg]:h-[1rem] ${
           isSelected ? "bg-[var(--color-brand-900)]" : ""
-        }`}
+        } ${className}`}
       >
         {icon}
         <span>{children}</span>
