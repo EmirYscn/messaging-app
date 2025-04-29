@@ -15,13 +15,16 @@ import { useUpdateFriendRequest } from "../hooks/useUpdateFriendRequest";
 import { useDeleteFriendRequest } from "../hooks/useDeleteFriendRequest";
 import { MdDelete } from "react-icons/md";
 import { useRemoveFriend } from "../hooks/useRemoveFriend";
+import FriendSkeleton from "./FriendSkeleton";
 
 function Friends() {
-  const { friends } = useFriends();
+  const { friends, isLoading: isFriendsLoading } = useFriends();
   const { createChat } = useCreateChat();
 
-  const { receivedFriendRequests } = useReceivedFriendRequests();
-  const { sentFriendRequests } = useSentFriendRequests();
+  const { receivedFriendRequests, isLoading: isReceivedRequestsLoading } =
+    useReceivedFriendRequests();
+  const { sentFriendRequests, isLoading: isSentRequestsLoading } =
+    useSentFriendRequests();
 
   const { update, isLoading: isUpdatingRequest } = useUpdateFriendRequest();
 
@@ -45,119 +48,144 @@ function Friends() {
         </div>
 
         <div className="flex flex-col gap-1 overflow-y-auto">
-          {receivedFriendRequests?.map((request) => (
-            <>
-              <h3 className="px-4 py-3 text-xl font-semibold">
-                Received Requests
-              </h3>
-              <div className="flex gap-2 border-b-1 border-[var(--color-grey-300)]">
-                <div className="px-4 grow grid grid-cols-[auto_1fr] text-left gap-2 items-center ">
-                  <div className="px-3">
-                    <ProfileImage imgSrc={request?.sender.avatar} size="xs" />
-                  </div>
-                  <div className="py-4 ">
-                    <span>{request?.sender.username}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 px-4 ">
-                  <Button
-                    icon={<IoMdCheckmark className="text-xl hover:scale-115" />}
-                    size="small"
-                    variation="accept"
-                    disabled={isUpdatingRequest}
-                    onClick={() =>
-                      update({ requestId: request.id, answer: "ACCEPT" })
-                    }
-                  />
-                  <Button
-                    icon={
-                      <IoMdClose
-                        className="text-xl hover:text-red-500"
+          {isReceivedRequestsLoading
+            ? Array.from({ length: 1 }).map((_, i) => (
+                <FriendSkeleton key={i} variation="received" />
+              ))
+            : receivedFriendRequests?.map((request) => (
+                <>
+                  <h3 className="px-4 py-3 text-xl font-semibold">
+                    Received Requests
+                  </h3>
+                  <div className="flex gap-2 border-b-1 border-[var(--color-grey-300)]">
+                    <div className="px-4 grow grid grid-cols-[auto_1fr] text-left gap-2 items-center ">
+                      <div className="px-3">
+                        <ProfileImage
+                          imgSrc={request?.sender.avatar}
+                          size="xs"
+                        />
+                      </div>
+                      <div className="py-4 ">
+                        <span>{request?.sender.username}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 px-4 ">
+                      <Button
+                        icon={
+                          <IoMdCheckmark className="text-xl hover:scale-115" />
+                        }
+                        size="small"
+                        variation="accept"
+                        disabled={isUpdatingRequest}
                         onClick={() =>
-                          update({ requestId: request.id, answer: "DECLINE" })
+                          update({ requestId: request.id, answer: "ACCEPT" })
                         }
                       />
-                    }
-                    size="small"
-                    disabled={isUpdatingRequest}
-                  />
-                </div>
-              </div>
-            </>
-          ))}
+                      <Button
+                        icon={
+                          <IoMdClose
+                            className="text-xl hover:text-red-500"
+                            onClick={() =>
+                              update({
+                                requestId: request.id,
+                                answer: "DECLINE",
+                              })
+                            }
+                          />
+                        }
+                        size="small"
+                        disabled={isUpdatingRequest}
+                      />
+                    </div>
+                  </div>
+                </>
+              ))}
 
-          {sentFriendRequests?.map((request) => (
-            <>
-              <h3 className="px-4 py-6 text-xl font-semibold">Sent Requests</h3>
-              <div className="flex items-center gap-2 border-b-1 border-[var(--color-grey-300)]">
-                <div className="px-4 grow grid grid-cols-[auto_1fr_auto] text-left gap-2 items-center ">
-                  <div className="px-3">
-                    <ProfileImage imgSrc={request?.sender?.avatar} size="xs" />
-                  </div>
-                  <div className="py-4">
-                    <span>{request?.receiver?.username}</span>
-                  </div>
-                  <div
-                    className={`px-3 p-2 rounded-md text-sm ${
-                      statusClass[request.status]
-                    }`}
-                  >
-                    {request.status}
-                  </div>
-                </div>
-
-                {request.status !== "ACCEPTED" && (
-                  <div className="flex items-center gap-1 px-4 ">
-                    <Button
-                      icon={
-                        <IoMdClose
-                          className="text-xl hover:text-red-500"
-                          onClick={() => deleteRequest(request.id)}
+          {isSentRequestsLoading
+            ? Array.from({ length: 1 }).map((_, i) => (
+                <FriendSkeleton key={i} variation="sent" />
+              ))
+            : sentFriendRequests?.map((request) => (
+                <>
+                  <h3 className="px-4 py-6 text-xl font-semibold">
+                    Sent Requests
+                  </h3>
+                  <div className="flex items-center gap-2 border-b-1 border-[var(--color-grey-300)]">
+                    <div className="px-4 grow grid grid-cols-[auto_1fr_auto] text-left gap-2 items-center ">
+                      <div className="px-3">
+                        <ProfileImage
+                          imgSrc={request?.sender?.avatar}
+                          size="xs"
                         />
-                      }
-                      size="small"
-                      disabled={isDeletingRequest}
-                    />
-                  </div>
-                )}
-              </div>
-            </>
-          ))}
-
-          {friends?.map((friend) => (
-            <Menus>
-              <Menus.Menu>
-                <Menus.Toggle id={friend?.id}>
-                  <div
-                    key={friend.id}
-                    className={`grid grid-cols-[auto_1fr] text-left gap-2 items-center`}
-                  >
-                    <div className="px-3 py-4 ">
-                      <ProfileImage imgSrc={friend?.avatar} size="xs" />
+                      </div>
+                      <div className="py-4">
+                        <span>{request?.receiver?.username}</span>
+                      </div>
+                      <div
+                        className={`px-3 p-2 rounded-md text-sm ${
+                          statusClass[request.status]
+                        }`}
+                      >
+                        {request.status}
+                      </div>
                     </div>
-                    <div className="py-4">
-                      <span>{friend?.username}</span>
-                    </div>
-                  </div>
-                </Menus.Toggle>
 
-                <Menus.List id={friend?.id}>
-                  <Menus.Button
-                    icon={<BiSolidMessageSquareAdd />}
-                    onClick={() => createChat(friend.id)}
-                  >
-                    Send Message
-                  </Menus.Button>
-                  <Menus.Button
-                    icon={<MdDelete />}
-                    onClick={() => removeFriend(friend?.id)}
-                  >
-                    Remove Friend
-                  </Menus.Button>
-                </Menus.List>
-              </Menus.Menu>
-            </Menus>
-          ))}
+                    {request.status !== "ACCEPTED" && (
+                      <div className="flex items-center gap-1 px-4 ">
+                        <Button
+                          icon={
+                            <IoMdClose
+                              className="text-xl hover:text-red-500"
+                              onClick={() => deleteRequest(request.id)}
+                            />
+                          }
+                          size="small"
+                          disabled={isDeletingRequest}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </>
+              ))}
+
+          {isFriendsLoading
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <FriendSkeleton key={i} variation="friends" />
+              ))
+            : friends?.map((friend) => (
+                <Menus>
+                  <Menus.Menu>
+                    <Menus.Toggle id={friend?.id}>
+                      <div
+                        key={friend.id}
+                        className={`grid grid-cols-[auto_1fr] text-left gap-2 items-center`}
+                      >
+                        <div className="px-3 py-4 ">
+                          <ProfileImage imgSrc={friend?.avatar} size="xs" />
+                        </div>
+                        <div className="py-4">
+                          <span>{friend?.username}</span>
+                        </div>
+                      </div>
+                    </Menus.Toggle>
+
+                    <Menus.List id={friend?.id}>
+                      <Menus.Button
+                        icon={<BiSolidMessageSquareAdd />}
+                        onClick={() => createChat(friend.id)}
+                      >
+                        Send Message
+                      </Menus.Button>
+                      <Menus.Button
+                        icon={<MdDelete />}
+                        onClick={() => removeFriend(friend?.id)}
+                      >
+                        Remove Friend
+                      </Menus.Button>
+                    </Menus.List>
+                  </Menus.Menu>
+                </Menus>
+              ))}
         </div>
       </div>
     </div>
