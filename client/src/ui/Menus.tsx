@@ -144,7 +144,7 @@
 //   return (
 //     <button
 //       onClick={handleClick}
-//       className="rounded-md translate-x-2 hover:bg-gray-100 focus:outline-none dark:hover:bg-gray-700 w-full"
+//       className="w-full translate-x-2 rounded-md hover:bg-gray-100 focus:outline-none dark:hover:bg-gray-700"
 //     >
 //       {children || icon || (
 //         <HiEllipsisVertical className="w-6 h-6 text-gray-700 dark:text-gray-300" />
@@ -213,7 +213,7 @@
 //         }`}
 //       >
 //         {icon && (
-//           <span className="w-4 h-4 text-gray-400 dark:text-gray-300 transition-all">
+//           <span className="w-4 h-4 text-gray-400 transition-all dark:text-gray-300">
 //             {icon}
 //           </span>
 //         )}
@@ -275,9 +275,10 @@ type ToggleProps = {
   id: number | string;
   children?: React.ReactNode;
   icon?: React.ReactNode;
+  className?: string;
 };
 
-function Toggle({ id, children, icon }: ToggleProps) {
+function Toggle({ id, children, icon, className }: ToggleProps) {
   const context = useContext(MenusContext);
   if (!context) {
     throw new Error("Toggle must be used within a MenusProvider");
@@ -302,7 +303,7 @@ function Toggle({ id, children, icon }: ToggleProps) {
   return (
     <button
       onClick={handleClick}
-      className="w-full bg-none border-none px-4 py-2 hover:bg-[var(--color-grey-100)] focus:outline-none"
+      className={`w-full bg-none border-none px-4 py-2 hover:bg-[var(--color-grey-100)] focus:outline-none ${className}`}
     >
       {children || icon || (
         <HiEllipsisVertical className="w-6 h-6 text-[var(--color-grey-700)] " />
@@ -378,8 +379,14 @@ function Button({ children, icon, onClick, isSelected }: ButtonProps) {
   );
 }
 
-function Menu({ children }: { children: React.ReactNode }) {
-  return <div className="flex items-center">{children}</div>;
+function Menu({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={`flex items-center ${className}`}>{children}</div>;
 }
 
 Menus.Menu = Menu;

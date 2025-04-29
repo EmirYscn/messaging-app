@@ -18,7 +18,7 @@ export const getFriends = async (): Promise<User[]> => {
   }
 };
 
-export const deleteFriend = async (friendId: string) => {
+export const removeFriend = async (friendId: string) => {
   try {
     await api.delete(`/api/v1/friends/${friendId}`);
   } catch (error: unknown) {
