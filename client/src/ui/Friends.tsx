@@ -53,7 +53,7 @@ function Friends() {
                 <FriendSkeleton key={i} variation="received" />
               ))
             : receivedFriendRequests?.map((request) => (
-                <>
+                <div key={request.id}>
                   <h3 className="px-4 py-3 text-xl font-semibold">
                     Received Requests
                   </h3>
@@ -98,7 +98,7 @@ function Friends() {
                       />
                     </div>
                   </div>
-                </>
+                </div>
               ))}
 
           {isSentRequestsLoading
@@ -106,7 +106,7 @@ function Friends() {
                 <FriendSkeleton key={i} variation="sent" />
               ))
             : sentFriendRequests?.map((request) => (
-                <>
+                <div key={request.id}>
                   <h3 className="px-4 py-6 text-xl font-semibold">
                     Sent Requests
                   </h3>
@@ -145,7 +145,7 @@ function Friends() {
                       </div>
                     )}
                   </div>
-                </>
+                </div>
               ))}
 
           {isFriendsLoading
@@ -153,38 +153,40 @@ function Friends() {
                 <FriendSkeleton key={i} variation="friends" />
               ))
             : friends?.map((friend) => (
-                <Menus>
-                  <Menus.Menu>
-                    <Menus.Toggle id={friend?.id}>
-                      <div
-                        key={friend.id}
-                        className={`grid grid-cols-[auto_1fr] text-left gap-2 items-center`}
-                      >
-                        <div className="px-3 py-4 ">
-                          <ProfileImage imgSrc={friend?.avatar} size="xs" />
+                <div key={friend.id}>
+                  <Menus>
+                    <Menus.Menu>
+                      <Menus.Toggle id={friend?.id}>
+                        <div
+                          key={friend.id}
+                          className={`grid grid-cols-[auto_1fr] text-left gap-2 items-center`}
+                        >
+                          <div className="px-3 py-4 ">
+                            <ProfileImage imgSrc={friend?.avatar} size="xs" />
+                          </div>
+                          <div className="py-4">
+                            <span>{friend?.username}</span>
+                          </div>
                         </div>
-                        <div className="py-4">
-                          <span>{friend?.username}</span>
-                        </div>
-                      </div>
-                    </Menus.Toggle>
+                      </Menus.Toggle>
 
-                    <Menus.List id={friend?.id}>
-                      <Menus.Button
-                        icon={<BiSolidMessageSquareAdd />}
-                        onClick={() => createChat(friend.id)}
-                      >
-                        Send Message
-                      </Menus.Button>
-                      <Menus.Button
-                        icon={<MdDelete />}
-                        onClick={() => removeFriend(friend?.id)}
-                      >
-                        Remove Friend
-                      </Menus.Button>
-                    </Menus.List>
-                  </Menus.Menu>
-                </Menus>
+                      <Menus.List id={friend?.id}>
+                        <Menus.Button
+                          icon={<BiSolidMessageSquareAdd />}
+                          onClick={() => createChat(friend.id)}
+                        >
+                          Send Message
+                        </Menus.Button>
+                        <Menus.Button
+                          icon={<MdDelete />}
+                          onClick={() => removeFriend(friend?.id)}
+                        >
+                          Remove Friend
+                        </Menus.Button>
+                      </Menus.List>
+                    </Menus.Menu>
+                  </Menus>
+                </div>
               ))}
         </div>
       </div>

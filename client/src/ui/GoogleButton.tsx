@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 const GoogleIcon = () => (
   <svg
     width="18"
@@ -27,6 +29,7 @@ const GoogleIcon = () => (
 const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 function GoogleButton() {
+  const { t } = useTranslation("auth");
   const handleGoogleLogin = () => {
     const currentUrl = window.location.origin;
     const redirectUrl = encodeURIComponent(currentUrl);
@@ -49,7 +52,7 @@ function GoogleButton() {
       "
     >
       <GoogleIcon />
-      Continue with Google
+      {t("continueWithGoogle")}
     </button>
   );
 }
