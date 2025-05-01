@@ -1,9 +1,9 @@
-// import Logo from "../ui/Logo";
-// import Heading from "../ui/Heading";
+import { useTranslation } from "react-i18next";
 import LoginForm from "../ui/LoginForm";
 import Logo from "../ui/Logo";
 
 function Login() {
+  const { t } = useTranslation("auth");
   return (
     <div
       className="
@@ -16,7 +16,7 @@ function Login() {
     >
       <Logo size="lg" />
       <header className="text-3xl font-semibold text-center">
-        Log in to your account
+        {t("loginTitle")}
       </header>
       <LoginForm />
     </div>

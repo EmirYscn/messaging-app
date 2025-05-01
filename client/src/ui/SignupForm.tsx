@@ -8,8 +8,10 @@ import FormRowVertical from "./FormRowVertical";
 import SpinnerMini from "./SpinnerMini";
 
 import { useSignup } from "../hooks/useSignup";
+import { useTranslation } from "react-i18next";
 
 function SignupForm() {
+  const { t } = useTranslation("auth");
   const {
     register,
     handleSubmit,
@@ -32,7 +34,7 @@ function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormRowVertical label="Email address" formError={errors?.email?.message}>
+      <FormRowVertical label={t("email")} formError={errors?.email?.message}>
         <Input
           type="email"
           id="email"
@@ -48,7 +50,10 @@ function SignupForm() {
           })}
         />
       </FormRowVertical>
-      <FormRowVertical label="Username" formError={errors?.username?.message}>
+      <FormRowVertical
+        label={t("username")}
+        formError={errors?.username?.message}
+      >
         <Input
           type="username"
           id="username"
@@ -59,7 +64,10 @@ function SignupForm() {
         />
       </FormRowVertical>
 
-      <FormRowVertical label="Password" formError={errors?.password?.message}>
+      <FormRowVertical
+        label={t("password")}
+        formError={errors?.password?.message}
+      >
         <Input
           type="password"
           id="password"
@@ -75,7 +83,7 @@ function SignupForm() {
         />
       </FormRowVertical>
       <FormRowVertical
-        label="Confirm Password"
+        label={t("confirmPassword")}
         formError={errors?.passwordConfirm?.message}
       >
         <Input
@@ -92,7 +100,7 @@ function SignupForm() {
 
       <FormRowVertical>
         <Button type="submit" size="medium" variation="login">
-          {!isPending ? "Sign up" : <SpinnerMini />}
+          {!isPending ? t("signup") : <SpinnerMini />}
         </Button>
       </FormRowVertical>
     </form>

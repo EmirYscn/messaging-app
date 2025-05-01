@@ -9,8 +9,10 @@ import Button from "./Button";
 import { FormEvent } from "../types/types";
 import { useLogin } from "../hooks/useLogin";
 import SpinnerMini from "./SpinnerMini";
+import { useTranslation } from "react-i18next";
 
 function LoginForm() {
+  const { t } = useTranslation("auth");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, isPending } = useLogin();
@@ -32,7 +34,7 @@ function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <FormRowVertical label="Email">
+      <FormRowVertical label={t("email")}>
         <Input
           type="email"
           id="email"
@@ -43,7 +45,7 @@ function LoginForm() {
         />
       </FormRowVertical>
 
-      <FormRowVertical label="Password">
+      <FormRowVertical label={t("password")}>
         <Input
           type="password"
           id="password"
@@ -54,14 +56,14 @@ function LoginForm() {
         />
       </FormRowVertical>
 
-      <Link to="/forgotPassword">Forgot Password?</Link>
+      <Link to="/forgotPassword">{t("forgotPassword")}</Link>
 
       <FormRowVertical>
         <GoogleButton />
         <GitHubButton />
       </FormRowVertical>
 
-      <Link to="/signup">Don't have an account?</Link>
+      <Link to="/signup">{t("dontHaveAnAccount")}</Link>
       <FormRowVertical>
         <Button
           type="submit"
@@ -70,7 +72,7 @@ function LoginForm() {
           // className="px-5 py-2 rounded-lg  bg-[var(--color-grey-50)] text-[var(--color-grey-900)]"
         >
           {!isPending ? (
-            <span className="text-gray-200">Log in</span>
+            <span className="text-gray-200">{t("loginButton")}</span>
           ) : (
             <SpinnerMini />
           )}

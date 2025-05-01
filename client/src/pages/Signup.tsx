@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import Logo from "../ui/Logo";
 
 import SignupForm from "../ui/SignupForm";
 
 function Signup() {
+  const { t } = useTranslation("auth");
   return (
     <div
       className="
@@ -15,7 +17,7 @@ function Signup() {
     >
       <Logo size="lg" />
       <header className="text-3xl font-semibold text-center">
-        Create an account
+        {t("signupTitle")}
       </header>
       <SignupForm />
     </div>

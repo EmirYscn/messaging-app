@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 const GitHubIcon = () => (
   <svg
     width="18"
@@ -15,6 +17,7 @@ const GitHubIcon = () => (
 const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 function GitHubButton() {
+  const { t } = useTranslation("auth");
   const handleGitHubLogin = () => {
     const currentUrl = window.location.origin;
     const redirectUrl = encodeURIComponent(currentUrl);
@@ -37,7 +40,7 @@ function GitHubButton() {
       "
     >
       <GitHubIcon />
-      Continue with GitHub
+      {t("continueWithGithub")}
     </button>
   );
 }
