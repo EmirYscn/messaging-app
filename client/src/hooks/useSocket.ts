@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useUser } from "./useUser";
 
+const SOCKET_URL = process.env.SOCKET_URL || "http://localhost:3000";
+
 export function useSocket(): Socket | null {
   const { user } = useUser();
   const socketRef = useRef<Socket | null>(null);
@@ -10,7 +12,7 @@ export function useSocket(): Socket | null {
   useEffect(() => {
     if (!user || socketRef.current || isConnected) return;
 
-    const socket = io("http://localhost:3000", {
+    const socket = io(SOCKET_URL, {
       auth: {
         token: localStorage.getItem("jwt"),
         userId: user.id,
@@ -23,12 +25,10 @@ export function useSocket(): Socket | null {
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log("✅ Connected to socket:", socket.id);
       setIsConnected(true);
     });
 
     socket.on("disconnect", () => {
-      console.log("❌ Disconnected from socket");
       setIsConnected(false);
     });
 

@@ -8,22 +8,74 @@ import Menus from "./Menus";
 import { IoCopyOutline } from "react-icons/io5";
 import { useCreateChat } from "../hooks/useCreateChat";
 import { useChat } from "../hooks/useChat";
+import { useTranslation } from "react-i18next";
+import { BsFillTrashFill } from "react-icons/bs";
+import { useDeleteMessages } from "../hooks/useDeleteMessages";
 
-function Message({ message }: { message: MessageType }) {
+type MessageProps = {
+  message: MessageType;
+  setSelectedMessages: React.Dispatch<React.SetStateAction<string[]>>;
+  isSelecting: boolean;
+};
+
+function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
+  const { t } = useTranslation("menus");
+  const { t: chatsT } = useTranslation("chats");
   const { createChat } = useCreateChat();
+  const { deleteMessages } = useDeleteMessages();
   const { chat } = useChat();
   const [isHovering, setIsHovering] = useState(false);
   const { user } = useUser();
   const { senderId, sender, content, createdAt } = message;
-
+  const [isSelected, setIsSelected] = useState(false);
   const isCurrentUser = senderId === user?.id;
+
+  function handleSelectMessage() {
+    if (isSelecting) {
+      if (isSelected) {
+        setSelectedMessages((prev) => prev.filter((id) => id !== message.id));
+        setIsSelected(false);
+      } else {
+        setSelectedMessages((prev) => [...prev, message.id]);
+        setIsSelected(true);
+      }
+    }
+  }
 
   return (
     <div
-      className={`flex gap-2 items-start ${
+      className={`flex gap-2 items-start w-full ${
         isCurrentUser ? "self-end flex-row-reverse" : ""
       }`}
     >
+      {isSelecting && isCurrentUser && (
+        <div className="flex items-center space-x-2">
+          <label htmlFor={message.id} className="relative cursor-pointer">
+            <input
+              type="checkbox"
+              id={message.id}
+              className="hidden peer"
+              onChange={handleSelectMessage}
+            />
+            <span className="block w-5 h-5 transition-colors duration-150 bg-gray-700 rounded-md shadow-inner bg-gradient-to-b from-gray-600 to-gray-500 peer-checked:from-blue-600 peer-checked:to-blue-700">
+              <svg
+                className="absolute top-[3px] left-[3px] w-3 h-3 stroke-white stroke-2 transition-all duration-150 peer-checked:stroke-dashoffset-0"
+                viewBox="0 0 12 11"
+              >
+                <polyline
+                  points="1 6.29411765 4.5 10 11 1"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray="17"
+                  strokeDashoffset="17"
+                  className="peer-checked:stroke-dashoffset-0"
+                />
+              </svg>
+            </span>
+          </label>
+        </div>
+      )}
       <div className={`flex-shrink-0 ${isCurrentUser ? "ml-2" : "mr-2"}`}>
         <ProfileImage imgSrc={sender?.avatar} size="xs" />
       </div>
@@ -37,15 +89,6 @@ function Message({ message }: { message: MessageType }) {
           setIsHovering(false);
         }}
       >
-        {/* {isHovering && (
-          <div
-            className={`absolute top-2 left-2 w-full h-full bg-black/50 rounded-2xl flex items-center justify-center text-white text-sm font-bold transition-opacity duration-300`}
-            onClick={() => {
-              navigator.clipboard.writeText(content);
-            }}
-          ></div>
-        )} */}
-
         {/* Message Arrow */}
         <div
           className={`absolute top-2 w-0 h-0 border-t-[10px] border-b-[10px] border-t-transparent border-b-transparent ${
@@ -82,14 +125,14 @@ function Message({ message }: { message: MessageType }) {
                   className="transition-transform duration-300 group-hover:-translate-x-2 hover:bg-transparent"
                 />
                 <Menus.List id={message.id}>
-                  {chat?.type !== "PRIVATE" && (
+                  {chat?.type !== "PRIVATE" && !isCurrentUser && (
                     <Menus.Button
                       icon={<IoCopyOutline />}
                       onClick={() => {
                         createChat(message.senderId);
                       }}
                     >
-                      <span className="text-sm">Send message</span>
+                      <span className="text-sm">{t("sendMessage")}</span>
                     </Menus.Button>
                   )}
                   <Menus.Button
@@ -98,8 +141,18 @@ function Message({ message }: { message: MessageType }) {
                       navigator.clipboard.writeText(content);
                     }}
                   >
-                    <span className="text-sm">Copy</span>
+                    <span className="text-sm">{t("copy")}</span>
                   </Menus.Button>
+                  {isCurrentUser && (
+                    <Menus.Button
+                      icon={<BsFillTrashFill />}
+                      onClick={() => {
+                        deleteMessages([message.id]);
+                      }}
+                    >
+                      <span className="text-sm">{chatsT("deleteMessage")}</span>
+                    </Menus.Button>
+                  )}
                 </Menus.List>
               </Menus.Menu>
             </Menus>

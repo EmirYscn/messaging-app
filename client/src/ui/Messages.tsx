@@ -1,36 +1,39 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import Message from "./Message";
 
 import { useChatMessages } from "../hooks/useChatMessages";
 import { useChat } from "../hooks/useChat";
-import { useReceiveMessage } from "../hooks/useSocketReceiveMessage";
+import { useReceiveMessage } from "../hooks/useSocketMessage";
 import MessageSkeleton from "./MessageSkeleton";
+import { useTranslation } from "react-i18next";
 
-function Messages() {
+type MessagesProps = {
+  isSelecting: boolean;
+  setSelectedMessages: React.Dispatch<React.SetStateAction<string[]>>;
+};
+
+function Messages({ isSelecting, setSelectedMessages }: MessagesProps) {
+  const { t } = useTranslation("chats");
   const { chat } = useChat();
   const { messages, isLoading } = useChatMessages();
-  const [localMessages, setLocalMessages] = useState(messages || []);
+
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  useReceiveMessage(setLocalMessages);
-
-  useEffect(() => {
-    if (messages) setLocalMessages(messages);
-  }, [messages]);
+  useReceiveMessage();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [localMessages]);
+  }, [messages]);
 
   return (
-    <div className="flex flex-col gap-4 bg-[var(--color-grey-50)] text-gray-900 p-4">
+    <div
+      className={`flex flex-col gap-4 bg-[var(--color-grey-50)] text-gray-900 p-4`}
+    >
       {chat?.type === "PUBLIC" && (
         <div className="flex items-center justify-center ">
           <span className="bg-[var(--color-grey-200)] opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold">
-            {localMessages.length > 0
-              ? "Messages from the last 24 hours"
-              : "No messages in the last 24 hours"}
+            {messages.length > 0 ? t("messages24h") : t("noMessages24h")}
           </span>
         </div>
       )}
@@ -42,10 +45,16 @@ function Messages() {
           ))}
         </div>
       ) : (
-        localMessages.map((message) => (
-          <Message key={message.id} message={message} />
+        messages.map((message) => (
+          <Message
+            key={message.id}
+            message={message}
+            isSelecting={isSelecting}
+            setSelectedMessages={setSelectedMessages}
+          />
         ))
       )}
+
       <div ref={bottomRef} />
     </div>
   );

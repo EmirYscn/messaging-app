@@ -1,0 +1,14 @@
+{
+  "Channel 1": "Channel 1",
+  "Channel 2": "Channel 2",
+  "Channel 3": "Channel 3",
+  "messages24h": "Messages in the last 24 hours",
+  "noMessages": "No messages yet",
+  "noMessages24h": "No messages in the last 24 hours",
+  "typeMessage": "Type a message...",
+  "activeUsers": "Active Users",
+  "noActiveUsers": "No active users",
+  "selectMessages": "Select messages",
+  "cancel": "Cancel",
+  "deleteMessage": "Delete message"
+}

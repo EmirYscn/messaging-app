@@ -70,7 +70,6 @@ export const updateUser = async (
   id: string,
   body: Partial<User & { profile: Partial<Profile> }>
 ) => {
-  console.log(body);
   // Destructure profile fields if present
   const { profile, ...userFields } = body;
 

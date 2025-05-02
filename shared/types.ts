@@ -145,7 +145,9 @@ export interface ServerToClientEvents {
   chat_created: () => void;
   chat_updated: () => void;
   error_occurred: (message: { message: string }) => void;
-  // connect_error: (error: { message: string }) => void;
+  friend_requests_updated: () => void;
+  friends_updated: () => void;
+  messages_updated: () => void;
 }
 
 export interface ClientToServerEvents {

@@ -4,6 +4,7 @@ import { useUser } from "../hooks/useUser";
 import { FaPlus } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { Chat, MESSAGE_TYPE } from "../types/types";
+import { useTranslation } from "react-i18next";
 
 type MessageInputProps = {
   chat: Chat;
@@ -11,6 +12,7 @@ type MessageInputProps = {
 };
 
 function MessageInput({ chat, isConnected }: MessageInputProps) {
+  const { t } = useTranslation("chats");
   const { user } = useUser();
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -45,7 +47,7 @@ function MessageInput({ chat, isConnected }: MessageInputProps) {
         <FaPlus />
       </button>
       <textarea
-        placeholder="Type a message..."
+        placeholder={t("typeMessage")}
         ref={textareaRef}
         value={message}
         onChange={(e) => setMessage(e.target.value)}

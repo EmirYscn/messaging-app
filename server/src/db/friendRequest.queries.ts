@@ -24,55 +24,75 @@ export const sendFriendRequest = async (
   });
 };
 
-// export const sendFriendRequest = async (
-//   senderId: string,
-//   receiverId: string
-// ) => {
-//   const friendRequest = await prisma.friendRequest.create({
-//     data: {
-//       sender: { connect: { id: senderId } },
-//       receiver: { connect: { id: receiverId } },
-//     },
-//   });
-
-//   return friendRequest;
-// };
-
 export const acceptFriendRequest = async (friendRequestId: string) => {
-  const request = await prisma.friendRequest.update({
+  const request = await prisma.friendRequest.findUnique({
     where: { id: friendRequestId },
-    data: { status: "ACCEPTED" },
   });
+
   if (!request) {
-    throw new AppError("Friend request not found", 404);
+    throw new AppError("Friend request not found.", 400);
   }
+
+  // Ensure there's no existing friendship (optional safety)
+  const existingFriendship = await prisma.friendship.findFirst({
+    where: {
+      OR: [
+        { user1Id: request.senderId, user2Id: request.receiverId },
+        { user1Id: request.receiverId, user2Id: request.senderId },
+      ],
+    },
+  });
+
+  if (existingFriendship) {
+    throw new AppError("Friendship already exists.", 400);
+  }
+
+  // Delete the friend request
+  await prisma.friendRequest.delete({
+    where: { id: friendRequestId },
+  });
+
+  // Create the friendship
   await prisma.friendship.create({
     data: {
       user1: { connect: { id: request.senderId } },
       user2: { connect: { id: request.receiverId } },
     },
   });
-  await prisma.friendRequest.delete({
-    where: { id: friendRequestId },
-  });
+
+  return [request.senderId, request.receiverId];
 };
 
 export const declineFriendRequest = async (friendRequestId: string) => {
-  await prisma.friendRequest.update({
+  const request = await prisma.friendRequest.findUnique({
     where: { id: friendRequestId },
-    data: { status: "DECLINED" },
   });
+
+  if (!request) {
+    throw new AppError("Friend request not found.", 400);
+  }
+
   await prisma.friendRequest.delete({
     where: { id: friendRequestId },
   });
+
+  return [request.senderId, request.receiverId];
 };
 
 export const deleteFriendRequest = async (friendRequestId: string) => {
-  await prisma.friendRequest.delete({
-    where: {
-      id: friendRequestId,
-    },
+  const request = await prisma.friendRequest.findUnique({
+    where: { id: friendRequestId },
   });
+
+  if (!request) {
+    throw new AppError("Friend request not found.", 400);
+  }
+
+  await prisma.friendRequest.delete({
+    where: { id: friendRequestId },
+  });
+
+  return [request.senderId, request.receiverId];
 };
 
 export const getReceivedFriendRequests = async (userId: string) => {

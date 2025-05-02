@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { usePublicChats } from "../hooks/usePublicChats";
+import { useTranslation } from "react-i18next";
 
 const chatPosClass: Record<number, string> = {
   1: "col-start-2 row-start-2 bg-gradient-to-br from-pink-400 to-red-500",
@@ -8,6 +9,7 @@ const chatPosClass: Record<number, string> = {
 };
 
 function PublicChats() {
+  const { t } = useTranslation("chats");
   const { publicChats } = usePublicChats();
 
   return (
@@ -27,7 +29,7 @@ function PublicChats() {
         flex items-center justify-center 
          text-sm sm:text-lg font-semibold hover:bg-amber-200 hover:scale-105 cursor-pointer border-2 border-[var(--color-green-700)]`}
           >
-            {chat.name}
+            {t(`${chat.name}`) || chat.name}
           </Link>
         );
       })}

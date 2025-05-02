@@ -1,0 +1,14 @@
+{
+  "Profile updated successfully!": "¡Perfil actualizado con éxito!",
+  "Account successfully created!": "¡Cuenta creada con éxito!",
+  "Profile image updated successfully!": "¡Imagen de perfil actualizada con éxito!",
+  "disconnected": "Desconectado",
+  "connected": "Conectado",
+  "reconnecting": "Reconectando",
+  "connectionFailed": "Fallo de conexión",
+  "io server disconnect": "Has sido desconectado por el servidor. Por favor, inténtalo de nuevo.",
+  "io client disconnect": "Te has desconectado. Por favor, actualiza la página o vuelve a conectarte.",
+  "transport close": "Se perdió la conexión. Intentando reconectar...",
+  "ping timeout": "La conexión ha caducado. Por favor, verifica tu conexión a internet.",
+  "transport error": "Ocurrió un error de red. Por favor, inténtalo de nuevo."
+}

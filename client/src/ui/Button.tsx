@@ -16,6 +16,7 @@ type ButtonProps = {
   onClick?: (() => void) | ((e: React.MouseEvent<HTMLButtonElement>) => void);
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
+  className?: string;
 };
 
 const sizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
@@ -48,6 +49,7 @@ function Button({
   children,
   onClick,
   disabled,
+  className,
 }: ButtonProps) {
   const baseClasses = `flex items-center gap-2 rounded-sm ${
     disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
@@ -58,7 +60,7 @@ function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${baseClasses} ${sizeClasses[size]} ${variationClasses[variation]}`}
+      className={`${baseClasses} ${sizeClasses[size]} ${variationClasses[variation]} ${className}`}
     >
       {icon}
       {children}

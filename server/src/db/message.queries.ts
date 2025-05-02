@@ -1,5 +1,6 @@
 import { Message, Prisma } from "@prisma/client";
 import { prisma } from "./prismaClient";
+import { decryptMessageContent, decryptText } from "../utils/crypto";
 
 export const getMessages = async (chatId: string) => {
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -33,7 +34,12 @@ export const getMessages = async (chatId: string) => {
 
   const orderedMessages = messages.reverse();
 
-  return { messages: orderedMessages, count: totalCount };
+  const decryptedMessages = orderedMessages.map((msg) => ({
+    ...msg,
+    content: decryptText(msg.content),
+  }));
+
+  return { messages: decryptedMessages, count: totalCount };
 };
 
 export const createMessage = async (message: Message) => {
@@ -72,5 +78,23 @@ export const createMessage = async (message: Message) => {
     return [newMsg, updatedChat];
   });
 
-  return { newMsg, updatedChat };
+  const decryptedContent = decryptMessageContent(newMsg);
+
+  return {
+    newMsg: decryptedContent,
+    updatedChat,
+  };
+};
+
+export const deleteMessages = async (messageIds: string[]) => {
+  const messagesToDelete = await prisma.message.findFirst({
+    where: { id: { in: messageIds } },
+    select: { chat: { include: { users: { select: { id: true } } } } },
+  });
+
+  await prisma.message.deleteMany({
+    where: { id: { in: messageIds } },
+  });
+
+  return messagesToDelete?.chat.users;
 };
