@@ -15,20 +15,25 @@ import { useSentFriendRequests } from "../hooks/useSentFriendRequests";
 import { useReceivedFriendRequests } from "../hooks/useReceivedFriendRequests";
 import { User as UserType } from "../types/types";
 import { IoMdCheckmark } from "react-icons/io";
+import { useTranslation } from "react-i18next";
+import { useSocketFriends } from "../hooks/useSocketFriends";
 
 function FriendAdd() {
+  const { t } = useTranslation("common");
   const { sendRequest } = useSendFriendRequest();
   const [searchValue, setSearchValue] = useState("");
   const debouncedValue = useDebounce(searchValue, 300);
   const { users } = useSearchUsers(debouncedValue);
 
+  useSocketFriends();
+
   return (
-    <div className="flex flex-col gap-4 h-full">
-      <div className="flex flex-col gap-4 flex-1">
-        <h1 className="px-4 py-6 text-4xl font-semibold">Add Friends</h1>
+    <div className="flex flex-col h-full gap-4">
+      <div className="flex flex-col flex-1 gap-4">
+        <h1 className="px-4 py-6 text-4xl font-semibold">{t("addFriend")}</h1>
         <div className="px-4 ">
           <Searchbar
-            placeholder="Search users"
+            placeholder={t("searchUsers")}
             searchValue={searchValue}
             setSearchValue={setSearchValue}
           />
@@ -44,7 +49,7 @@ function FriendAdd() {
               />
             ))
           ) : debouncedValue ? (
-            <span className="px-4 text-center font-semibold">
+            <span className="px-4 font-semibold text-center">
               No User found
             </span>
           ) : null}
@@ -96,11 +101,11 @@ function User({ user, onClick }: { user: UserType; onClick: () => void }) {
         <div className="px-3">
           <ProfileImage imgSrc={user?.avatar} size="xs" />
         </div>
-        <div className=" py-4">
+        <div className="py-4 ">
           <span>{user?.username}</span>
         </div>
       </div>
-      <div className="px-4 flex gap-1 items-center ">
+      <div className="flex items-center gap-1 px-4 ">
         <Button
           icon={icon}
           size="small"

@@ -82,7 +82,7 @@ model Chat {
   updatedAt DateTime @updatedAt
   deletedAt DateTime? // Soft delete timestamp
 
-  lastMessage   Message? @relation("ChatLastMessage", fields: [lastMessageId], references: [id], onDelete: Cascade)
+  lastMessage   Message? @relation("ChatLastMessage", fields: [lastMessageId], references: [id], onDelete: SetNull)
   lastMessageId String?  @unique // ID of the last message sent in the chat
 
   users    User[]

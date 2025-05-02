@@ -1,3 +1,4 @@
+import { decryptMessageContent, decryptText } from "../utils/crypto";
 import { prisma } from "./prismaClient";
 
 export const getChats = async (userId: string) => {
@@ -33,6 +34,8 @@ export const getChats = async (userId: string) => {
 
   // Format the chats to use the opposite user for private chats
   const formattedChats = chats.map((chat) => {
+    const decryptedLastMessage = decryptMessageContent(chat.lastMessage);
+
     if (chat.type === "PRIVATE") {
       const otherUser = chat.users.find((u) => u.id !== userId);
 
@@ -42,7 +45,7 @@ export const getChats = async (userId: string) => {
         type: chat.type,
         name: otherUser?.username || "Unknown",
         avatar: otherUser?.avatar || null,
-        lastMessage: chat.lastMessage,
+        lastMessage: decryptedLastMessage,
         updatedAt: chat.updatedAt,
       };
     } else {
@@ -52,7 +55,7 @@ export const getChats = async (userId: string) => {
         type: chat.type,
         name: chat.name || "Unnamed Group",
         avatar: null, // or use a group avatar if you implement one
-        lastMessage: chat.lastMessage,
+        lastMessage: decryptedLastMessage,
         updatedAt: chat.updatedAt,
       };
     }

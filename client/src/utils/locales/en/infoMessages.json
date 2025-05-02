@@ -1,0 +1,14 @@
+{
+  "Profile updated successfully!": "Profile updated successfully!",
+  "Account successfully created!": "Account successfully created!",
+  "Profile image updated successfully!": "Profile image updated successfully!",
+  "disconnected": "Disconnected",
+  "connected": "Connected",
+  "reconnecting": "Reconnecting",
+  "connectionFailed": "Connection failed",
+  "io server disconnect": "You have been disconnected by the server. Please try again.",
+  "io client disconnect": "You have disconnected. Please refresh or reconnect.",
+  "transport close": "Connection was lost. Trying to reconnect...",
+  "ping timeout": "Connection timed out. Please check your internet connection.",
+  "transport error": "A network error occurred. Please try again."
+}

@@ -10,13 +10,15 @@ import { useUser } from "../hooks/useUser";
 import { useFriends } from "../hooks/useFriends";
 import { useSendFriendRequest } from "../hooks/useSendFriendRequest";
 import { useRemoveFriend } from "../hooks/useRemoveFriend";
+import { useTranslation } from "react-i18next";
 
 function ActiveUsersPanel() {
+  const { t } = useTranslation("chats");
   const { activeUsers } = useSocketActiveUsers();
 
   return (
     <div className="hidden lg:block w-1/4 border-l-1 border-[var(--color-grey-100)] bg-[var(--color-grey-50)]">
-      <h1 className="p-4 mb-4 text-xl font-semibold">Active Users</h1>
+      <h1 className="p-4 mb-4 text-xl font-semibold">{t("activeUsers")}</h1>
       {activeUsers && activeUsers.length > 0 ? (
         <>
           {activeUsers.map((user) => (
@@ -24,7 +26,9 @@ function ActiveUsersPanel() {
           ))}
         </>
       ) : (
-        <div className="p-4 text-[var(--color-grey-300)]">No active users</div>
+        <div className="p-4 text-[var(--color-grey-300)]">
+          {t("noActiveUsers")}
+        </div>
       )}
     </div>
   );
@@ -33,6 +37,7 @@ function ActiveUsersPanel() {
 export default ActiveUsersPanel;
 
 function User({ user }: { user: UserType }) {
+  const { t } = useTranslation("menus");
   const { user: loggedUser } = useUser();
   const { friends } = useFriends();
   const { createChat } = useCreateChat();
@@ -69,7 +74,7 @@ function User({ user }: { user: UserType }) {
                 onClick={() => removeFriend(user?.id)}
                 disabled={isRemovingFriend}
               >
-                Remove Friend
+                {t("removeFriend")}
               </Menus.Button>
             ) : (
               <Menus.Button
@@ -77,14 +82,14 @@ function User({ user }: { user: UserType }) {
                 onClick={() => sendRequest(user?.id)}
                 disabled={isSendingRequest}
               >
-                Add Friend
+                {t("addFriend")}
               </Menus.Button>
             )}
             <Menus.Button
               icon={<BiSolidMessageSquareAdd />}
               onClick={() => createChat(user.id)}
             >
-              Send Message
+              {t("sendMessage")}
             </Menus.Button>
           </Menus.List>
         )}

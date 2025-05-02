@@ -16,8 +16,11 @@ import { useDeleteFriendRequest } from "../hooks/useDeleteFriendRequest";
 import { MdDelete } from "react-icons/md";
 import { useRemoveFriend } from "../hooks/useRemoveFriend";
 import FriendSkeleton from "./FriendSkeleton";
+import { useTranslation } from "react-i18next";
+import { useSocketFriends } from "../hooks/useSocketFriends";
 
 function Friends() {
+  const { t } = useTranslation("common");
   const { friends, isLoading: isFriendsLoading } = useFriends();
   const { createChat } = useCreateChat();
 
@@ -33,6 +36,8 @@ function Friends() {
 
   const { removeFriend } = useRemoveFriend();
 
+  useSocketFriends();
+
   const statusClass = {
     PENDING: "bg-[var(--color-brand-100)] text-gray-200",
     ACCEPTED: "bg-[var(--color-green-700)] text-[var(--color-grey-50)]",
@@ -42,9 +47,9 @@ function Friends() {
   return (
     <div className="flex flex-col h-full gap-4">
       <div className="flex flex-col flex-1 gap-4">
-        <h1 className="px-4 py-6 text-4xl font-semibold">Friends</h1>
+        <h1 className="px-4 py-6 text-4xl font-semibold">{t("friends")}</h1>
         <div className="px-4 ">
-          <Searchbar placeholder="Search friends" />
+          <Searchbar placeholder={t("searchFriends")} />
         </div>
 
         <div className="flex flex-col gap-1 overflow-y-auto">

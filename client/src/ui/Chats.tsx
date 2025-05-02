@@ -7,15 +7,17 @@ import { TfiWorld } from "react-icons/tfi";
 import { useSocketChat } from "../hooks/useSocketChat";
 import { formatDateToHour } from "../utils/formatDateToHour";
 import ChatSkeleton from "./ChatSkeleton";
+import { useTranslation } from "react-i18next";
 
 function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
+  const { t } = useTranslation("common");
   const { chats, isLoading } = useChats();
   useSocketChat();
 
   return (
     <div className="flex flex-col h-full gap-4 p-4">
       <div className="flex items-center justify-between">
-        <h2 className="mb-4 text-4xl font-semibold">Chats</h2>
+        <h2 className="mb-4 text-4xl font-semibold">{t("chats")}</h2>
         <button className="md:hidden" onClick={onToggleChats}>
           Close
         </button>
@@ -36,7 +38,7 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
           <ProfileImage context="chats" size="xs">
             <TfiWorld />
           </ProfileImage>
-          <span>Public Chats</span>
+          <span>{t("publicChats")}</span>
         </NavLink>
 
         {isLoading

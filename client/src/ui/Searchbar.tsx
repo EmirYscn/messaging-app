@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import { FaArrowLeft, FaSearch } from "react-icons/fa";
 
 type SearchbarProps = {
@@ -7,7 +8,7 @@ type SearchbarProps = {
 };
 
 function Searchbar({
-  placeholder = "Search...",
+  placeholder = t("search"),
   searchValue,
   setSearchValue,
 }: SearchbarProps) {

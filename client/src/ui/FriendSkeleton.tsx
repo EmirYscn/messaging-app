@@ -4,9 +4,9 @@ function FriendSkeleton({
   variation?: "sent" | "received" | "friends";
 }) {
   const variations = {
-    sent: "bg-blue-300",
-    received: "bg-red-400/60",
-    friends: "bg-gray-300/60",
+    sent: "bg-blue-300/10",
+    received: "bg-green-400/10",
+    friends: "bg-gray-300/40",
   };
 
   return (

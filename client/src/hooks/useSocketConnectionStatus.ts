@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { socket } from "../services/socket"; // adjust path as needed
 import toast from "react-hot-toast";
 import { Socket } from "socket.io-client";
+import { useTranslation } from "react-i18next";
+import { t } from "i18next";
 
 type KnownDisconnectReason =
   | "io server disconnect"
@@ -11,16 +13,15 @@ type KnownDisconnectReason =
   | "transport error";
 
 const errorMessages: Record<KnownDisconnectReason, string> = {
-  "io server disconnect":
-    "You have been disconnected by the server. Please try again.",
-  "io client disconnect": "You have disconnected. Please refresh or reconnect.",
-  "transport close": "Connection was lost. Trying to reconnect...",
-  "ping timeout":
-    "Connection timed out. Please check your internet connection.",
-  "transport error": "A network error occurred. Please try again.",
+  "io server disconnect": t("io server disconnect"),
+  "io client disconnect": t("io client disconnect"),
+  "transport close": t("transport close"),
+  "ping timeout": t("ping timeout"),
+  "transport error": t("transport error"),
 };
 
 export function useSocketConnectionStatus() {
+  const { t } = useTranslation("infoMessages");
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [errorMessage, setErrorMessage] = useState("");
   const reconnectToastId = useRef<string | null>(null);
@@ -39,13 +40,13 @@ export function useSocketConnectionStatus() {
     const handleDisconnect = (reason: Socket.DisconnectReason) => {
       setIsConnected(false);
       const knownReason = reason as KnownDisconnectReason;
-      const message = errorMessages[knownReason] ?? "Disconnected";
+      const message = errorMessages[knownReason] ?? t("disconnected");
 
-      setErrorMessage(socket.active ? "Reconnecting..." : message);
+      setErrorMessage(socket.active ? t("reconnecting") : message);
 
       if (socket.active) {
         if (!reconnectToastId.current) {
-          reconnectToastId.current = toast.loading("Reconnecting...");
+          reconnectToastId.current = toast.loading(`${t("reconnecting")}...`);
         }
       } else {
         toast.error(message);
@@ -58,7 +59,9 @@ export function useSocketConnectionStatus() {
       console.error("Socket connection error:", err);
 
       setErrorMessage(
-        socket.active ? "Reconnecting..." : `Connection failed: ${err.message}`
+        socket.active
+          ? t("reconnecting")
+          : `${t("connectionFailed")}: ${err.message}`
       );
 
       setIsConnected(false);
@@ -73,7 +76,7 @@ export function useSocketConnectionStatus() {
       socket.off("disconnect", handleDisconnect);
       socket.off("connect_error", handleConnectError);
     };
-  }, []);
+  }, [t]);
 
   return { isConnected, errorMessage };
 }

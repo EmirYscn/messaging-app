@@ -8,6 +8,7 @@ import { useProfile } from "../hooks/useProfile";
 import { useUpdateUser } from "../hooks/useUpdateUser";
 import Button from "./Button";
 import { Profile as ProfileType } from "../types/types";
+import { useTranslation } from "react-i18next";
 
 type UpdatePayload = {
   username?: string;
@@ -16,6 +17,7 @@ type UpdatePayload = {
 };
 
 function Profile() {
+  const { t } = useTranslation("auth");
   const { profile } = useProfile();
   const { update, isLoading: isUpdating } = useUpdateUser();
 
@@ -71,10 +73,10 @@ function Profile() {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full">
-      <div className="flex flex-col gap-4 flex-1">
-        <h1 className="px-4 py-6 text-4xl font-semibold">Profile</h1>
-        <div className="px-4 py-2 flex gap-4 items-center justify-center">
+    <div className="flex flex-col h-full gap-4">
+      <div className="flex flex-col flex-1 gap-4">
+        <h1 className="px-4 py-6 text-4xl font-semibold">{t("profile")}</h1>
+        <div className="flex items-center justify-center gap-4 px-4 py-2">
           <ProfileImage
             context="settings"
             imgSrc={profile?.user?.avatar}
@@ -82,12 +84,12 @@ function Profile() {
           />
         </div>
         <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-2 text-left px-6 py-4">
+          <div className="flex flex-col gap-2 px-6 py-4 text-left">
             <label
               htmlFor="username"
               className="text-sm text-[var(--color-brand-100)]"
             >
-              Username
+              {t("username")}
             </label>
             <div className="grid grid-cols-[1fr_auto] gap-4 items-center">
               {!isEditingUsername ? (
@@ -108,7 +110,7 @@ function Profile() {
                     onChange={(e) => setUsernameInput(e.target.value)}
                     autoFocus
                   />
-                  <div className="flex gap-1 items-center">
+                  <div className="flex items-center gap-1">
                     <Button
                       icon={
                         <IoMdCheckmark className="text-xl hover:text-green-400" />
@@ -132,12 +134,12 @@ function Profile() {
               )}
             </div>
           </div>
-          <div className="flex flex-col gap-2 text-left px-6 py-4">
+          <div className="flex flex-col gap-2 px-6 py-4 text-left">
             <label
               htmlFor="bio"
               className="text-sm text-[var(--color-brand-100)]"
             >
-              Bio
+              {t("bio")}
             </label>
             <div className="grid grid-cols-[1fr_auto] gap-4 items-center">
               {!isEditingBio ? (
@@ -158,7 +160,7 @@ function Profile() {
                     onChange={(e) => setBioInput(e.target.value)}
                     autoFocus
                   />
-                  <div className="flex gap-1 items-center">
+                  <div className="flex items-center gap-1">
                     <Button
                       icon={
                         <IoMdCheckmark className="text-xl hover:text-green-400" />

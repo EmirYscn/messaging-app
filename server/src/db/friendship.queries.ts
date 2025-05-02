@@ -54,19 +54,12 @@ export const getFriends = async (userId: string) => {
 };
 
 export const deleteFriend = async (userId: string, friendId: string) => {
-  // Delete the friendship where the user is user1
   await prisma.friendship.deleteMany({
     where: {
-      user1Id: userId,
-      user2Id: friendId,
-    },
-  });
-
-  // Delete the friendship where the user is user2
-  await prisma.friendship.deleteMany({
-    where: {
-      user1Id: friendId,
-      user2Id: userId,
+      OR: [
+        { user1Id: userId, user2Id: friendId },
+        { user1Id: friendId, user2Id: userId },
+      ],
     },
   });
 };

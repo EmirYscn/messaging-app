@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import { useAvatarUpload } from "../hooks/useAvatarUpload";
+import { useTranslation } from "react-i18next";
 
 type ProfileImageProps = {
   children?: React.ReactNode;
@@ -24,6 +25,7 @@ function ProfileImage({
   context,
   onClick,
 }: ProfileImageProps) {
+  const { t } = useTranslation("settings");
   const { updateAvatar, isLoading } = useAvatarUpload();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -83,8 +85,8 @@ function ProfileImage({
       <div className={`${baseWrapper} ${sizeClass}`} onClick={onClick}>
         <img src={src} onError={handleError} className={imageClass} />
         {isLoading && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
-            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40">
+            <div className="w-6 h-6 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
           </div>
         )}
         {context === "settings" && (
@@ -95,8 +97,8 @@ function ProfileImage({
             <span>
               <FaCamera />
             </span>
-            <span className="max-w-11/12 text-center">
-              Change Profile Picture
+            <span className="text-center max-w-11/12">
+              {t("changeProfilePicture")}
             </span>
           </div>
         )}

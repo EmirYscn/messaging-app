@@ -2,6 +2,7 @@ import { CHAT_TYPE, Message, User } from "@prisma/client";
 import * as messageQueries from "../db/message.queries";
 import { catchAsyncSocket, TypedIO, TypedSocket } from "../sockets/types";
 import { userSocketMap } from "../sockets/socketRegistry";
+import { decryptText, encryptText } from "../utils/crypto";
 
 export const sendMessage = catchAsyncSocket(
   async (socket: TypedSocket, io: TypedIO, data: Message) => {
@@ -9,11 +10,22 @@ export const sendMessage = catchAsyncSocket(
     console.log(
       `User with DBID: ${user.id} sent message: ${data.content} to chat: ${data.chatId}`
     );
+    // 0.5) Encrypt message content
+    if (typeof data.content !== "string") {
+      throw new Error("Invalid message content: must be a string");
+    }
+    const encryptedContent = encryptText(data.content);
     // 1) Store message in database
+    const dataToStore = {
+      ...data,
+      content: encryptedContent,
+    };
     const { newMsg: createdMessage, updatedChat } =
-      await messageQueries.createMessage(data);
+      await messageQueries.createMessage(dataToStore);
+
     // 2) Emit message
-    io.to(data.chatId).emit("receive_message", createdMessage);
+    if (createdMessage)
+      io.to(data.chatId).emit("receive_message", createdMessage);
     // 3) Emit chat updated
     if (updatedChat.type !== "PUBLIC") {
       for (const user of updatedChat.users) {
