@@ -16,6 +16,9 @@ import Button from "./Button";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useDeleteMessages } from "../hooks/useDeleteMessages";
 import ProfileImage from "./ProfileImage";
+import { IoMdExit } from "react-icons/io";
+import { useLeaveGroup } from "../hooks/useLeaveGroup";
+import { IoPersonAdd } from "react-icons/io5";
 
 function Chat() {
   const { t } = useTranslation("chats");
@@ -25,6 +28,7 @@ function Chat() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const { deleteMessages, isLoading: isDeleting } = useDeleteMessages();
+  const { leaveGroup, isPending: isLeavingGroup } = useLeaveGroup();
 
   function handleSelecting() {
     setSelectedMessages([]);
@@ -51,7 +55,7 @@ function Chat() {
               <ProfileImage imgSrc={chat?.avatar} size="sm" />
               <div>
                 <h2 className="text-2xl font-semibold">
-                  {t(`${chat?.name}`) || chat?.name}
+                  {chat?.type === "PUBLIC" ? t(`${chat?.name}`) : chat?.name}
                 </h2>
                 {chat?.type === "GROUP" && chat?.users && (
                   <div className="flex flex-wrap gap-2">
@@ -93,9 +97,16 @@ function Chat() {
                 <Menus.Menu>
                   <Menus.Toggle id={chat.id} />
                   <Menus.List id={chat.id}>
-                    <Menus.Button icon={<RiInfoCardFill />}>
-                      <span className="text-sm">User info</span>
-                    </Menus.Button>
+                    {chat?.type === "PRIVATE" && (
+                      <Menus.Button icon={<RiInfoCardFill />}>
+                        <span className="text-sm">User info</span>
+                      </Menus.Button>
+                    )}
+                    {chat?.type === "GROUP" && (
+                      <Menus.Button icon={<IoPersonAdd />}>
+                        <span className="text-sm">{t("addUser")}</span>
+                      </Menus.Button>
+                    )}
                     <Menus.Button
                       icon={<BiSelectMultiple />}
                       onClick={handleSelecting}
@@ -105,6 +116,15 @@ function Chat() {
                         {isSelecting ? t("cancel") : t("selectMessages")}
                       </span>
                     </Menus.Button>
+                    {chat.type === "GROUP" && (
+                      <Menus.Button
+                        icon={<IoMdExit />}
+                        onClick={() => leaveGroup(chat.id)}
+                        disabled={isLeavingGroup}
+                      >
+                        <span className="text-sm">{t("leaveGroup")}</span>
+                      </Menus.Button>
+                    )}
                   </Menus.List>
                 </Menus.Menu>
               </Menus>

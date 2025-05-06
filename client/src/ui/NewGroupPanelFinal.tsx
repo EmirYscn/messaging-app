@@ -42,7 +42,9 @@ function NewGroupPanelFinal({
   }
 
   async function handleSave() {
-    if (!imageFile) return;
+    if (!groupName || selectedUsers.length === 0) {
+      return;
+    }
     createGroup(
       {
         name: groupName,

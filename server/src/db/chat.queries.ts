@@ -1,3 +1,4 @@
+import AppError from "../utils/appError";
 import { decryptMessageContent, decryptText } from "../utils/crypto";
 import { prisma } from "./prismaClient";
 
@@ -143,7 +144,7 @@ export const createChat = async (userIds: string[]) => {
 export const createGroupchat = async (
   userIds: string[],
   groupName: string,
-  avatar: string
+  avatar: string | null
 ) => {
   const sortedIds = userIds.sort();
 
@@ -165,4 +166,48 @@ export const createGroupchat = async (
     },
   });
   return newChat;
+};
+
+export const leaveChat = async (chatId: string, userId: string) => {
+  const leavingUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, username: true },
+  });
+
+  const chat = await prisma.chat.findUnique({
+    where: { id: chatId },
+    include: { users: true },
+  });
+
+  if (!chat) {
+    throw new AppError("Chat not found", 404);
+  }
+
+  const isUserInChat = chat.users.some((user) => user.id === userId);
+  if (!isUserInChat) {
+    throw new AppError("You are not a member of this chat", 403);
+  }
+
+  const updatedChat = await prisma.chat.update({
+    where: { id: chatId },
+    data: {
+      users: {
+        disconnect: { id: userId },
+      },
+    },
+    include: {
+      users: true,
+    },
+  });
+
+  // If the chat has no users left, delete it
+  if (updatedChat.users.length === 0) {
+    await prisma.chat.delete({
+      where: { id: chatId },
+    });
+    return null;
+  }
+
+  // If the chat still has users, return the updated chat
+  return { updatedChat, leavingUser };
 };

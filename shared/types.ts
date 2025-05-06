@@ -16,6 +16,7 @@ export enum MESSAGE_TYPE {
   IMAGE = "IMAGE",
   VIDEO = "VIDEO",
   AUDIO = "AUDIO",
+  SYSTEM = "SYSTEM",
 }
 
 export enum FRIEND_REQUEST_STATUS {
@@ -148,6 +149,7 @@ export interface ServerToClientEvents {
   friend_requests_updated: () => void;
   friends_updated: () => void;
   messages_updated: () => void;
+  user_left: (data: { chatId: string; leavingUser: User }) => void;
 }
 
 export interface ClientToServerEvents {

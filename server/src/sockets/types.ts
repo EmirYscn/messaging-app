@@ -15,6 +15,7 @@ export interface ServerToClientEvents {
   friend_requests_updated: () => void;
   friends_updated: () => void;
   messages_updated: () => void;
+  user_left: (data: { chatId: string; leavingUser: User }) => void;
 }
 
 export interface ClientToServerEvents {

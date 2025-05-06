@@ -45,14 +45,23 @@ function Messages({ isSelecting, setSelectedMessages }: MessagesProps) {
           ))}
         </div>
       ) : (
-        messages.map((message) => (
-          <Message
-            key={message.id}
-            message={message}
-            isSelecting={isSelecting}
-            setSelectedMessages={setSelectedMessages}
-          />
-        ))
+        messages.map((message) =>
+          message.type === "SYSTEM" ? (
+            <div
+              key={message.id}
+              className="text-center text-xs text-[var(--color-grey-500)] my-2"
+            >
+              {message.content}
+            </div>
+          ) : (
+            <Message
+              key={message.id}
+              message={message}
+              isSelecting={isSelecting}
+              setSelectedMessages={setSelectedMessages}
+            />
+          )
+        )
       )}
 
       <div ref={bottomRef} />

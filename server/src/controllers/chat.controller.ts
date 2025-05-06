@@ -89,11 +89,9 @@ export const createGroupChat = catchAsync(
 
     const file = req.file as Express.Multer.File;
 
-    if (!file) {
-      return next(new AppError("No file uploaded", 400));
-    }
+    let publicUrl: string | null = null;
 
-    const publicUrl = await uploadGroupAvatar(file, userId);
+    if (file) publicUrl = await uploadGroupAvatar(file, userId);
     const chat = await chatQueries.createGroupchat(
       [userId, ...userIds],
       name,
@@ -103,5 +101,31 @@ export const createGroupChat = catchAsync(
     notifyUsers(userIds, "chat_created");
 
     res.status(200).json({ status: "success", chat });
+  }
+);
+
+export const leaveChat = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id: chatId } = req.params;
+    const { id: userId } = req.user as User;
+
+    const result = await chatQueries.leaveChat(chatId, userId);
+
+    if (!result) {
+      return res.status(200).json({
+        status: "success",
+        message: "Chat deleted because no users remain",
+        chatId,
+      });
+    }
+
+    const { updatedChat, leavingUser } = result;
+
+    // Notify other users in the chat
+    const notifiedUserIds = updatedChat?.users.map((user) => user.id);
+    if (notifiedUserIds.length > 0)
+      notifyUsers(notifiedUserIds, "user_left", { chatId, leavingUser });
+
+    res.status(200).json({ status: "success", updatedChat });
   }
 );
