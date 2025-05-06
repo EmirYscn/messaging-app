@@ -10,5 +10,15 @@
   "noActiveUsers": "No hay usuarios activos",
   "selectMessages": "Seleccionar mensajes",
   "cancel": "Cancelar",
-  "deleteMessage": "Eliminar mensaje"
+  "deleteMessage": "Eliminar mensaje",
+  "newGroup": "Nuevo grupo",
+  "newChat": "Nuevo chat",
+  "addFriend": "Agregar amigo",
+  "selectChats": "Seleccionar chats",
+  "addMembersToGroup": "Añade miembros al grupo",
+  "groupDetails": "Detalles del grupo",
+  "groupName": "Nombre del grupo",
+  "changeGroupImage": "Cambiar imagen del grupo",
+  "groupMembers": "Miembros del grupo",
+  "enterGroupName": "Introduce el nombre del grupo"
 }

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { User } from "@prisma/client";
 import * as friendshipQueries from "../db/friendship.queries";
 import catchAsync from "../utils/catchAsync";
-import { notifyUser } from "../sockets/socketNotifier";
+import { notifyUsers } from "../sockets/socketNotifier";
 
 export const getFriends = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +21,7 @@ export const deleteFriend = catchAsync(
 
     await friendshipQueries.deleteFriend(userId, friendId);
 
-    notifyUser(friendId, "friends_updated");
+    notifyUsers([friendId], "friends_updated");
 
     res.status(200).json({ status: "success" });
   }

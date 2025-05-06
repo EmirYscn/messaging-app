@@ -7,7 +7,7 @@ export const getMessages = async (chatId: string) => {
 
   const chat = await prisma.chat.findUnique({
     where: { id: chatId },
-    select: { type: true }, // assuming you have a `type` field like 'public' or 'private'
+    select: { type: true },
   });
 
   if (!chat) {

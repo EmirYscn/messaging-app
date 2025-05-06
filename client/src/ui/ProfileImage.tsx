@@ -8,7 +8,8 @@ type ProfileImageProps = {
   onClick?: () => void;
   imgSrc?: string | undefined | null;
   size?: "xs" | "sm" | "md" | "lg";
-  context?: "header" | "settings" | "chats";
+  context?: "header" | "settings" | "chats" | "group";
+  setGroupImageFromFile?: (file: File) => void;
 };
 
 const sizeClasses = {
@@ -24,8 +25,10 @@ function ProfileImage({
   children,
   context,
   onClick,
+  setGroupImageFromFile,
 }: ProfileImageProps) {
   const { t } = useTranslation("settings");
+  const { t: tChat } = useTranslation("chats");
   const { updateAvatar, isLoading } = useAvatarUpload();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -67,6 +70,13 @@ function ProfileImage({
     }
   }
 
+  function handleGroupImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      setGroupImageFromFile?.(file);
+    }
+  }
+
   if (context === "chats") {
     return (
       <div className="flex items-center justify-center gap-4 cursor-pointer group">
@@ -76,6 +86,44 @@ function ProfileImage({
         >
           {children}
         </div>
+      </div>
+    );
+  }
+
+  if (context === "group") {
+    return (
+      <div className="flex items-center gap-4 cursor-pointer group">
+        <div className={`${baseWrapper} ${sizeClass}`} onClick={onClick}>
+          <img src={src} onError={handleError} className={imageClass} />
+          {isLoading && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40">
+              <div className="w-6 h-6 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+            </div>
+          )}
+          {context === "group" && (
+            <div
+              onClick={handleImageClick}
+              className={`${overlayBase} ${overlayVisible}`}
+            >
+              <span>
+                <FaCamera />
+              </span>
+              <span className="text-center max-w-11/12">
+                {tChat("changeGroupImage")}
+              </span>
+            </div>
+          )}
+        </div>
+        {context === "group" && (
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            accept="image/*"
+            onChange={handleGroupImageUpload}
+            disabled={isLoading}
+          />
+        )}
       </div>
     );
   }

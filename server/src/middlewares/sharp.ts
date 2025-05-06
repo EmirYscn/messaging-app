@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import sharp from "sharp";
 
-export const resizeUserPhoto = async (
+export const resizePhoto = async (
   req: Request,
   res: Response,
   next: NextFunction

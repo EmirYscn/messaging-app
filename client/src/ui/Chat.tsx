@@ -15,6 +15,7 @@ import { useState } from "react";
 import Button from "./Button";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useDeleteMessages } from "../hooks/useDeleteMessages";
+import ProfileImage from "./ProfileImage";
 
 function Chat() {
   const { t } = useTranslation("chats");
@@ -23,7 +24,7 @@ function Chat() {
 
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
-  const { deleteMessages } = useDeleteMessages();
+  const { deleteMessages, isLoading: isDeleting } = useDeleteMessages();
 
   function handleSelecting() {
     setSelectedMessages([]);
@@ -46,9 +47,32 @@ function Chat() {
       <div className="flex flex-col w-full h-full">
         <div className="px-8 py-4 border-b-2 border-[var(--color-grey-100)] flex justify-between items-center gap-4">
           {isConnected ? (
-            <h2 className="text-2xl font-semibold">
-              {t(`${chat?.name}`) || chat?.name}
-            </h2>
+            <div className="flex items-center gap-5">
+              <ProfileImage imgSrc={chat?.avatar} size="sm" />
+              <div>
+                <h2 className="text-2xl font-semibold">
+                  {t(`${chat?.name}`) || chat?.name}
+                </h2>
+                {chat?.type === "GROUP" && chat?.users && (
+                  <div className="flex flex-wrap gap-2">
+                    {chat.users.slice(0, 4).map((user, index, arr) => (
+                      <span
+                        key={user.id}
+                        className="text-sm text-[var(--color-grey-400)] max-w-[100px] truncate"
+                      >
+                        {user.username}
+                        {index < arr.length - 1 && ","}
+                      </span>
+                    ))}
+                    {chat.users.length > 4 && (
+                      <span className="text-sm text-[var(--color-grey-400)]">
+                        +{chat.users.length - 4} more
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
             <div className="flex items-center gap-2">
               <span>{errorMessage}</span>
@@ -61,7 +85,7 @@ function Chat() {
                 icon={<BsFillTrashFill />}
                 className="text-[1rem] hover:text-red-500"
                 onClick={handleDeleteMessages}
-                disabled={selectedMessages.length === 0}
+                disabled={selectedMessages.length === 0 || isDeleting}
               />
             )}
             {chat && (
@@ -75,6 +99,7 @@ function Chat() {
                     <Menus.Button
                       icon={<BiSelectMultiple />}
                       onClick={handleSelecting}
+                      disabled={isDeleting}
                     >
                       <span className="text-sm">
                         {isSelecting ? t("cancel") : t("selectMessages")}

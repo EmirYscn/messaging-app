@@ -82,3 +82,35 @@ export const createChat = async (body: string): Promise<string> => {
     throw new Error("An unexpected error occurred.");
   }
 };
+
+export const createGroupChat = async (body: {
+  name: string;
+  userIds: string[];
+  imageFile?: File | null;
+}) => {
+  try {
+    const formData = new FormData();
+    formData.append("name", body.name);
+    formData.append("userIds", JSON.stringify(body.userIds));
+    if (body.imageFile) {
+      formData.append("groupImage", body.imageFile);
+    }
+
+    const res = await api.post("/api/v1/chats/group", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return res.data.chat;
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message || "Couldn't create group chat";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};
