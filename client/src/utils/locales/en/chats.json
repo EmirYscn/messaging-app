@@ -20,5 +20,7 @@
   "groupName": "Group name",
   "changeGroupImage": "Change group image",
   "groupMembers": "Group members",
-  "enterGroupName": "Enter group name"
+  "enterGroupName": "Enter group name",
+  "leaveGroup": "Leave group",
+  "addUser": "Add user"
 }

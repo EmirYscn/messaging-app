@@ -114,3 +114,18 @@ export const createGroupChat = async (body: {
     throw new Error("An unexpected error occurred.");
   }
 };
+
+export const leaveGroupChat = async (chatId: string) => {
+  try {
+    await api.patch(`/api/v1/chats/${chatId}/leave`);
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message || "Couldn't leave group chat";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};
