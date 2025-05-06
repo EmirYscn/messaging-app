@@ -54,7 +54,7 @@ export const getChats = async (userId: string) => {
         id: chat.id,
         type: chat.type,
         name: chat.name || "Unnamed Group",
-        avatar: null, // or use a group avatar if you implement one
+        avatar: chat.avatar || null, // or use a group avatar if you implement one
         lastMessage: decryptedLastMessage,
         updatedAt: chat.updatedAt,
       };
@@ -103,7 +103,7 @@ export const getChat = async (chatId: string, userId: string) => {
     id: chat.id,
     type: chat.type,
     name: chat.name || "Unnamed Group",
-    avatar: null,
+    avatar: chat.avatar || null,
     users: chat.users,
     _count: chat._count,
   };
@@ -129,6 +129,33 @@ export const createChat = async (userIds: string[]) => {
   const newChat = await prisma.chat.create({
     data: {
       type: "PRIVATE",
+      users: {
+        connect: sortedIds.map((userId) => ({ id: userId })),
+      },
+    },
+    include: {
+      users: true,
+    },
+  });
+  return newChat;
+};
+
+export const createGroupchat = async (
+  userIds: string[],
+  groupName: string,
+  avatar: string
+) => {
+  const sortedIds = userIds.sort();
+
+  console.log("NAME: ", groupName);
+  console.log("USERIDS: ", userIds);
+  console.log("AVATAR: ", avatar);
+
+  const newChat = await prisma.chat.create({
+    data: {
+      type: "GROUP",
+      name: groupName,
+      avatar,
       users: {
         connect: sortedIds.map((userId) => ({ id: userId })),
       },

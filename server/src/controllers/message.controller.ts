@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import catchAsync from "../utils/catchAsync";
 import * as messageQueries from "../db/message.queries";
 import AppError from "../utils/appError";
-import { notifyUser } from "../sockets/socketNotifier";
+import { notifyUsers } from "../sockets/socketNotifier";
 import { User } from "@prisma/client";
 
 export const deleteMessages = catchAsync(
@@ -17,7 +17,7 @@ export const deleteMessages = catchAsync(
 
     const chatUsers = await messageQueries.deleteMessages(messageIds);
     const notifiedUserId = chatUsers?.find((user) => user.id !== userId)?.id;
-    if (notifiedUserId) notifyUser(notifiedUserId, "messages_updated");
+    if (notifiedUserId) notifyUsers([notifiedUserId], "messages_updated");
 
     res.status(200).json({ status: "success", message: "Messages deleted" });
   }

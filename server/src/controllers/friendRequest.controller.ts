@@ -2,9 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import * as friendRequestQueries from "../db/friendRequest.queries";
 import { User } from "@prisma/client";
 import catchAsync from "../utils/catchAsync";
-import { userSocketMap } from "../sockets/socketRegistry";
-import { TypedSocket } from "../sockets/types";
-import { notifyUser } from "../sockets/socketNotifier";
+import { notifyUsers } from "../sockets/socketNotifier";
 
 export const sendFriendRequest = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -13,7 +11,7 @@ export const sendFriendRequest = catchAsync(
 
     await friendRequestQueries.sendFriendRequest(senderId, receiverId);
 
-    notifyUser(receiverId, "friend_requests_updated");
+    notifyUsers([receiverId], "friend_requests_updated");
 
     res.status(200).json({ status: "success" });
   }
@@ -27,7 +25,8 @@ export const acceptFriendRequest = catchAsync(
     const userIds = await friendRequestQueries.acceptFriendRequest(requestId);
 
     const notifiedUserId = userIds.find((id) => id !== userId);
-    if (notifiedUserId) notifyUser(notifiedUserId, "friend_requests_updated");
+    if (notifiedUserId)
+      notifyUsers([notifiedUserId], "friend_requests_updated");
 
     res.status(200).json({ status: "success" });
   }
@@ -41,7 +40,8 @@ export const declineFriendRequest = catchAsync(
     const userIds = await friendRequestQueries.declineFriendRequest(requestId);
 
     const notifiedUserId = userIds.find((id) => id !== userId);
-    if (notifiedUserId) notifyUser(notifiedUserId, "friend_requests_updated");
+    if (notifiedUserId)
+      notifyUsers([notifiedUserId], "friend_requests_updated");
 
     res.status(200).json({ status: "success" });
   }
@@ -55,7 +55,8 @@ export const deleteFriendRequest = catchAsync(
     const userIds = await friendRequestQueries.deleteFriendRequest(requestId);
 
     const notifiedUserId = userIds.find((id) => id !== userId);
-    if (notifiedUserId) notifyUser(notifiedUserId, "friend_requests_updated");
+    if (notifiedUserId)
+      notifyUsers([notifiedUserId], "friend_requests_updated");
 
     res.status(200).json({ status: "success" });
   }

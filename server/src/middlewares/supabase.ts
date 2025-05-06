@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
+import AppError from "../utils/appError";
 // import { sanitizeFilename } from "../utils/sanitizeFilename";
 
 export const supabaseUrl = process.env.SUPABASE_URL;
@@ -63,7 +64,49 @@ export const uploadAvatar = async (
     return publicUrl;
   } catch (error) {
     console.error("Error uploading avatar:", error);
-    throw error;
+    throw new AppError("Failed to upload user avatar", 500);
+  }
+};
+
+export const uploadGroupAvatar = async (
+  file: Express.Multer.File,
+  userId: string
+) => {
+  const { buffer } = file;
+  const timestamp = Date.now();
+  const folderPath = `group-${userId}`;
+  const filePath = `${folderPath}/avatar-${timestamp}.jpeg`; // Ensure only one file per user
+
+  try {
+    // Delete existing file first (if it exists)
+    const { data: files, error } = await supabase.storage
+      .from("avatars")
+      .list(folderPath);
+
+    if (error) {
+      throw error;
+    }
+
+    if (files && files.length > 0) {
+      const filePaths = files.map((file) => `${folderPath}/${file.name}`);
+      await supabase.storage.from("avatars").remove(filePaths);
+    }
+
+    // Upload the new file (ensuring the same file path)
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, buffer, { contentType: "image/jpeg", upsert: true });
+
+    if (uploadError) throw uploadError;
+
+    // Get Public URL
+    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+
+    const publicUrl = `${data.publicUrl}?t=${Date.now()}`;
+    return publicUrl;
+  } catch (error) {
+    console.error("Error uploading avatar:", error);
+    throw new AppError("Failed to upload group image", 500);
   }
 };
 

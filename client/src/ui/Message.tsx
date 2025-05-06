@@ -21,8 +21,8 @@ type MessageProps = {
 function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
   const { t } = useTranslation("menus");
   const { t: chatsT } = useTranslation("chats");
-  const { createChat } = useCreateChat();
-  const { deleteMessages } = useDeleteMessages();
+  const { createChat, isLoading: isCreating } = useCreateChat();
+  const { deleteMessages, isLoading: isDeleting } = useDeleteMessages();
   const { chat } = useChat();
   const [isHovering, setIsHovering] = useState(false);
   const { user } = useUser();
@@ -131,6 +131,7 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                       onClick={() => {
                         createChat(message.senderId);
                       }}
+                      disabled={isCreating}
                     >
                       <span className="text-sm">{t("sendMessage")}</span>
                     </Menus.Button>
@@ -149,6 +150,7 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                       onClick={() => {
                         deleteMessages([message.id]);
                       }}
+                      disabled={isDeleting}
                     >
                       <span className="text-sm">{chatsT("deleteMessage")}</span>
                     </Menus.Button>

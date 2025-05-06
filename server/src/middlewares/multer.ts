@@ -3,7 +3,7 @@ import multer from "multer";
 
 const storage = multer.memoryStorage();
 
-const userPhotoFilter = (
+const photoFilter = (
   req: Request,
   file: Express.Multer.File,
   cb: multer.FileFilterCallback
@@ -24,8 +24,15 @@ const userPhotoFilter = (
 
 const uploadUserAvatarMulter = multer({
   storage: storage,
-  fileFilter: userPhotoFilter,
+  fileFilter: photoFilter,
   limits: { fileSize: 0.7 * 1024 * 1024 }, // 700KB limit
 });
 
+const uploadGroupImageMulter = multer({
+  storage: storage,
+  fileFilter: photoFilter,
+  limits: { fileSize: 1 * 1024 * 1024 }, // 1MB limit
+});
+
 export const uploadUserAvatar = uploadUserAvatarMulter.single("avatar");
+export const uploadGroupImage = uploadGroupImageMulter.single("groupImage");
