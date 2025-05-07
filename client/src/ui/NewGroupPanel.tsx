@@ -97,7 +97,7 @@ function NewGroupPanel({ onBack, onSuccess }: NewGroupProps) {
             <Button
               icon={<IoMdArrowRoundForward />}
               size="large"
-              className="!p-2 bg-[var(--color-brand-100)] !rounded-full"
+              className="!p-2 bg-[var(--color-brand-100)] !rounded-full text-white"
               onClick={() => setIsCreatingGroupFinal(true)}
             />
           </div>

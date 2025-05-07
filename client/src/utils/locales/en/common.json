@@ -6,5 +6,7 @@
   "searchFriends": "Search Friends",
   "searchUsers": "Search Users",
   "friends": "Friends",
-  "addFriend": "Add Friend"
+  "addFriend": "Add Friend",
+  "receivedRequests": "Received Requests",
+  "sentRequests": "Sent Requests"
 }

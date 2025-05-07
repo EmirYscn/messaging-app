@@ -6,5 +6,7 @@
   "searchFriends": "Buscar amigos",
   "searchUsers": "Buscar usuarios",
   "friends": "Amigos",
-  "addFriend": "Agregar amigo"
+  "addFriend": "Agregar amigo",
+  "receivedRequests": "Solicitudes recibidas",
+  "sentRequests": "Solicitudes enviadas"
 }
