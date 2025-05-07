@@ -56,7 +56,7 @@ function Friends({
                           <input
                             type="checkbox"
                             checked={isSelected(friend)}
-                            className="w-5 h-5 text-blue-600 border-gray-300 rounded-full appearance-none bg-white/90 focus:ring-2 focus:ring-green-500 checked:bg-green-600 checked:border-transparent"
+                            className="w-5 h-5 text-blue-600 border-gray-300 rounded-full appearance-none bg-[var(--color-grey-200)] focus:ring-2 focus:ring-green-500 checked:bg-green-600 checked:border-transparent"
                             onChange={(e) => {
                               e.stopPropagation();
                               if (onCheck) {
@@ -70,20 +70,22 @@ function Friends({
                     </div>
                   </Menus.Toggle>
 
-                  <Menus.List id={friend?.id}>
-                    <Menus.Button
-                      icon={<BiSolidMessageSquareAdd />}
-                      onClick={() => createChat(friend.id)}
-                    >
-                      Send Message
-                    </Menus.Button>
-                    <Menus.Button
-                      icon={<MdDelete />}
-                      onClick={() => removeFriend(friend?.id)}
-                    >
-                      Remove Friend
-                    </Menus.Button>
-                  </Menus.List>
+                  {!hasCheckbox && (
+                    <Menus.List id={friend?.id}>
+                      <Menus.Button
+                        icon={<BiSolidMessageSquareAdd />}
+                        onClick={() => createChat(friend.id)}
+                      >
+                        Send Message
+                      </Menus.Button>
+                      <Menus.Button
+                        icon={<MdDelete />}
+                        onClick={() => removeFriend(friend?.id)}
+                      >
+                        Remove Friend
+                      </Menus.Button>
+                    </Menus.List>
+                  )}
                 </Menus.Menu>
               </Menus>
             </div>

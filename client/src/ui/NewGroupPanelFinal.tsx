@@ -121,7 +121,7 @@ function NewGroupPanelFinal({
           <Button
             icon={<MdOutlineDone />}
             size="large"
-            className="!p-2 bg-[var(--color-brand-100)] !rounded-full"
+            className="!p-2 bg-[var(--color-brand-100)] !rounded-full text-white"
             onClick={handleSave}
             disabled={isCreatingGroup}
           />
