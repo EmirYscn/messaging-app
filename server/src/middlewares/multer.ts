@@ -34,5 +34,13 @@ const uploadGroupImageMulter = multer({
   limits: { fileSize: 1 * 1024 * 1024 }, // 1MB limit
 });
 
+const uploadImageMessageMulter = multer({
+  storage: storage,
+  fileFilter: photoFilter,
+  limits: { fileSize: 0.5 * 1024 * 1024 }, // 500kb limit
+});
+
 export const uploadUserAvatar = uploadUserAvatarMulter.single("avatar");
 export const uploadGroupImage = uploadGroupImageMulter.single("groupImage");
+export const uploadImageMessage =
+  uploadImageMessageMulter.single("imageMessage");

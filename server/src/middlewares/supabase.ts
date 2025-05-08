@@ -33,7 +33,8 @@ export const uploadAvatar = async (
   const { buffer } = file;
   const timestamp = Date.now();
   const folderPath = `user-${userId}`;
-  const filePath = `${folderPath}/avatar-${timestamp}.jpeg`; // Ensure only one file per user
+  const ext = file.mimetype.split("/")[1];
+  const filePath = `${folderPath}/avatar-${timestamp}.${ext}`; // Ensure only one file per user
 
   try {
     // Delete existing file first (if it exists)
@@ -75,7 +76,8 @@ export const uploadGroupAvatar = async (
   const { buffer } = file;
   const timestamp = Date.now();
   const folderPath = `group-${userId}`;
-  const filePath = `${folderPath}/avatar-${timestamp}.jpeg`; // Ensure only one file per user
+  const ext = file.mimetype.split("/")[1];
+  const filePath = `${folderPath}/avatar-${timestamp}.${ext}`; // Ensure only one file per user
 
   try {
     // Delete existing file first (if it exists)
@@ -107,6 +109,31 @@ export const uploadGroupAvatar = async (
   } catch (error) {
     console.error("Error uploading avatar:", error);
     throw new AppError("Failed to upload group image", 500);
+  }
+};
+
+export const uploadImage = async (
+  file: Express.Multer.File,
+  chatId: string,
+  userId: string
+) => {
+  const { buffer } = file;
+  const folderPath = `chat-${chatId}`;
+  const ext = file.mimetype.split("/")[1];
+  const filePath = `${folderPath}/message-${userId}-${uuidv4()}.${ext}`; // Ensure only one file per user
+  try {
+    // Upload the new file (ensuring the same file path)
+    const { error: uploadError } = await supabase.storage
+      .from("messages")
+      .upload(filePath, buffer, { contentType: "image/jpeg", upsert: true });
+    if (uploadError) throw uploadError;
+    // Get Public URL
+    const { data } = supabase.storage.from("messages").getPublicUrl(filePath);
+    const publicUrl = `${data.publicUrl}?t=${Date.now()}`;
+    return publicUrl;
+  } catch (error) {
+    console.error("Error uploading message image:", error);
+    throw new AppError("Failed to upload message image", 500);
   }
 };
 

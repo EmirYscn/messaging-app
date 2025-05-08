@@ -11,15 +11,15 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading } = useUser();
   const location = useLocation();
 
-  const hasToken = !!localStorage.getItem("jwt");
-
-  if (hasToken && isLoading) {
-    <div className="flex justify-center items-center h-screen">
-      <Spinner />
-    </div>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
-  if (!hasToken || (!isLoading && !isAuthenticated)) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

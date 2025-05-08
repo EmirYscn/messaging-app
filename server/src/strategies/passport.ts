@@ -11,6 +11,7 @@ import jwt from "jsonwebtoken";
 
 import * as db from "../db/user.queries";
 import { prisma } from "../db/prismaClient";
+import { Request } from "express";
 
 const SERVER_URL = process.env.SERVER_URL;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -143,10 +144,19 @@ const githubStrategy = new GithubStrategy(
 );
 
 // JWT Strategy configuration
-const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: JWT_SECRET!,
+const cookieExtractor = (req: Request): string | null => {
+  return req.cookies?.jwt || null;
 };
+
+const jwtOptions = {
+  jwtFromRequest: cookieExtractor,
+  secretOrKey: process.env.JWT_SECRET!,
+};
+
+// const jwtOptions = {
+//   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+//   secretOrKey: JWT_SECRET!,
+// };
 
 const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {

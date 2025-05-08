@@ -40,7 +40,7 @@ export function useSocketConnectionStatus() {
     const handleDisconnect = (reason: Socket.DisconnectReason) => {
       setIsConnected(false);
       const knownReason = reason as KnownDisconnectReason;
-      const message = errorMessages[knownReason] ?? t("disconnected");
+      const message = errorMessages[knownReason] ?? "";
 
       setErrorMessage(socket.active ? t("reconnecting") : message);
 
