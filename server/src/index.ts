@@ -4,6 +4,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 import { rateLimit } from "express-rate-limit";
+import cookieParser from "cookie-parser";
 
 import config from "./config/config";
 
@@ -19,8 +20,9 @@ import { globalErrorHandler } from "./controllers/error.controller";
 
 const app: Application = express();
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
+app.use(cookieParser());
 // Set security HTTP headers
 app.use(helmet());
 

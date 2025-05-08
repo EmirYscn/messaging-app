@@ -87,9 +87,15 @@ export const login = async (
       // Generate a JWT token
       const token = generateToken(user);
 
+      res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // use HTTPS in prod
+        sameSite: "lax", // or "strict" if appropriate
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+      });
+
       // Simply return the token and user info
       return res.json({
-        token,
         user: {
           id: user.id,
           email: user.email,
@@ -100,6 +106,18 @@ export const login = async (
       });
     }
   )(req, res, next);
+};
+
+export const logout = (req: Request, res: Response) => {
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+  res.status(200).json({
+    status: "success",
+    message: "Logged out successfully",
+  });
 };
 
 // Middleware to protect routes with JWT authentication

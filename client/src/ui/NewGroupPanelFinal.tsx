@@ -25,6 +25,7 @@ function NewGroupPanelFinal({
   const [groupName, setGroupName] = useState("");
   const [groupImage, setGroupImage] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+
   const { createGroup, isCreatingGroup } = useCreateGroup();
 
   useEffect(() => {

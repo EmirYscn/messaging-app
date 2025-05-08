@@ -4,6 +4,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Spinner from "../ui/Spinner";
 import { connectSocket } from "../services/socket";
+// import { useUser } from "../hooks/useUser";
+import { getCurrentUser } from "../services/apiAuth";
 
 function AuthSuccess() {
   const [searchParams] = useSearchParams();
@@ -16,33 +18,66 @@ function AuthSuccess() {
     if (effectRan.current) return; // Prevent running twice
     effectRan.current = true;
 
-    const encodedData = searchParams.get("data");
-    if (encodedData) {
+    const fetchUser = async () => {
+      const encodedData = searchParams.get("data");
       try {
-        const decodedData = JSON.parse(atob(encodedData));
-        const { token, user, provider } = decodedData;
+        const user = await getCurrentUser();
 
-        // Store token in localStorage
-        localStorage.setItem("jwt", token);
-
-        // connect socket
-        connectSocket();
-
-        // Update React Query cache with user data
         queryClient.setQueryData(["user"], user);
 
-        // Show success message
-        toast.success(`Successfully logged in with ${provider}`);
-        // Redirect to dashboard
-        // Navigate after success
+        connectSocket();
+
+        if (encodedData) {
+          const decodedData = JSON.parse(atob(encodedData));
+          const { provider } = decodedData;
+          toast.success(
+            `Successfully logged in ${provider ? `with ${provider}` : ""}`
+          );
+        }
+
         setTimeout(() => {
           navigate("/", { replace: true });
         }, 300);
       } catch {
-        navigate("/login?error=invalid_data", { replace: true });
+        toast.error("Authentication failed");
+        navigate("/login", { replace: true });
       }
-    }
-  }, [searchParams, navigate, queryClient]);
+    };
+
+    fetchUser();
+  }, [navigate, queryClient]);
+
+  // useEffect(() => {
+  //   if (effectRan.current) return; // Prevent running twice
+  //   effectRan.current = true;
+
+  //   const encodedData = searchParams.get("data");
+  //   if (encodedData) {
+  //     try {
+  //       const decodedData = JSON.parse(atob(encodedData));
+  //       const { token, user, provider } = decodedData;
+
+  //       // Store token in localStorage
+  //       localStorage.setItem("jwt", token);
+
+  //       // connect socket
+  //       connectSocket();
+
+  //       // Update React Query cache with user data
+  //       queryClient.setQueryData(["user"], user);
+
+  //       // Show success message
+  //       toast.success(`Successfully logged in with ${provider}`);
+  //       // Redirect to dashboard
+  //       // Navigate after success
+  //       setTimeout(() => {
+  //         navigate("/", { replace: true });
+  //       }, 300);
+  //     } catch {
+  //       navigate("/login?error=invalid_data", { replace: true });
+  //     }
+  //   }
+  // }, [searchParams, navigate, queryClient]);
 
   return <Spinner />;
 }

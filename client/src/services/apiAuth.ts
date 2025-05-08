@@ -1,4 +1,4 @@
-import axios, { InternalAxiosRequestConfig } from "axios";
+import axios from "axios";
 import { User } from "../types/types";
 import { connectSocket, socket } from "./socket";
 
@@ -7,19 +7,8 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 // Create axios instance with base URL
 export const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
 });
-
-// Request interceptor to add authorization header
-api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem("jwt");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error: unknown) => Promise.reject(error)
-);
 
 export const getCurrentUser = async (): Promise<User> => {
   try {
@@ -28,7 +17,7 @@ export const getCurrentUser = async (): Promise<User> => {
   } catch (error: unknown) {
     // If the token is invalid or expired, clear it
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      localStorage.removeItem("jwt");
+      // socket.disconnect();
     }
     throw error;
   }
@@ -68,8 +57,8 @@ export type LoginCredentials = {
 export const login = async (data: LoginCredentials): Promise<User> => {
   try {
     const res = await api.post("/api/v1/auth/login", data);
-    const token = res.data.token;
-    localStorage.setItem("jwt", token);
+    // const token = res.data.token;
+    // localStorage.setItem("jwt", token);
 
     // connect socket
     connectSocket();
@@ -90,9 +79,10 @@ export const login = async (data: LoginCredentials): Promise<User> => {
 };
 
 export const logout = async (): Promise<void> => {
-  return new Promise((resolve) => {
-    localStorage.removeItem("jwt");
+  try {
+    await api.post("/api/v1/auth/logout"); // This should clear the cookie on the server
     socket.disconnect();
-    resolve();
-  });
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
 };

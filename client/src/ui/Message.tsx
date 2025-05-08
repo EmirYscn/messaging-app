@@ -100,21 +100,25 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
 
         {/* Message Content */}
         <div
-          className={`group gap-1 rounded-2xl px-4 py-2 w-max break-words max-w-[12rem] md:max-w-[24rem] grid grid-cols-2 grid-rows-2 items-center  ${
+          className={`group flex flex-col gap-1 rounded-2xl px-4 py-2 w-max break-words max-w-[12rem] md:max-w-[24rem] ${
             isCurrentUser
               ? "bg-[var(--color-blue-500)] text-white"
               : "bg-[var(--color-blue-100)] text-[var(--color-grey-800)]"
           }`}
         >
           {!isCurrentUser && (
-            <span className="col-span-2 text-sm font-bold">
-              {sender?.username}
-            </span>
+            <span className="text-sm font-bold">{sender?.username}</span>
           )}
 
-          <span className={`${isCurrentUser ? "col-span-1" : ""}`}>
-            {content}
-          </span>
+          {message.type === "TEXT" ? (
+            <span>{content}</span>
+          ) : (
+            <img
+              src={message.content}
+              alt="Chat image"
+              className="rounded-lg w-full h-auto max-w-full object-cover border border-gray-300"
+            />
+          )}
 
           {isHovering && (
             <Menus>
@@ -136,14 +140,16 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                       <span className="text-sm">{t("sendMessage")}</span>
                     </Menus.Button>
                   )}
-                  <Menus.Button
-                    icon={<IoCopyOutline />}
-                    onClick={() => {
-                      navigator.clipboard.writeText(content);
-                    }}
-                  >
-                    <span className="text-sm">{t("copy")}</span>
-                  </Menus.Button>
+                  {message.type === "TEXT" && (
+                    <Menus.Button
+                      icon={<IoCopyOutline />}
+                      onClick={() => {
+                        navigator.clipboard.writeText(content);
+                      }}
+                    >
+                      <span className="text-sm">{t("copy")}</span>
+                    </Menus.Button>
+                  )}
                   {isCurrentUser && (
                     <Menus.Button
                       icon={<BsFillTrashFill />}
@@ -161,8 +167,8 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
           )}
 
           <span
-            className={`text-[10px] opacity-70 text-right self-end ${
-              isCurrentUser ? "col-span-2" : "text-[var(--color-grey-700)]"
+            className={`text-[10px] opacity-70 text-right ${
+              isCurrentUser ? "" : "text-[var(--color-grey-700)]"
             }`}
           >
             {formatDateToHour(createdAt)}

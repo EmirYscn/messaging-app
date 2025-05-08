@@ -36,7 +36,7 @@ export const getMessages = async (chatId: string) => {
 
   const decryptedMessages = orderedMessages.map((msg) => ({
     ...msg,
-    content: decryptText(msg.content),
+    content: msg.type === "TEXT" ? decryptText(msg.content) : msg.content,
   }));
 
   return { messages: decryptedMessages, count: totalCount };
@@ -97,4 +97,26 @@ export const deleteMessages = async (messageIds: string[]) => {
   });
 
   return messagesToDelete?.chat.users;
+};
+
+export const createImageMessage = async (
+  chatId: string,
+  senderId: string,
+  image: string
+) => {
+  const newMsg = prisma.message.create({
+    data: {
+      chatId,
+      senderId,
+      content: image,
+      type: "IMAGE",
+    },
+    include: {
+      sender: {
+        select: { id: true, username: true, avatar: true, role: true },
+      },
+    },
+  });
+
+  return newMsg;
 };

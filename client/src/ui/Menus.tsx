@@ -276,9 +276,16 @@ type ToggleProps = {
   children?: React.ReactNode;
   icon?: React.ReactNode;
   className?: string;
+  position?: "above" | "below";
 };
 
-function Toggle({ id, children, icon, className }: ToggleProps) {
+function Toggle({
+  id,
+  children,
+  icon,
+  className,
+  position = "below",
+}: ToggleProps) {
   const context = useContext(MenusContext);
   if (!context) {
     throw new Error("Toggle must be used within a MenusProvider");
@@ -292,8 +299,14 @@ function Toggle({ id, children, icon, className }: ToggleProps) {
     if (button) {
       const rect = button.getBoundingClientRect();
       setPosition({
-        x: window.innerWidth - rect.width - rect.x,
-        y: rect.y + rect.height + 8,
+        x:
+          position === "above"
+            ? window.innerWidth - rect.width * 3 - rect.x
+            : window.innerWidth - rect.width - rect.x,
+        y:
+          position === "above"
+            ? rect.y - rect.height - 32
+            : rect.y + rect.height + 8,
       });
       if (openId === "" || openId !== id) open(id);
       else close();
@@ -342,7 +355,7 @@ function List({ id, children, className }: ListProps) {
 }
 
 type ButtonProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   icon?: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean | undefined;
@@ -381,7 +394,7 @@ function Button({
         } ${className}`}
       >
         {icon}
-        <span>{children}</span>
+        {children && <span>{children}</span>}
       </button>
     </li>
   );
