@@ -3,7 +3,7 @@ import { useUser } from "../hooks/useUser";
 import { Message as MessageType } from "../types/types";
 import { formatDateToHour } from "../utils/formatDateToHour";
 import ProfileImage from "./ProfileImage";
-import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowDown, IoMdDownload } from "react-icons/io";
 import Menus from "./Menus";
 import { IoCopyOutline } from "react-icons/io5";
 import { useCreateChat } from "../hooks/useCreateChat";
@@ -11,6 +11,7 @@ import { useChat } from "../hooks/useChat";
 import { useTranslation } from "react-i18next";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useDeleteMessages } from "../hooks/useDeleteMessages";
+import { MediaWithSkeleton } from "./MediaWithSkeleton";
 
 type MessageProps = {
   message: MessageType;
@@ -21,13 +22,18 @@ type MessageProps = {
 function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
   const { t } = useTranslation("menus");
   const { t: chatsT } = useTranslation("chats");
+
+  const { chat } = useChat();
+  const { user } = useUser();
+
   const { createChat, isLoading: isCreating } = useCreateChat();
   const { deleteMessages, isLoading: isDeleting } = useDeleteMessages();
-  const { chat } = useChat();
+
   const [isHovering, setIsHovering] = useState(false);
-  const { user } = useUser();
-  const { senderId, sender, content, createdAt } = message;
   const [isSelected, setIsSelected] = useState(false);
+
+  const { senderId, sender, content, createdAt } = message;
+
   const isCurrentUser = senderId === user?.id;
 
   function handleSelectMessage() {
@@ -110,15 +116,14 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
             <span className="text-sm font-bold">{sender?.username}</span>
           )}
 
-          {message.type === "TEXT" ? (
-            <span>{content}</span>
-          ) : (
-            <img
-              src={message.content}
-              alt="Chat image"
-              className="rounded-lg w-full h-auto max-w-full object-cover border border-gray-300"
-            />
+          {message.media && message.media.length > 0 && (
+            <div className="flex flex-col gap-2">
+              {message.media.map((media) => (
+                <MediaWithSkeleton key={media.id} src={media.url} />
+              ))}
+            </div>
           )}
+          {message.content && <span>{content}</span>}
 
           {isHovering && (
             <Menus>
@@ -148,6 +153,16 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                       }}
                     >
                       <span className="text-sm">{t("copy")}</span>
+                    </Menus.Button>
+                  )}
+                  {message.type === "IMAGE" && (
+                    <Menus.Button
+                      icon={<IoMdDownload />}
+                      onClick={() => {
+                        // Implement download functionality
+                      }}
+                    >
+                      <span className="text-sm">{chatsT("download")}</span>
                     </Menus.Button>
                   )}
                   {isCurrentUser && (

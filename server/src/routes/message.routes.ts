@@ -1,16 +1,25 @@
 import { Router } from "express";
 import * as messageController from "../controllers/message.controller";
 import { requireAuth } from "../controllers/auth.controller";
-import { uploadImageMessage } from "../middlewares/multer";
+import { uploadMedia } from "../middlewares/multer";
+import { compressMedia } from "../middlewares/sharp";
 
 const router = Router();
 
 router.post(
-  "/:chatId/image",
+  "/media",
   requireAuth,
-  uploadImageMessage,
-  messageController.uploadImageMessage
+  uploadMedia,
+  compressMedia,
+  messageController.createMedia
 );
+
+// router.post(
+//   "/:chatId/image",
+//   requireAuth,
+//   uploadImageMessage,
+//   messageController.uploadImageMessage
+// );
 router.delete("/", requireAuth, messageController.deleteMessages);
 
 export { router };

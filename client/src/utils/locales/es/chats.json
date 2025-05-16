@@ -22,5 +22,6 @@
   "groupMembers": "Miembros del grupo",
   "enterGroupName": "Introduce el nombre del grupo",
   "leaveGroup": "Salir del grupo",
-  "addUser": "Añadir usuario"
+  "addUser": "Añadir usuario",
+  "download": "Descargar"
 }

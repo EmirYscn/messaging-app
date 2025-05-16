@@ -19,6 +19,9 @@ import ProfileImage from "./ProfileImage";
 import { IoMdExit } from "react-icons/io";
 import { useLeaveGroup } from "../hooks/useLeaveGroup";
 import { IoPersonAdd } from "react-icons/io5";
+import Modal from "./Modal";
+import AddUserModal from "./AddUserModal";
+import { useAddToGroup } from "../hooks/useAddToGroup";
 
 function Chat() {
   const { t } = useTranslation("chats");
@@ -29,6 +32,7 @@ function Chat() {
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const { deleteMessages, isLoading: isDeleting } = useDeleteMessages();
   const { leaveGroup, isPending: isLeavingGroup } = useLeaveGroup();
+  const { addToGroup } = useAddToGroup();
 
   function handleSelecting() {
     setSelectedMessages([]);
@@ -93,41 +97,50 @@ function Chat() {
               />
             )}
             {chat && (
-              <Menus>
-                <Menus.Menu>
-                  <Menus.Toggle id={chat.id} />
-                  <Menus.List id={chat.id}>
-                    {chat?.type === "PRIVATE" && (
-                      <Menus.Button icon={<RiInfoCardFill />}>
-                        <span className="text-sm">User info</span>
-                      </Menus.Button>
-                    )}
-                    {chat?.type === "GROUP" && (
-                      <Menus.Button icon={<IoPersonAdd />}>
-                        <span className="text-sm">{t("addUser")}</span>
-                      </Menus.Button>
-                    )}
-                    <Menus.Button
-                      icon={<BiSelectMultiple />}
-                      onClick={handleSelecting}
-                      disabled={isDeleting}
-                    >
-                      <span className="text-sm">
-                        {isSelecting ? t("cancel") : t("selectMessages")}
-                      </span>
-                    </Menus.Button>
-                    {chat.type === "GROUP" && (
+              <Modal>
+                <Menus>
+                  <Menus.Menu>
+                    <Menus.Toggle id={chat.id} />
+                    <Menus.List id={chat.id}>
+                      {chat?.type === "PRIVATE" && (
+                        <Menus.Button icon={<RiInfoCardFill />}>
+                          <span className="text-sm">User info</span>
+                        </Menus.Button>
+                      )}
+                      {chat?.type === "GROUP" && (
+                        <Modal.Open opens="addUser">
+                          <Menus.Button icon={<IoPersonAdd />}>
+                            <span className="text-sm">{t("addUser")}</span>
+                          </Menus.Button>
+                        </Modal.Open>
+                      )}
                       <Menus.Button
-                        icon={<IoMdExit />}
-                        onClick={() => leaveGroup(chat.id)}
-                        disabled={isLeavingGroup}
+                        icon={<BiSelectMultiple />}
+                        onClick={handleSelecting}
+                        disabled={isDeleting}
                       >
-                        <span className="text-sm">{t("leaveGroup")}</span>
+                        <span className="text-sm">
+                          {isSelecting ? t("cancel") : t("selectMessages")}
+                        </span>
                       </Menus.Button>
-                    )}
-                  </Menus.List>
-                </Menus.Menu>
-              </Menus>
+                      {chat.type === "GROUP" && (
+                        <Menus.Button
+                          icon={<IoMdExit />}
+                          onClick={() => leaveGroup(chat.id)}
+                          disabled={isLeavingGroup}
+                        >
+                          <span className="text-sm">{t("leaveGroup")}</span>
+                        </Menus.Button>
+                      )}
+                    </Menus.List>
+                    <Modal.Window name="addUser">
+                      <AddUserModal
+                        onConfirm={(userIds: string[]) => addToGroup(userIds)}
+                      />
+                    </Modal.Window>
+                  </Menus.Menu>
+                </Menus>
+              </Modal>
             )}
           </div>
         </div>

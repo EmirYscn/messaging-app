@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { socket } from "../services/socket"; // adjust path as needed
 import toast from "react-hot-toast";
 import { Socket } from "socket.io-client";
 import { useTranslation } from "react-i18next";
-import { t } from "i18next";
+
+import { socket } from "../services/socket";
+import { useChat } from "./useChat";
 
 type KnownDisconnectReason =
   | "io server disconnect"
@@ -12,21 +13,28 @@ type KnownDisconnectReason =
   | "ping timeout"
   | "transport error";
 
-const errorMessages: Record<KnownDisconnectReason, string> = {
-  "io server disconnect": t("io server disconnect"),
-  "io client disconnect": t("io client disconnect"),
-  "transport close": t("transport close"),
-  "ping timeout": t("ping timeout"),
-  "transport error": t("transport error"),
-};
-
 export function useSocketConnectionStatus() {
   const { t } = useTranslation("infoMessages");
+  const { chat } = useChat();
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [errorMessage, setErrorMessage] = useState("");
   const reconnectToastId = useRef<string | null>(null);
+  const latestChatRef = useRef(chat);
+
+  // Update the ref on every chat change
+  useEffect(() => {
+    latestChatRef.current = chat;
+  }, [chat]);
 
   useEffect(() => {
+    const errorMessages: Record<KnownDisconnectReason, string> = {
+      "io server disconnect": t("io server disconnect"),
+      "io client disconnect": t("io client disconnect"),
+      "transport close": t("transport close"),
+      "ping timeout": t("ping timeout"),
+      "transport error": t("transport error"),
+    };
+
     const handleConnect = () => {
       setIsConnected(true);
       setErrorMessage(""); // clear any previous error
@@ -35,12 +43,20 @@ export function useSocketConnectionStatus() {
         toast.dismiss(reconnectToastId.current);
         reconnectToastId.current = null;
       }
+
+      const currentChat = latestChatRef.current;
+      if (currentChat?.id && currentChat?.type) {
+        socket.emit("join_room", {
+          chatId: currentChat.id,
+          chatType: currentChat.type,
+        });
+      }
     };
 
     const handleDisconnect = (reason: Socket.DisconnectReason) => {
       setIsConnected(false);
       const knownReason = reason as KnownDisconnectReason;
-      const message = errorMessages[knownReason] ?? "";
+      const message = errorMessages[knownReason] ?? t("disconnected");
 
       setErrorMessage(socket.active ? t("reconnecting") : message);
 

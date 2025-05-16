@@ -12,19 +12,29 @@ function Friends({
   hasCheckbox,
   onCheck,
   selectedUsers,
+  searchbarValue,
 }: {
   hasCheckbox?: boolean;
   onCheck?: (user: User) => void;
   selectedUsers?: User[];
+  searchbarValue?: string;
 }) {
   const { friends, isLoading } = useFriends();
   const { createChat } = useCreateChat();
   const { removeFriend } = useRemoveFriend();
 
+  let filteredFriends = friends;
+  if (searchbarValue) {
+    filteredFriends = friends?.filter((friend) =>
+      friend?.username?.toLowerCase().includes(searchbarValue.toLowerCase())
+    );
+  }
+
   const isSelected = (friend: User) => {
     if (!selectedUsers) return false;
     return selectedUsers.some((user) => user.id === friend.id);
   };
+
   return (
     <>
       {" "}
@@ -32,7 +42,7 @@ function Friends({
         ? Array.from({ length: 5 }).map((_, i) => (
             <FriendSkeleton key={i} variation="friends" />
           ))
-        : friends?.map((friend) => (
+        : filteredFriends?.map((friend) => (
             <div key={friend.id}>
               <Menus>
                 <Menus.Menu>

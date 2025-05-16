@@ -211,3 +211,40 @@ export const leaveChat = async (chatId: string, userId: string) => {
   // If the chat still has users, return the updated chat
   return { updatedChat, leavingUser };
 };
+
+export const addUsersToGroup = async (chatId: string, userIds: string[]) => {
+  const chat = await prisma.chat.findUnique({
+    where: { id: chatId },
+    include: { users: true },
+  });
+
+  if (!chat) {
+    throw new AppError("Chat not found", 404);
+  }
+
+  const existingUserIds = chat.users.map((user) => user.id);
+  const newUserIds = userIds.filter((id) => !existingUserIds.includes(id));
+
+  if (newUserIds.length === 0) {
+    throw new AppError("All users are already in the group", 400);
+  }
+
+  const addedUsers = await prisma.user.findMany({
+    where: { id: { in: newUserIds } },
+    select: { id: true, username: true },
+  });
+
+  const updatedChat = await prisma.chat.update({
+    where: { id: chatId },
+    data: {
+      users: {
+        connect: newUserIds.map((userId) => ({ id: userId })),
+      },
+    },
+    include: {
+      users: true,
+    },
+  });
+
+  return { updatedChat, addedUsers };
+};

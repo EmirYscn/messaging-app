@@ -32,7 +32,7 @@ function FriendsList() {
 
           <SentFriendRequests searchbarValue={searchbarValue} />
 
-          <Friends />
+          <Friends searchbarValue={searchbarValue} />
         </div>
       </div>
     </div>

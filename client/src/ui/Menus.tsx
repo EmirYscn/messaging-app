@@ -316,7 +316,7 @@ function Toggle({
   return (
     <button
       onClick={handleClick}
-      className={`w-full bg-none border-none px-4 py-2 hover:bg-[var(--color-grey-100)] focus:outline-none ${className}`}
+      className={`w-full bg-none border-none px-4 py-2 hover:bg-[var(--color-brand-100)]/10 focus:outline-none ${className}`}
     >
       {children || icon || (
         <HiEllipsisVertical className="w-6 h-6 text-[var(--color-grey-700)] " />

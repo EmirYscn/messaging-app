@@ -3,11 +3,11 @@ import { socket } from "../services/socket";
 import { useUser } from "../hooks/useUser";
 import { FaPlus } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
-import { Chat, MESSAGE_TYPE } from "../types/types";
+import { Chat, SocketMessageType } from "../types/types";
 import { useTranslation } from "react-i18next";
 import Menus from "./Menus";
 import { MdPhotoLibrary } from "react-icons/md";
-import { useSendImage } from "../hooks/useSendImage";
+import { useUploadMedia } from "../hooks/useUploadMedia";
 import toast from "react-hot-toast";
 
 type MessageInputProps = {
@@ -18,12 +18,14 @@ type MessageInputProps = {
 function MessageInput({ chat, isConnected }: MessageInputProps) {
   const { t } = useTranslation("chats");
   const { user } = useUser();
+  const { sendMedia, isLoading: isMediaLoading } = useUploadMedia();
+
   const [message, setMessage] = useState("");
+  const [mediaPreview, setMediaPreview] = useState("");
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [imagePreview, setImagePreview] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const { sendImage } = useSendImage();
 
   function handlePhotoClick() {
     fileInputRef.current?.click();
@@ -32,51 +34,43 @@ function MessageInput({ chat, isConnected }: MessageInputProps) {
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 0.5 * 1024 * 1024) {
-        toast.error("Image size exceeds 500KB");
-        setImagePreview("");
-        setImageFile(null);
+      if (file.size > 1 * 1024 * 1024) {
+        toast.error("Media size exceeds 1MB");
+        setMediaPreview("");
+        setMediaFile(null);
         return;
       }
+
       const previewUrl = URL.createObjectURL(file);
-      setImagePreview(previewUrl);
-      setImageFile(file);
+      setMediaPreview(previewUrl);
+      setMediaFile(file);
     }
   }
 
   async function handleMessageSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !chat) return;
-    if (imageFile === null && message.trim() === "") return; // Prevent sending empty messages
-    if (!user) return;
-    if (message) {
-      const data = {
-        content: message,
-        chatId: chat?.id,
-        senderId: user?.id,
-        type: "TEXT" as MESSAGE_TYPE,
-      };
-      socket.emit("send_message", data);
-    }
-    // let imageUrl = "";
-    // if (imageFile) {
-    //   imageUrl = await sendImage(imageFile);
-    // }
-    if (imageFile) {
-      sendImage(imageFile);
-    }
+    if (mediaFile === null && message.trim() === "") return; // Prevent sending empty messages
 
-    // // socket.emit("send_message", {
-    // //   content: message,
-    // //   image: imageUrl,
-    // //   chatId: chat.id,
-    // //   senderId: user.id,
-    // //   type: imageUrl ? "IMAGE" : "TEXT",
-    // // });
+    const socketData: SocketMessageType = {
+      content: message,
+      chatId: chat?.id,
+    };
 
-    setMessage("");
-    setImagePreview("");
-    setImageFile(null);
+    try {
+      if (mediaFile) {
+        const media = await sendMedia(mediaFile);
+        socketData.media = media;
+      }
+      socket.emit("send_message", socketData);
+
+      // Reset input fields
+      setMessage("");
+      setMediaPreview("");
+      setMediaFile(null);
+    } catch (err) {
+      console.error("Failed to send message with media:", err);
+    }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -86,11 +80,12 @@ function MessageInput({ chat, isConnected }: MessageInputProps) {
     }
   }
 
+  // cleanup function to revoke the object URL
   useEffect(() => {
     return () => {
-      if (imagePreview) URL.revokeObjectURL(imagePreview);
+      if (mediaPreview) URL.revokeObjectURL(mediaPreview);
     };
-  }, [imagePreview]);
+  }, [mediaPreview]);
 
   return (
     <>
@@ -98,23 +93,34 @@ function MessageInput({ chat, isConnected }: MessageInputProps) {
         onSubmit={handleMessageSubmit}
         className="flex flex-col gap-4 border-t-2 border-[var(--color-grey-100)] "
       >
-        {imagePreview && (
+        {mediaPreview && (
           <div className="relative w-32 h-32 flex justify-center ml-6 lg:ml-12 mt-4 mb-2">
             <img
-              src={imagePreview}
+              src={mediaPreview}
               alt="Preview"
-              className="w-32 h-32 object-cover mb-2 rounded-lg"
+              className={`w-32 h-32 object-cover mb-2 rounded-lg transition-opacity ${
+                isMediaLoading ? "opacity-50" : "opacity-100"
+              }`}
             />
-            <button
-              type="button"
-              onClick={() => {
-                setImagePreview("");
-                setImageFile(null);
-              }}
-              className="absolute top-2 right-2 bg-white text-black text-xs px-1 rounded-full"
-            >
-              ✕
-            </button>
+            {/* Spinner overlay */}
+            {isMediaLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-white border-t-blue-500 rounded-full animate-spin"></div>
+              </div>
+            )}
+            {/* Remove button */}
+            {!isMediaLoading && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMediaPreview("");
+                  setMediaFile(null);
+                }}
+                className="absolute top-2 right-2 bg-white text-black text-xs px-1 rounded-full"
+              >
+                ✕
+              </button>
+            )}
           </div>
         )}
         <div className="flex gap-4 items-cente  px-6 lg:px-12 py-6">
@@ -158,7 +164,7 @@ function MessageInput({ chat, isConnected }: MessageInputProps) {
           <button
             type="submit"
             className="text-xl disabled:opacity-50"
-            disabled={!isConnected || (!message && !imageFile)}
+            disabled={!isConnected || (!message && !mediaFile)}
           >
             <IoMdSend />
           </button>

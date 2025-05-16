@@ -1,11 +1,16 @@
 import { CHAT_TYPE, Message, User } from "@prisma/client";
 import * as messageQueries from "../db/message.queries";
-import { catchAsyncSocket, TypedIO, TypedSocket } from "../sockets/types";
+import {
+  catchAsyncSocket,
+  SocketMessageType,
+  TypedIO,
+  TypedSocket,
+} from "../sockets/types";
 import { userSocketMap } from "../sockets/socketRegistry";
-import { decryptText, encryptText } from "../utils/crypto";
+import { encryptText } from "../utils/crypto";
 
 export const sendMessage = catchAsyncSocket(
-  async (socket: TypedSocket, io: TypedIO, data: Message) => {
+  async (socket: TypedSocket, io: TypedIO, data: SocketMessageType) => {
     const user = socket.data.user as User;
     console.log(
       `User with DBID: ${user.id} sent message: ${data.content} to chat: ${data.chatId}`
@@ -14,14 +19,19 @@ export const sendMessage = catchAsyncSocket(
     if (typeof data.content !== "string") {
       throw new Error("Invalid message content: must be a string");
     }
-    const encryptedContent = encryptText(data.content);
+
+    let encryptedContent = data.content;
+    if (data.content.length > 0) {
+      encryptedContent = encryptText(data.content);
+    }
+
     // 1) Store message in database
     const dataToStore = {
       ...data,
       content: encryptedContent,
     };
     const { newMsg: createdMessage, updatedChat } =
-      await messageQueries.createMessage(dataToStore);
+      await messageQueries.createMessage(dataToStore, user.id);
 
     // 2) Emit message
     if (createdMessage)

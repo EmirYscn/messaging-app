@@ -18,6 +18,7 @@ function NewGroupPanel({ onBack, onSuccess }: NewGroupProps) {
   const { t } = useTranslation("chats");
   const { t: tCommon } = useTranslation("common");
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [searchbarValue, setSearchbarValue] = useState("");
 
   const [isCreatingGroupFinal, setIsCreatingGroupFinal] = useState(false);
 
@@ -82,7 +83,11 @@ function NewGroupPanel({ onBack, onSuccess }: NewGroupProps) {
         )}
 
         <div className="px-4">
-          <Searchbar />
+          <Searchbar
+            placeholder={tCommon("searchFriends")}
+            searchValue={searchbarValue}
+            setSearchValue={setSearchbarValue}
+          />
         </div>
         <div className="flex flex-col gap-2 overflow-y-auto">
           <h1 className="px-4 text-xl font-semibold">{tCommon("friends")}</h1>
@@ -90,6 +95,7 @@ function NewGroupPanel({ onBack, onSuccess }: NewGroupProps) {
             hasCheckbox={true}
             onCheck={(user: User) => handleUserSelection(user)}
             selectedUsers={selectedUsers}
+            searchbarValue={searchbarValue}
           />
         </div>
         {selectedUsers.length > 0 && (

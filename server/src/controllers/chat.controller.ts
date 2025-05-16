@@ -124,7 +124,37 @@ export const leaveChat = catchAsync(
     // Notify other users in the chat
     const notifiedUserIds = updatedChat?.users.map((user) => user.id);
     if (notifiedUserIds.length > 0)
-      notifyUsers(notifiedUserIds, "user_left", { chatId, leavingUser });
+      notifyUsers(notifiedUserIds, "user_left_group", { chatId, leavingUser });
+
+    res.status(200).json({ status: "success", updatedChat });
+  }
+);
+
+export const addUserToChat = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id: chatId } = req.params;
+    const { userIds } = req.body;
+
+    if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+      return next(new AppError("User IDs are required", 400));
+    }
+
+    const { updatedChat, addedUsers } = await chatQueries.addUsersToGroup(
+      chatId,
+      userIds
+    );
+
+    // Notify other users in the chat
+    const notifiedUserIds = updatedChat?.users.map((user) => user.id);
+    if (notifiedUserIds.length > 0)
+      notifyUsers(notifiedUserIds, "users_joined_group", {
+        chatId,
+        joinedUsers: addedUsers,
+      });
+
+    // Notify the added users
+    const addedUserIds = addedUsers.map((user) => user.id);
+    notifyUsers(addedUserIds, "chat_created");
 
     res.status(200).json({ status: "success", updatedChat });
   }

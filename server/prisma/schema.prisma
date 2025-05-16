@@ -36,6 +36,12 @@ enum MESSAGE_TYPE {
   AUDIO
 }
 
+enum MEDIA_TYPE {
+  IMAGE
+  VIDEO
+  AUDIO
+}
+
 model Profile {
   id  String  @id @default(uuid())
   bio String?
@@ -105,6 +111,7 @@ model Message {
   chatId String
 
   chatAsLastMessage Chat? @relation("ChatLastMessage")
+  media Media[] // List of media files associated with the message
 }
 
 model Friendship {
@@ -135,4 +142,16 @@ model FriendRequest {
   @@index([senderId])
   @@index([receiverId]) 
   @@unique([senderId, receiverId]) // Unique constraint to prevent duplicate friend requests
+}
+
+model Media {
+  id        String @id @default(uuid())
+  url       String // URL to the media file
+  filePath  String // Local file path to the media file
+  type      MEDIA_TYPE // Type of media (e.g., image, video, audio)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  message   Message? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId String?
 }
