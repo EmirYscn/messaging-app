@@ -1,5 +1,5 @@
 // socket/types.ts
-import { CHAT_TYPE, Message, User } from "@prisma/client";
+import { CHAT_TYPE, Media, Message, User } from "@prisma/client";
 import { Server, Socket } from "socket.io";
 
 export interface ServerToClientEvents {
@@ -14,12 +14,19 @@ export interface ServerToClientEvents {
   connect_error: (error: Error) => void;
   friend_requests_updated: () => void;
   friends_updated: () => void;
-  messages_updated: () => void;
-  user_left: (data: { chatId: string; leavingUser: User }) => void;
+  messages_updated: (data: { chatId: string }) => void;
+  user_left_group: (data: { chatId: string; leavingUser: User }) => void;
+  users_joined_group: (data: { chatId: string; joinedUsers: User[] }) => void;
 }
 
+export type SocketMessageType = {
+  content: string;
+  chatId: string;
+  media?: Media;
+};
+
 export interface ClientToServerEvents {
-  send_message: (data: Message) => void;
+  send_message: (data: SocketMessageType) => void;
   join_room: (data: { chatId: string; chatType: CHAT_TYPE }) => void;
   leave_room: (data: { chatId: string; chatType: CHAT_TYPE }) => void;
   add_to_active_users: (data: User) => void;

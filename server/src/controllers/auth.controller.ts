@@ -94,7 +94,7 @@ export const login = async (
         maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
       });
 
-      // Simply return the token and user info
+      // Simply return the user info
       return res.json({
         user: {
           id: user.id,

@@ -57,8 +57,6 @@ export type LoginCredentials = {
 export const login = async (data: LoginCredentials): Promise<User> => {
   try {
     const res = await api.post("/api/v1/auth/login", data);
-    // const token = res.data.token;
-    // localStorage.setItem("jwt", token);
 
     // connect socket
     connectSocket();

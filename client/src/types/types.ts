@@ -8,6 +8,7 @@ export type {
   ROLE,
   CHAT_TYPE,
   MESSAGE_TYPE,
+  MEDIA_TYPE,
   FRIEND_REQUEST_STATUS,
   User,
   Profile,
@@ -23,4 +24,6 @@ export type {
   ClientToServerEvents,
   ServerToClientEvents,
   FriendRequest,
+  Media,
+  SocketMessageType,
 } from "../../../shared/types";

@@ -1,6 +1,8 @@
-import { Message, Prisma } from "@prisma/client";
+import { Media, Message, Prisma } from "@prisma/client";
 import { prisma } from "./prismaClient";
-import { decryptMessageContent, decryptText } from "../utils/crypto";
+import { decryptMessageContent } from "../utils/crypto";
+import { SocketMessageType } from "../sockets/types";
+import { deleteMediasFromBucket } from "../middlewares/supabase";
 
 export const getMessages = async (chatId: string) => {
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -27,6 +29,9 @@ export const getMessages = async (chatId: string) => {
       sender: {
         select: { id: true, username: true, avatar: true, role: true },
       },
+      media: {
+        select: { id: true, url: true, type: true },
+      },
     },
     orderBy: { createdAt: "desc" },
     take: 20,
@@ -34,30 +39,44 @@ export const getMessages = async (chatId: string) => {
 
   const orderedMessages = messages.reverse();
 
-  const decryptedMessages = orderedMessages.map((msg) => ({
-    ...msg,
-    content: msg.type === "TEXT" ? decryptText(msg.content) : msg.content,
-  }));
+  const decryptedMessages = orderedMessages.map((msg) =>
+    decryptMessageContent(msg)
+  );
 
   return { messages: decryptedMessages, count: totalCount };
 };
 
-export const createMessage = async (message: Message) => {
-  const { chatId, senderId, content, type } = message;
+export const createMessage = async (
+  data: SocketMessageType,
+  senderId: string
+) => {
+  const { chatId, content, media: mediaData } = data;
   const [newMsg, updatedChat] = await prisma.$transaction(async (tx) => {
+    const messageType = mediaData?.type || "TEXT";
+
     const newMsg = await tx.message.create({
       data: {
         chatId,
         senderId,
         content,
-        type,
+        type: messageType,
       },
       include: {
         sender: {
           select: { id: true, username: true, avatar: true, role: true },
         },
+        media: {
+          select: { id: true, url: true, type: true },
+        },
       },
     });
+
+    if (mediaData?.id) {
+      await tx.media.update({
+        where: { id: mediaData.id },
+        data: { messageId: newMsg.id },
+      });
+    }
 
     const updatedChat = await tx.chat.update({
       where: { id: newMsg.chatId },
@@ -75,7 +94,19 @@ export const createMessage = async (message: Message) => {
       },
     });
 
-    return [newMsg, updatedChat];
+    const fullMessage = await tx.message.findUnique({
+      where: { id: newMsg.id },
+      include: {
+        sender: {
+          select: { id: true, username: true, avatar: true, role: true },
+        },
+        media: {
+          select: { id: true, url: true, type: true },
+        },
+      },
+    });
+
+    return [fullMessage, updatedChat];
   });
 
   const decryptedContent = decryptMessageContent(newMsg);
@@ -87,16 +118,46 @@ export const createMessage = async (message: Message) => {
 };
 
 export const deleteMessages = async (messageIds: string[]) => {
-  const messagesToDelete = await prisma.message.findFirst({
-    where: { id: { in: messageIds } },
-    select: { chat: { include: { users: { select: { id: true } } } } },
+  const messagesToDelete = await prisma.$transaction(async (tx) => {
+    const messages = await tx.message.findMany({
+      where: { id: { in: messageIds } },
+      select: {
+        chatId: true,
+        chat: {
+          include: {
+            users: { select: { id: true } },
+          },
+        },
+        media: {
+          select: { filePath: true },
+        },
+      },
+    });
+
+    await tx.message.deleteMany({
+      where: { id: { in: messageIds } },
+    });
+
+    return messages;
   });
 
-  await prisma.message.deleteMany({
-    where: { id: { in: messageIds } },
-  });
+  const mediasToDelete = messagesToDelete
+    .map(
+      (msg) => msg.media?.map((media) => media.filePath).filter(Boolean) ?? []
+    )
+    .flat();
 
-  return messagesToDelete?.chat.users;
+  if (mediasToDelete.length > 0) {
+    await deleteMediasFromBucket(mediasToDelete);
+  }
+
+  const chatUsers = messagesToDelete.flatMap((msg) => msg.chat.users);
+  const chatId = messagesToDelete[0]?.chatId ?? null;
+
+  return {
+    chatUsers,
+    chatId,
+  };
 };
 
 export const createImageMessage = async (

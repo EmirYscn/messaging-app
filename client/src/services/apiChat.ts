@@ -129,3 +129,21 @@ export const leaveGroupChat = async (chatId: string) => {
     throw new Error("An unexpected error occurred.");
   }
 };
+
+export const addUsersToGroup = async (chatId: string, userIds: string[]) => {
+  try {
+    const res = await api.post(`/api/v1/chats/${chatId}/add-users`, {
+      userIds,
+    });
+    return res.data.chatId;
+  } catch (error: unknown) {
+    // Extract error message from response
+    if (axios.isAxiosError(error)) {
+      const serverMessage =
+        error.response?.data?.message || "Couldn't add users to group";
+      throw new Error(serverMessage);
+    }
+
+    throw new Error("An unexpected error occurred.");
+  }
+};

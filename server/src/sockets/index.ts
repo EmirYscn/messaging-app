@@ -39,25 +39,6 @@ export const handleVerifyToken = (
     return next(new Error("Unauthorized, please re-login."));
   }
 };
-// export const handleVerifyToken = (
-//   socket: TypedSocket,
-//   next: SocketNextFunction
-// ) => {
-//   const { token } = socket.handshake.auth;
-//   if (!token) {
-//     console.log("❌ No token provided");
-//     return next(new Error("Unauthorized, please re-login."));
-//   }
-
-//   try {
-//     const decoded = jwt.verify(token, JWT_SECRET);
-//     socket.data.user = decoded; // Attach user info to socket
-//     next();
-//   } catch (err) {
-//     console.error("JWT Error:", err);
-//     return next(new Error("Unauthorized, please re-login."));
-//   }
-// };
 
 export const handleUserSocketMapping = (socket: TypedSocket, user: User) => {
   // handle user socket mapping

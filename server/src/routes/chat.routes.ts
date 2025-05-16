@@ -17,8 +17,10 @@ router.post(
   chatController.createGroupChat
 );
 router.patch("/:id/leave", requireAuth, chatController.leaveChat);
+router.post("/:id/add-users", requireAuth, chatController.addUserToChat);
 router.get("/public-chats", chatController.getPublicChats);
 router.get("/:id", requireAuth, chatController.getChat);
+
 router.get("/:id/messages", requireAuth, chatController.getMessages);
 
 export { router };

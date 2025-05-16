@@ -24,6 +24,11 @@ export enum FRIEND_REQUEST_STATUS {
   ACCEPTED = "ACCEPTED",
   DECLINED = "DECLINED",
 }
+export enum MEDIA_TYPE {
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+  AUDIO = "AUDIO",
+}
 
 export type Profile = {
   readonly id: string;
@@ -84,6 +89,20 @@ export type Message = {
 
   chatId: string;
   chat: Chat;
+
+  media?: Media[];
+};
+
+export type Media = {
+  readonly id: string;
+  url: string;
+  type: MEDIA_TYPE;
+
+  readonly createdAt: Date | string;
+  readonly updatedAt: Date | string;
+
+  messageId: string;
+  message: Message;
 };
 
 export type FriendRequest = {
@@ -137,6 +156,12 @@ export type UpdateChatDTO = Partial<CreateChatDTO>;
 
 // Socket.io types
 
+export type SocketMessageType = {
+  content: string;
+  chatId: string;
+  media?: Media;
+};
+
 export interface ServerToClientEvents {
   receive_message: (data: Message) => void;
   add_to_active_users: (data: User) => void;
@@ -148,12 +173,13 @@ export interface ServerToClientEvents {
   error_occurred: (message: { message: string }) => void;
   friend_requests_updated: () => void;
   friends_updated: () => void;
-  messages_updated: () => void;
-  user_left: (data: { chatId: string; leavingUser: User }) => void;
+  messages_updated: (data: { chatId: string }) => void;
+  user_left_group: (data: { chatId: string; leavingUser: User }) => void;
+  users_joined_group: (data: { chatId: string; joinedUsers: User[] }) => void;
 }
 
 export interface ClientToServerEvents {
-  send_message: (data: CreateMessageDTO) => void;
+  send_message: (data: SocketMessageType) => void;
   join_room: (data: { chatId: string; chatType: CHAT_TYPE }) => void;
   leave_room: (data: { chatId: string; chatType: CHAT_TYPE }) => void;
   add_to_active_users: (data: User) => void;

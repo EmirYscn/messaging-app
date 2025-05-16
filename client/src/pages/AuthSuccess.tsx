@@ -4,8 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Spinner from "../ui/Spinner";
 import { connectSocket } from "../services/socket";
-// import { useUser } from "../hooks/useUser";
-import { getCurrentUser } from "../services/apiAuth";
 
 function AuthSuccess() {
   const [searchParams] = useSearchParams();
@@ -20,32 +18,31 @@ function AuthSuccess() {
 
     const fetchUser = async () => {
       const encodedData = searchParams.get("data");
-      try {
-        const user = await getCurrentUser();
-
-        queryClient.setQueryData(["user"], user);
-
-        connectSocket();
-
-        if (encodedData) {
+      if (encodedData) {
+        try {
           const decodedData = JSON.parse(atob(encodedData));
-          const { provider } = decodedData;
+          const { user, provider } = decodedData;
+
+          queryClient.setQueryData(["user"], user);
+
+          connectSocket();
+
           toast.success(
             `Successfully logged in ${provider ? `with ${provider}` : ""}`
           );
-        }
 
-        setTimeout(() => {
-          navigate("/", { replace: true });
-        }, 300);
-      } catch {
-        toast.error("Authentication failed");
-        navigate("/login", { replace: true });
+          setTimeout(() => {
+            navigate("/", { replace: true });
+          }, 300);
+        } catch {
+          toast.error("Authentication failed");
+          navigate("/login", { replace: true });
+        }
       }
     };
 
     fetchUser();
-  }, [navigate, queryClient]);
+  }, [navigate, queryClient, searchParams]);
 
   // useEffect(() => {
   //   if (effectRan.current) return; // Prevent running twice

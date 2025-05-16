@@ -13,7 +13,7 @@ function Searchbar({
   setSearchValue,
 }: SearchbarProps) {
   return (
-    <div className="flex gap-4 items-center bg-[var(--color-grey-100)] px-4 py-1 rounded-lg shadow-sm">
+    <div className="flex gap-4 items-center px-4 py-1 rounded-lg shadow-sm">
       <label
         htmlFor="searchbar"
         className="cursor-pointer text-[var(--color-grey-400)]"
