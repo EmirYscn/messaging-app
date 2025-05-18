@@ -9,11 +9,13 @@ import FriendSkeleton from "./FriendSkeleton";
 import { User } from "../types/types";
 
 function Friends({
+  filterList,
   hasCheckbox,
   onCheck,
   selectedUsers,
   searchbarValue,
 }: {
+  filterList?: string[];
   hasCheckbox?: boolean;
   onCheck?: (user: User) => void;
   selectedUsers?: User[];
@@ -24,8 +26,16 @@ function Friends({
   const { removeFriend } = useRemoveFriend();
 
   let filteredFriends = friends;
+
+  filteredFriends = filteredFriends?.filter((friend) => {
+    if (filterList) {
+      return !filterList?.includes(friend.id);
+    }
+    return true;
+  });
+
   if (searchbarValue) {
-    filteredFriends = friends?.filter((friend) =>
+    filteredFriends = filteredFriends?.filter((friend) =>
       friend?.username?.toLowerCase().includes(searchbarValue.toLowerCase())
     );
   }

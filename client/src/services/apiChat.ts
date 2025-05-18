@@ -50,10 +50,13 @@ export const getPublicChats = async (): Promise<Chat[]> => {
 };
 
 export const getMessages = async (
-  chatId: string
+  chatId: string,
+  cursor?: string | null
 ): Promise<{ messages: Message[]; count: number }> => {
   try {
-    const res = await api.get(`/api/v1/chats/${chatId}/messages`);
+    const res = await api.get(`/api/v1/chats/${chatId}/messages`, {
+      params: cursor ? { cursor } : {},
+    });
     return { messages: res.data.messages, count: res.data.count };
   } catch (error: unknown) {
     // Extract error message from response

@@ -42,8 +42,12 @@ export const getPublicChats = catchAsync(
 export const getMessages = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
+    const { cursor } = req.query;
 
-    const { messages, count } = await messageQueries.getMessages(id);
+    const { messages, count } = await messageQueries.getMessages(
+      id,
+      cursor as string
+    );
 
     res.status(200).json({ status: "success", messages, count });
   }

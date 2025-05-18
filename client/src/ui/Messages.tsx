@@ -16,20 +16,50 @@ type MessagesProps = {
 function Messages({ isSelecting, setSelectedMessages }: MessagesProps) {
   const { t } = useTranslation("chats");
   const { chat } = useChat();
+  // const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  //   useChatMessages();
   const { messages, isLoading } = useChatMessages();
 
+  // const messages = data?.pages.flatMap((page) => page.messages) || [];
+
+  // const { ref: topRef, inView } = useInView();
   const bottomRef = useRef<HTMLDivElement>(null);
+  // const hasMounted = useRef(false);
 
   useReceiveMessage();
 
+  // useEffect(() => {
+  //   if (!hasMounted.current) {
+  //     hasMounted.current = true;
+  //     return; // Don't fetch on initial mount
+  //   }
+
+  //   if (inView && hasNextPage) {
+  //     fetchNextPage();
+  //   }
+  // }, [inView, hasNextPage, fetchNextPage]);
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (messages.length > 0 && !isLoading && bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isLoading]);
 
   return (
     <div
       className={`flex flex-col gap-4 bg-[var(--color-grey-50)] text-gray-900 p-4`}
     >
+      {/* {hasNextPage && (
+        <div ref={topRef}>
+          {isFetchingNextPage && (
+            <div className="flex flex-col gap-4 mb-4">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <MessageSkeleton key={i} isCurrentUser={i % 2 === 1} />
+              ))}
+            </div>
+          )}
+        </div>
+      )} */}
       {chat?.type === "PUBLIC" && (
         <div className="flex items-center justify-center ">
           <span className="bg-[var(--color-grey-200)] opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold">

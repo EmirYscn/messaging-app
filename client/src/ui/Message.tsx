@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useDeleteMessages } from "../hooks/useDeleteMessages";
 import { MediaWithSkeleton } from "./MediaWithSkeleton";
+import { useDownloadFile } from "../hooks/useDownloadFile";
 
 type MessageProps = {
   message: MessageType;
@@ -28,6 +29,7 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
 
   const { createChat, isLoading: isCreating } = useCreateChat();
   const { deleteMessages, isLoading: isDeleting } = useDeleteMessages();
+  const { downloadFromPublicUrl } = useDownloadFile();
 
   const [isHovering, setIsHovering] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
@@ -134,6 +136,16 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                   className="transition-transform duration-300 group-hover:-translate-x-2 hover:bg-transparent"
                 />
                 <Menus.List id={message.id}>
+                  {message.type === "IMAGE" && (
+                    <Menus.Button
+                      icon={<IoMdDownload />}
+                      onClick={() => {
+                        downloadFromPublicUrl(message.media![0].url);
+                      }}
+                    >
+                      <span className="text-sm">{chatsT("download")}</span>
+                    </Menus.Button>
+                  )}
                   {chat?.type !== "PRIVATE" && !isCurrentUser && (
                     <Menus.Button
                       icon={<IoCopyOutline />}
@@ -155,16 +167,7 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                       <span className="text-sm">{t("copy")}</span>
                     </Menus.Button>
                   )}
-                  {message.type === "IMAGE" && (
-                    <Menus.Button
-                      icon={<IoMdDownload />}
-                      onClick={() => {
-                        // Implement download functionality
-                      }}
-                    >
-                      <span className="text-sm">{chatsT("download")}</span>
-                    </Menus.Button>
-                  )}
+
                   {isCurrentUser && (
                     <Menus.Button
                       icon={<BsFillTrashFill />}
