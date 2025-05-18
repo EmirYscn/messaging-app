@@ -10,15 +10,23 @@ import ChatSkeleton from "./ChatSkeleton";
 import { useTranslation } from "react-i18next";
 import Menus from "./Menus";
 import { BiSelectMultiple } from "react-icons/bi";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Button from "./Button";
 import NewChat from "./NewChatPanel";
+import ChatsCustomContextMenu from "./ChatsCustomContextMenu";
 
 function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
   const { t } = useTranslation("common");
   const { t: tChat } = useTranslation("chats");
   const { chats, isLoading } = useChats();
   useSocketChat();
+  const chatListRef = useRef<HTMLDivElement>(null);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    chatId: string;
+    chatType: "GROUP" | "PRIVATE" | "PUBLIC";
+  } | null>(null);
 
   const [isCreatingChat, setIsCreatingChat] = useState(false);
 
@@ -53,8 +61,8 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
                       fill="currentColor"
                     ></path>
                     <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
                       d="M0.944298 5.52617L2.99998 8.84848V17.3333C2.99998 18.8061 4.19389 20 5.66665 20H19.3333C20.8061 20 22 18.8061 22 17.3333V6.66667C22 5.19391 20.8061 4 19.3333 4H1.79468C1.01126 4 0.532088 4.85997 0.944298 5.52617ZM4.99998 8.27977V17.3333C4.99998 17.7015 5.29845 18 5.66665 18H19.3333C19.7015 18 20 17.7015 20 17.3333V6.66667C20 6.29848 19.7015 6 19.3333 6H3.58937L4.99998 8.27977Z"
                       fill="currentColor"
                     ></path>
@@ -78,7 +86,10 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
             </div>
           </div>
           <Searchbar />
-          <div className="flex flex-col gap-3 overflow-y-auto">
+          <div
+            className="flex flex-col gap-3 overflow-y-auto "
+            ref={chatListRef}
+          >
             <NavLink
               to={"/"}
               onClick={onToggleChats}
@@ -105,6 +116,32 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
                     to={`/chat/${chat.id}`}
                     key={chat.id}
                     onClick={onToggleChats}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+
+                      const container = chatListRef.current;
+                      if (!container) return;
+
+                      const rect = container.getBoundingClientRect();
+                      const menuWidth = 160;
+                      const menuHeight = 100;
+
+                      let x = e.clientX;
+                      let y = e.clientY;
+
+                      // Clamp X and Y so the menu stays inside the chat container
+                      if (x + menuWidth > rect.right)
+                        x = rect.right - menuWidth;
+                      if (y + menuHeight > rect.bottom)
+                        y = rect.bottom - menuHeight;
+
+                      setContextMenu({
+                        x,
+                        y,
+                        chatId: chat.id,
+                        chatType: chat.type,
+                      });
+                    }}
                     className={({ isActive }) =>
                       `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
                         isActive ? "bg-[var(--color-grey-100)]" : ""
@@ -129,6 +166,11 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
                     </div>
                   </NavLink>
                 ))}
+
+            <ChatsCustomContextMenu
+              contextMenu={contextMenu}
+              setContextMenu={setContextMenu}
+            />
           </div>
         </div>
       </div>

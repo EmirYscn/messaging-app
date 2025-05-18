@@ -4,7 +4,7 @@ import { decryptMessageContent } from "../utils/crypto";
 import { SocketMessageType } from "../sockets/types";
 import { deleteMediasFromBucket } from "../middlewares/supabase";
 
-export const getMessages = async (chatId: string) => {
+export const getMessages = async (chatId: string, cursor?: string) => {
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
   const chat = await prisma.chat.findUnique({

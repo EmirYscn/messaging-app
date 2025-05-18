@@ -43,9 +43,10 @@ function Open({ children, opens: opensWindowName }: OpenProps) {
 type WindowProps = {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
   name: string;
+  className?: string;
 };
 
-function Window({ children, name }: WindowProps) {
+function Window({ children, name, className }: WindowProps) {
   const { openName, close } = useContext(ModalContext);
 
   const ref = useOutsideClick<HTMLDivElement>(close);
@@ -53,16 +54,16 @@ function Window({ children, name }: WindowProps) {
   if (name !== openName) return null;
 
   return createPortal(
-    <div className="fixed top-0 left-0 w-full h-full bg-[var(--backdrop-color)] backdrop-blur-[4px] z-[1000]">
+    <div className="fixed top-0 left-0 w-full h-full bg-[var(--backdrop-color)] backdrop-blur-[4px] z-[1000] ">
       <div
         ref={ref}
-        className="fixed top-[50%] left-[50%] translate-[-50%] bg-[var(--color-grey-800)] text-[var(--color-grey-50)] rounded-[var(--border-radius-lg)] shadow-[var(--shadow-md)] py-[3.2rem] px-[4rem] transition-all duration-500"
+        className={`fixed top-[50%] left-[50%] translate-[-50%] bg-[var(--color-grey-800)] text-[var(--color-grey-100)] rounded-[var(--border-radius-lg)] shadow-[var(--shadow-md)] py-[2rem] px-[2.2rem] md:py-[3.2rem] md:px-[4rem] transition-all duration-500 ${className}`}
       >
         <button
           className="bg-none border-none p-[0.4rem] radius-[var(--border-radius-sm)] translate-x-[0.8rem] transition-all duration-200 absolute top-[1.2rem] right-[1.9rem] hover:bg[var(--color-grey-100)]"
           onClick={close}
         >
-          <HiXMark />
+          <HiXMark className="w-5 h-5 text-[var(--color-grey-100)]" />
         </button>
         <div>{cloneElement(children, { onCloseModal: close })}</div>
       </div>

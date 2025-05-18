@@ -9,7 +9,15 @@ export function useReceiveMessage() {
     if (!socket) return;
 
     const handleReceiveMessage = (message: Message) => {
-      queryClient.invalidateQueries({ queryKey: ["messages", message.chatId] });
+      queryClient.setQueryData(
+        ["messages", message.chatId],
+        (oldData: { messages: Message[]; count: number }) => {
+          if (!oldData) return { messages: [message] };
+          return {
+            messages: [...oldData.messages, message],
+          };
+        }
+      );
     };
 
     const handleMessagesUpdate = (data: { chatId: string }) => {
