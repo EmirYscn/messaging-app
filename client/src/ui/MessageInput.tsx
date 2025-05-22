@@ -11,11 +11,12 @@ import { useUploadMedia } from "../hooks/useUploadMedia";
 import toast from "react-hot-toast";
 
 type MessageInputProps = {
+  bottomRef: React.RefObject<HTMLDivElement | null>;
   chat: Chat;
   isConnected: boolean;
 };
 
-function MessageInput({ chat, isConnected }: MessageInputProps) {
+function MessageInput({ bottomRef, chat, isConnected }: MessageInputProps) {
   const { t } = useTranslation("chats");
   const { user } = useUser();
   const { sendMedia, isLoading: isMediaLoading } = useUploadMedia();
@@ -68,6 +69,15 @@ function MessageInput({ chat, isConnected }: MessageInputProps) {
       setMessage("");
       setMediaPreview("");
       setMediaFile(null);
+
+      // Scroll to the bottom after sending a message
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+          inline: "nearest",
+        });
+      }, 50);
     } catch (err) {
       console.error("Failed to send message with media:", err);
     }

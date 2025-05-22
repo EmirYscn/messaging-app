@@ -35,6 +35,7 @@ function Chat() {
   const { addToGroup } = useAddToGroup();
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   function handleSelecting() {
     setSelectedMessages([]);
@@ -150,12 +151,19 @@ function Chat() {
         <div ref={containerRef} className="flex-grow overflow-y-auto">
           <Messages
             containerRef={containerRef}
+            bottomRef={bottomRef}
             isSelecting={isSelecting}
             setSelectedMessages={setSelectedMessages}
           />
         </div>
 
-        {chat && <MessageInput chat={chat} isConnected={isConnected} />}
+        {chat && (
+          <MessageInput
+            chat={chat}
+            isConnected={isConnected}
+            bottomRef={bottomRef}
+          />
+        )}
       </div>
 
       {/* Right: Active Users Panel */}

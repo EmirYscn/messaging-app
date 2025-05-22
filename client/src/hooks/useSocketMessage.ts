@@ -8,17 +8,6 @@ export function useReceiveMessage() {
   useEffect(() => {
     if (!socket) return;
 
-    // const handleReceiveMessage = (message: Message) => {
-    //   queryClient.setQueryData(
-    //     ["messages", message.chatId],
-    //     (oldData: { messages: Message[]; count: number }) => {
-    //       if (!oldData) return { messages: [message] };
-    //       return {
-    //         messages: [...oldData.messages, message],
-    //       };
-    //     }
-    //   );
-    // };
     const handleReceiveMessage = (message: Message) => {
       queryClient.setQueryData<
         InfiniteData<{
@@ -34,14 +23,13 @@ export function useReceiveMessage() {
           };
         }
 
-        // Insert message into the **last page** (or whichever logic you want)
         const newPages = [...oldData.pages];
-        const lastPageIndex = newPages.length - 1;
+        const firstPageIndex = 0;
 
-        newPages[lastPageIndex] = {
-          ...newPages[lastPageIndex],
-          messages: [...newPages[lastPageIndex].messages, message],
-          count: newPages[lastPageIndex].count + 1,
+        newPages[firstPageIndex] = {
+          ...newPages[firstPageIndex],
+          messages: [...newPages[firstPageIndex].messages, message],
+          count: newPages[firstPageIndex].count + 1,
         };
 
         return {
