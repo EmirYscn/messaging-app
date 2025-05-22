@@ -23,5 +23,8 @@
   "enterGroupName": "Introduce el nombre del grupo",
   "leaveGroup": "Salir del grupo",
   "addUser": "Añadir usuario",
-  "download": "Descargar"
+  "download": "Descargar",
+  "loading": "Cargando",
+  "loadMore": "Cargar más",
+  "noMoreMessagesFromThisPoint": "No hay más mensajes desde este punto"
 }

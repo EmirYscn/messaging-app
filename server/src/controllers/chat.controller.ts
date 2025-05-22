@@ -44,12 +44,12 @@ export const getMessages = catchAsync(
     const { id } = req.params;
     const { cursor } = req.query;
 
-    const { messages, count } = await messageQueries.getMessages(
+    const { messages, count, nextCursor } = await messageQueries.getMessages(
       id,
       cursor as string
     );
 
-    res.status(200).json({ status: "success", messages, count });
+    res.status(200).json({ status: "success", messages, count, nextCursor });
   }
 );
 

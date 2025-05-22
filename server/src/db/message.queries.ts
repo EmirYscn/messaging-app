@@ -4,6 +4,8 @@ import { decryptMessageContent } from "../utils/crypto";
 import { SocketMessageType } from "../sockets/types";
 import { deleteMediasFromBucket } from "../middlewares/supabase";
 
+const TAKE = 20;
+
 export const getMessages = async (chatId: string, cursor?: string) => {
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
@@ -34,16 +36,26 @@ export const getMessages = async (chatId: string, cursor?: string) => {
       },
     },
     orderBy: { createdAt: "desc" },
-    take: 20,
+    take: TAKE + 1,
+    ...(cursor && {
+      cursor: { id: cursor },
+      skip: 1, // Skip the cursor message itself
+    }),
   });
 
-  const orderedMessages = messages.reverse();
+  const hasMore = messages.length > TAKE;
+  const trimmedMessages = hasMore ? messages.slice(0, TAKE) : messages;
+  const nextCursor = hasMore
+    ? trimmedMessages[trimmedMessages.length - 1].id
+    : null;
+
+  const orderedMessages = trimmedMessages.reverse();
 
   const decryptedMessages = orderedMessages.map((msg) =>
     decryptMessageContent(msg)
   );
 
-  return { messages: decryptedMessages, count: totalCount };
+  return { messages: decryptedMessages, count: totalCount, nextCursor };
 };
 
 export const createMessage = async (
