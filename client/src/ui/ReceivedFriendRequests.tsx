@@ -48,7 +48,8 @@ function ReceivedFriendRequests({
             </div>
             <div className="flex items-center gap-1 px-4">
               <Button
-                icon={<IoMdCheckmark className="text-xl hover:scale-115" />}
+                icon={<IoMdCheckmark className="text-xl" />}
+                className="hover:scale-110 hover:animate-pulse"
                 size="small"
                 variation="accept"
                 disabled={isUpdatingRequest}

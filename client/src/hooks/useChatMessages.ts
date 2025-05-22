@@ -2,26 +2,18 @@ import { useParams } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getMessages } from "../services/apiChat";
 import { Message } from "../types/types";
-
-// export const useChatMessages = () => {
-//   const { chatId } = useParams();
-
-//   const {
-//     isLoading,
-//     data: { messages, count } = { messages: [], count: 0 },
-//     error,
-//   } = useQuery({
-//     queryKey: ["messages", chatId],
-//     queryFn: () => getMessages(chatId!),
-//   });
-
-//   return { isLoading, messages, count, error };
-// };
+import { formatDate } from "../utils/formatDate";
 
 type MessagePage = {
   messages: Message[];
   count: number;
   nextCursor: string | null;
+};
+
+type DateMessage = {
+  id: string;
+  type: "SYSTEM";
+  content: string;
 };
 
 export const useChatMessages = () => {
@@ -43,15 +35,32 @@ export const useChatMessages = () => {
     enabled: !!chatId,
   });
 
-  const messages = data?.pages
+  const flatMessages = data?.pages
     ? data.pages
         .slice()
         .reverse() // reverse pages array to prepend new pages at the start
         .flatMap((page) => page.messages)
     : [];
 
+  const messagesWithDateMarkers: (Message | DateMessage)[] = [];
+  let lastDate = "";
+
+  flatMessages.forEach((msg) => {
+    const messageDate = formatDate(msg.createdAt.toString());
+    if (messageDate !== lastDate) {
+      // Insert a date marker message before the first message of a new date
+      messagesWithDateMarkers.push({
+        id: `date-${messageDate}`, // unique id for date marker
+        type: "SYSTEM",
+        content: messageDate,
+      });
+      lastDate = messageDate;
+    }
+    messagesWithDateMarkers.push(msg);
+  });
+
   return {
-    messages,
+    messages: messagesWithDateMarkers,
     isFetching,
     hasNextPage,
     fetchNextPage,

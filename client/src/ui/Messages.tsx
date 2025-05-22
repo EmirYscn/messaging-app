@@ -11,12 +11,14 @@ import { useInView } from "react-intersection-observer";
 
 type MessagesProps = {
   containerRef: React.RefObject<HTMLDivElement | null>;
+  bottomRef: React.RefObject<HTMLDivElement | null>;
   isSelecting: boolean;
   setSelectedMessages: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 function Messages({
   containerRef,
+  bottomRef,
   isSelecting,
   setSelectedMessages,
 }: MessagesProps) {
@@ -31,7 +33,6 @@ function Messages({
   } = useChatMessages();
 
   const { ref: topRef, inView } = useInView();
-  const bottomRef = useRef<HTMLDivElement>(null);
 
   useReceiveMessage();
 
@@ -127,10 +128,16 @@ function Messages({
       containerRef?.current
     ) {
       if (!userScrolledUp.current) {
-        bottomRef.current.scrollIntoView({ behavior: "smooth" });
+        setTimeout(() => {
+          bottomRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "end",
+            inline: "end",
+          });
+        }, 50);
       }
     }
-  }, [messages, isLoading, isFetchingNextPage, containerRef]);
+  }, [messages, isLoading, isFetchingNextPage, containerRef, bottomRef]);
 
   return (
     <div

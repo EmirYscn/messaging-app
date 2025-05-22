@@ -8,5 +8,6 @@
   "friends": "Amigos",
   "addFriend": "Agregar amigo",
   "receivedRequests": "Solicitudes recibidas",
-  "sentRequests": "Solicitudes enviadas"
+  "sentRequests": "Solicitudes enviadas",
+  "pending": "Pendiente"
 }

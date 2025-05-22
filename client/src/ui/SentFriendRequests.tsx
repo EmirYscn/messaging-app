@@ -28,6 +28,12 @@ function SentFriendRequests({ searchbarValue }: { searchbarValue: string }) {
     DECLINED: "bg-[var(--color-red-700)] text-gray-200",
   };
 
+  const statusText = {
+    PENDING: t("pending"),
+    ACCEPTED: t("accepted"),
+    DECLINED: t("declined"),
+  };
+
   return isSentRequestsLoading ? (
     Array.from({ length: 1 }).map((_, i) => (
       <FriendSkeleton key={i} variation="sent" />
@@ -50,7 +56,7 @@ function SentFriendRequests({ searchbarValue }: { searchbarValue: string }) {
                   statusClass[request.status]
                 }`}
               >
-                {request.status}
+                {statusText[request.status]}
               </div>
             </div>
 
