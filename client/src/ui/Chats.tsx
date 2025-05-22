@@ -13,22 +13,46 @@ import { BiSelectMultiple } from "react-icons/bi";
 import { useRef, useState } from "react";
 import Button from "./Button";
 import NewChat from "./NewChatPanel";
-import ChatsCustomContextMenu from "./ChatsCustomContextMenu";
+import ChatsContextMenu, {
+  ChatsContextMenu as ChatsContextMenuType,
+} from "./CustomContextMenus/ChatsContextMenu";
+import { Chat } from "../types/types";
+import { ContextMenuPosition } from "./CustomContextMenus/ContextMenu";
 
 function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
   const { t } = useTranslation("common");
   const { t: tChat } = useTranslation("chats");
   const { chats, isLoading } = useChats();
   useSocketChat();
-  const chatListRef = useRef<HTMLDivElement>(null);
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-    chatId: string;
-    chatType: "GROUP" | "PRIVATE" | "PUBLIC";
-  } | null>(null);
-
   const [isCreatingChat, setIsCreatingChat] = useState(false);
+
+  const chatListRef = useRef<HTMLDivElement>(null);
+  const [contextMenu, setContextMenu] = useState<ChatsContextMenuType>(null);
+  const [menuPosition, setMenuPosition] = useState<ContextMenuPosition>(null);
+
+  const handleContextMenu = (e: React.MouseEvent, chat: Chat) => {
+    e.preventDefault();
+
+    const container = chatListRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const menuWidth = 160;
+    const menuHeight = 100;
+
+    let x = e.clientX;
+    let y = e.clientY;
+
+    // Clamp X and Y so the menu stays inside the chat container
+    if (x + menuWidth > rect.right) x = rect.right - menuWidth;
+    if (y + menuHeight > rect.bottom) y = rect.bottom - menuHeight;
+
+    setMenuPosition({ x, y });
+    setContextMenu({
+      chatId: chat.id,
+      chatType: chat.type,
+    });
+  };
 
   return (
     <div className="relative h-full overflow-hidden">
@@ -116,32 +140,7 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
                     to={`/chat/${chat.id}`}
                     key={chat.id}
                     onClick={onToggleChats}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-
-                      const container = chatListRef.current;
-                      if (!container) return;
-
-                      const rect = container.getBoundingClientRect();
-                      const menuWidth = 160;
-                      const menuHeight = 100;
-
-                      let x = e.clientX;
-                      let y = e.clientY;
-
-                      // Clamp X and Y so the menu stays inside the chat container
-                      if (x + menuWidth > rect.right)
-                        x = rect.right - menuWidth;
-                      if (y + menuHeight > rect.bottom)
-                        y = rect.bottom - menuHeight;
-
-                      setContextMenu({
-                        x,
-                        y,
-                        chatId: chat.id,
-                        chatType: chat.type,
-                      });
-                    }}
+                    onContextMenu={(e) => handleContextMenu(e, chat)}
                     className={({ isActive }) =>
                       `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
                         isActive ? "bg-[var(--color-grey-100)]" : ""
@@ -167,9 +166,11 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
                   </NavLink>
                 ))}
 
-            <ChatsCustomContextMenu
+            <ChatsContextMenu
               contextMenu={contextMenu}
               setContextMenu={setContextMenu}
+              position={menuPosition}
+              setPosition={setMenuPosition}
             />
           </div>
         </div>

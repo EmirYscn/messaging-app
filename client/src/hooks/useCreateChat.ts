@@ -18,7 +18,9 @@ export function useCreateChat() {
       }>(["chats", "private"]);
 
       const existingChat = existingChats?.chats?.find((chat) =>
-        chat?.users?.some((p) => p.id === oppositeUserId)
+        chat?.users?.some(
+          (p) => p.id === oppositeUserId && chat.type === "PRIVATE"
+        )
       );
       if (existingChat) {
         return existingChat.id;

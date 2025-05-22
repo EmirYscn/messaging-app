@@ -52,12 +52,21 @@ export const getPublicChats = async (): Promise<Chat[]> => {
 export const getMessages = async (
   chatId: string,
   cursor?: string | null
-): Promise<{ messages: Message[]; count: number }> => {
+): Promise<{
+  messages: Message[];
+  count: number;
+  nextCursor: string | null;
+}> => {
   try {
     const res = await api.get(`/api/v1/chats/${chatId}/messages`, {
       params: cursor ? { cursor } : {},
     });
-    return { messages: res.data.messages, count: res.data.count };
+    console.log(res.data);
+    return {
+      messages: res.data.messages,
+      count: res.data.count,
+      nextCursor: res.data.nextCursor,
+    };
   } catch (error: unknown) {
     // Extract error message from response
     if (axios.isAxiosError(error)) {

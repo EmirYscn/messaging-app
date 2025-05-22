@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 import Message from "./Message";
 
@@ -7,59 +7,159 @@ import { useChat } from "../hooks/useChat";
 import { useReceiveMessage } from "../hooks/useSocketMessage";
 import MessageSkeleton from "./MessageSkeleton";
 import { useTranslation } from "react-i18next";
+import { useInView } from "react-intersection-observer";
 
 type MessagesProps = {
+  containerRef: React.RefObject<HTMLDivElement | null>;
   isSelecting: boolean;
   setSelectedMessages: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-function Messages({ isSelecting, setSelectedMessages }: MessagesProps) {
+function Messages({
+  containerRef,
+  isSelecting,
+  setSelectedMessages,
+}: MessagesProps) {
   const { t } = useTranslation("chats");
   const { chat } = useChat();
-  // const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-  //   useChatMessages();
-  const { messages, isLoading } = useChatMessages();
+  const {
+    messages,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useChatMessages();
 
-  // const messages = data?.pages.flatMap((page) => page.messages) || [];
-
-  // const { ref: topRef, inView } = useInView();
+  const { ref: topRef, inView } = useInView();
   const bottomRef = useRef<HTMLDivElement>(null);
-  // const hasMounted = useRef(false);
 
   useReceiveMessage();
 
-  // useEffect(() => {
-  //   if (!hasMounted.current) {
-  //     hasMounted.current = true;
-  //     return; // Don't fetch on initial mount
-  //   }
+  const hasMounted = useRef(false);
+  const initialLoadDone = useRef(false);
+  const userScrolledUp = useRef(false);
 
-  //   if (inView && hasNextPage) {
-  //     fetchNextPage();
-  //   }
-  // }, [inView, hasNextPage, fetchNextPage]);
+  // For storing scroll position before fetching more
+  const previousScrollHeight = useRef(0);
+  const previousScrollTop = useRef(0);
+
+  // Detect scroll to track if user scrolled near top manually
+  useEffect(() => {
+    const container = containerRef?.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      // Distance from bottom
+      const distanceFromBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight;
+      if (distanceFromBottom < 100) {
+        userScrolledUp.current = false; // user near bottom
+      } else {
+        userScrolledUp.current = true; // user scrolled up
+      }
+    };
+
+    container.addEventListener("scroll", onScroll);
+
+    // Initialize userScrolledUp on mount:
+    onScroll();
+
+    return () => container.removeEventListener("scroll", onScroll);
+  }, [containerRef]);
+
+  // Control fetch on inView (load older messages)
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return; // skip first render
+    }
+    if (
+      inView &&
+      hasNextPage &&
+      initialLoadDone.current &&
+      userScrolledUp.current
+    ) {
+      // Save scroll position before fetching
+      const container = containerRef?.current;
+      if (container) {
+        previousScrollHeight.current = container.scrollHeight;
+        previousScrollTop.current = container.scrollTop;
+      }
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage, containerRef]);
+
+  // Mark initial load done
+  useEffect(() => {
+    if (!isLoading && !isFetchingNextPage && messages.length > 0) {
+      initialLoadDone.current = true;
+    }
+  }, [isLoading, isFetchingNextPage, messages]);
+
+  // After loading more messages, adjust scroll position to prevent jump
+  useLayoutEffect(() => {
+    const container = containerRef?.current;
+    if (!container) return;
+
+    if (isFetchingNextPage) return; // wait until fetching is done
+
+    if (
+      previousScrollHeight.current &&
+      previousScrollTop.current !== undefined
+    ) {
+      const newScrollHeight = container.scrollHeight;
+      const heightDiff = newScrollHeight - previousScrollHeight.current;
+      // Adjust scrollTop by the height difference so user stays in place
+      container.scrollTop = previousScrollTop.current + heightDiff;
+
+      // Reset stored values
+      previousScrollHeight.current = 0;
+      previousScrollTop.current = 0;
+    }
+  }, [messages, isFetchingNextPage, containerRef]);
 
   useEffect(() => {
-    if (messages.length > 0 && !isLoading && bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    if (
+      messages.length > 0 &&
+      !isLoading &&
+      !isFetchingNextPage &&
+      bottomRef.current &&
+      containerRef?.current
+    ) {
+      if (!userScrolledUp.current) {
+        bottomRef.current.scrollIntoView({ behavior: "smooth" });
+      }
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, isFetchingNextPage, containerRef]);
 
   return (
     <div
       className={`flex flex-col gap-4 bg-[var(--color-grey-50)] text-gray-900 p-4`}
     >
-      {/* {hasNextPage && (
-        <div ref={topRef}>
+      <div className="flex items-center justify-center" ref={topRef}>
+        <button
+          onClick={() => fetchNextPage()}
+          className="bg-[var(--color-grey-200)] opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold"
+        >
+          {isFetchingNextPage
+            ? t("loading")
+            : hasNextPage
+            ? t("loadMore")
+            : t("noMoreMessagesFromThisPoint")}
+        </button>
+      </div>
+
+      {hasNextPage && (
+        <div>
           {isFetchingNextPage && (
             <div className="flex flex-col gap-4 mb-4">
-              {Array.from({ length: 2 }).map((_, i) => (
+              {Array.from({ length: 5 }).map((_, i) => (
                 <MessageSkeleton key={i} isCurrentUser={i % 2 === 1} />
               ))}
             </div>
           )}
         </div>
-      )} */}
+      )}
       {chat?.type === "PUBLIC" && (
         <div className="flex items-center justify-center ">
           <span className="bg-[var(--color-grey-200)] opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold">
@@ -75,7 +175,7 @@ function Messages({ isSelecting, setSelectedMessages }: MessagesProps) {
           ))}
         </div>
       ) : (
-        messages.map((message) =>
+        messages?.map((message) =>
           message.type === "SYSTEM" ? (
             <div
               key={message.id}

@@ -23,5 +23,8 @@
   "enterGroupName": "Enter group name",
   "leaveGroup": "Leave group",
   "addUser": "Add user",
-  "download": "Download"
+  "download": "Download",
+  "loading": "Loading",
+  "loadMore": "Load more",
+  "noMoreMessagesFromThisPoint": "No more messages from this point"
 }

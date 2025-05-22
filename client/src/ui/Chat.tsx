@@ -11,7 +11,7 @@ import { useSocketConnectionStatus } from "../hooks/useSocketConnectionStatus";
 import { useSocketJoinRoom } from "../hooks/useSocketJoinRoom";
 import Menus from "./Menus";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Button from "./Button";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useDeleteMessages } from "../hooks/useDeleteMessages";
@@ -33,6 +33,8 @@ function Chat() {
   const { deleteMessages, isLoading: isDeleting } = useDeleteMessages();
   const { leaveGroup, isPending: isLeavingGroup } = useLeaveGroup();
   const { addToGroup } = useAddToGroup();
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   function handleSelecting() {
     setSelectedMessages([]);
@@ -145,8 +147,9 @@ function Chat() {
           </div>
         </div>
 
-        <div className="flex-grow overflow-y-auto">
+        <div ref={containerRef} className="flex-grow overflow-y-auto">
           <Messages
+            containerRef={containerRef}
             isSelecting={isSelecting}
             setSelectedMessages={setSelectedMessages}
           />

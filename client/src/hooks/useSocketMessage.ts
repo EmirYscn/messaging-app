@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { socket } from "../services/socket";
-import { useQueryClient } from "@tanstack/react-query";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { Message } from "../types/types";
 
 export function useReceiveMessage() {
@@ -8,16 +8,47 @@ export function useReceiveMessage() {
   useEffect(() => {
     if (!socket) return;
 
+    // const handleReceiveMessage = (message: Message) => {
+    //   queryClient.setQueryData(
+    //     ["messages", message.chatId],
+    //     (oldData: { messages: Message[]; count: number }) => {
+    //       if (!oldData) return { messages: [message] };
+    //       return {
+    //         messages: [...oldData.messages, message],
+    //       };
+    //     }
+    //   );
+    // };
     const handleReceiveMessage = (message: Message) => {
-      queryClient.setQueryData(
-        ["messages", message.chatId],
-        (oldData: { messages: Message[]; count: number }) => {
-          if (!oldData) return { messages: [message] };
+      queryClient.setQueryData<
+        InfiniteData<{
+          messages: Message[];
+          count: number;
+          nextCursor: string | null;
+        }>
+      >(["messages", message.chatId], (oldData) => {
+        if (!oldData) {
           return {
-            messages: [...oldData.messages, message],
+            pages: [{ messages: [message], count: 1, nextCursor: null }],
+            pageParams: [null],
           };
         }
-      );
+
+        // Insert message into the **last page** (or whichever logic you want)
+        const newPages = [...oldData.pages];
+        const lastPageIndex = newPages.length - 1;
+
+        newPages[lastPageIndex] = {
+          ...newPages[lastPageIndex],
+          messages: [...newPages[lastPageIndex].messages, message],
+          count: newPages[lastPageIndex].count + 1,
+        };
+
+        return {
+          ...oldData,
+          pages: newPages,
+        };
+      });
     };
 
     const handleMessagesUpdate = (data: { chatId: string }) => {
