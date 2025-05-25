@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useUser } from "./useUser";
 import { createChat as createChatApi } from "../services/apiChat";
 import { useNavigate } from "react-router";
-import { Chat as ChatType } from "../types/types";
+import { CHAT_TYPE, Chat as ChatType } from "../types/types";
 
 export function useCreateChat() {
   const { user } = useUser();
@@ -19,7 +19,7 @@ export function useCreateChat() {
 
       const existingChat = existingChats?.chats?.find((chat) =>
         chat?.users?.some(
-          (p) => p.id === oppositeUserId && chat.type === "PRIVATE"
+          (p) => p.id === oppositeUserId && chat.type === CHAT_TYPE.PRIVATE
         )
       );
       if (existingChat) {

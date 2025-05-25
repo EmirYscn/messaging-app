@@ -85,10 +85,10 @@ export type Message = {
   readonly deletedAt?: Date | string | null;
 
   senderId: string;
-  sender: User;
+  sender?: User;
 
   chatId: string;
-  chat: Chat;
+  chat?: Chat;
 
   media?: Media[];
 };

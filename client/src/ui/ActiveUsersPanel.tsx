@@ -4,7 +4,7 @@ import { User as UserType } from "../types/types";
 import Menus from "./Menus";
 import { IoPersonAdd } from "react-icons/io5";
 import { BiSolidMessageSquareAdd } from "react-icons/bi";
-import { useSocketActiveUsers } from "../hooks/useSocketActiveUsers";
+import { useSocketActiveUsers } from "../hooks/sockets/useSocketActiveUsers";
 import { useCreateChat } from "../hooks/useCreateChat";
 import { useUser } from "../hooks/useUser";
 import { useFriends } from "../hooks/useFriends";

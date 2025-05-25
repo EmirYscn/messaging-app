@@ -7,8 +7,8 @@ import MessageInput from "./MessageInput";
 import SpinnerMini from "./SpinnerMini";
 
 import { useChat } from "../hooks/useChat";
-import { useSocketConnectionStatus } from "../hooks/useSocketConnectionStatus";
-import { useSocketJoinRoom } from "../hooks/useSocketJoinRoom";
+import { useSocketConnectionStatus } from "../hooks/sockets/useSocketConnectionStatus";
+import { useSocketJoinRoom } from "../hooks/sockets/useSocketJoinRoom";
 import Menus from "./Menus";
 import { useTranslation } from "react-i18next";
 import { useRef, useState } from "react";
@@ -22,6 +22,7 @@ import { IoPersonAdd } from "react-icons/io5";
 import Modal from "./Modal";
 import AddUserModal from "./AddUserModal";
 import { useAddToGroup } from "../hooks/useAddToGroup";
+import { CHAT_TYPE } from "../types/types";
 
 function Chat() {
   const { t } = useTranslation("chats");
@@ -62,9 +63,11 @@ function Chat() {
               <ProfileImage imgSrc={chat?.avatar} size="sm" />
               <div>
                 <h2 className="text-2xl font-semibold">
-                  {chat?.type === "PUBLIC" ? t(`${chat?.name}`) : chat?.name}
+                  {chat?.type === CHAT_TYPE.PUBLIC
+                    ? t(`${chat?.name}`)
+                    : chat?.name}
                 </h2>
-                {chat?.type === "GROUP" && chat?.users && (
+                {chat?.type === CHAT_TYPE.GROUP && chat?.users && (
                   <div className="flex flex-wrap gap-2">
                     {chat.users.slice(0, 4).map((user, index, arr) => (
                       <span
@@ -105,12 +108,12 @@ function Chat() {
                   <Menus.Menu>
                     <Menus.Toggle id={chat.id} />
                     <Menus.List id={chat.id}>
-                      {chat?.type === "PRIVATE" && (
+                      {chat?.type === CHAT_TYPE.PRIVATE && (
                         <Menus.Button icon={<RiInfoCardFill />}>
                           <span className="text-sm">User info</span>
                         </Menus.Button>
                       )}
-                      {chat?.type === "GROUP" && (
+                      {chat?.type === CHAT_TYPE.GROUP && (
                         <Modal.Open opens="addUser">
                           <Menus.Button icon={<IoPersonAdd />}>
                             <span className="text-sm">{t("addUser")}</span>
@@ -126,7 +129,7 @@ function Chat() {
                           {isSelecting ? t("cancel") : t("selectMessages")}
                         </span>
                       </Menus.Button>
-                      {chat.type === "GROUP" && (
+                      {chat.type === CHAT_TYPE.GROUP && (
                         <Menus.Button
                           icon={<IoMdExit />}
                           onClick={() => leaveGroup(chat.id)}
@@ -167,7 +170,7 @@ function Chat() {
       </div>
 
       {/* Right: Active Users Panel */}
-      {chat?.type === "PUBLIC" && <ActiveUsersPanel />}
+      {chat?.type === CHAT_TYPE.PUBLIC && <ActiveUsersPanel />}
     </div>
   );
 }

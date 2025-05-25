@@ -1,4 +1,10 @@
-import { cloneElement, createContext, useContext, useState } from "react";
+import {
+  cloneElement,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
 
@@ -23,6 +29,17 @@ function Modal({ children }: ModalProps) {
   const close = () => setOpenName("");
   const open = setOpenName;
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        close();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <ModalContext.Provider value={{ openName, close, open }}>
       {children}
@@ -30,8 +47,13 @@ function Modal({ children }: ModalProps) {
   );
 }
 
+type OpenableElement = React.ReactElement<{
+  onClick: () => void;
+  onCloseModal?: () => void;
+}>;
+
 type OpenProps = {
-  children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  children: OpenableElement;
   opens: string;
 };
 
@@ -41,7 +63,7 @@ function Open({ children, opens: opensWindowName }: OpenProps) {
 }
 
 type WindowProps = {
-  children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  children: OpenableElement;
   name: string;
   className?: string;
 };

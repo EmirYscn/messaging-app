@@ -69,7 +69,7 @@ function Friends({
         : filteredFriends?.map((friend) => (
             <div
               key={friend.id}
-              className="hover:bg-[var(--color-grey-100)] px-4"
+              className="hover:bg-[var(--color-grey-700)] px-4"
               ref={friendsListRef}
               onContextMenu={(e) => onContextMenu?.(e, friend)}
             >

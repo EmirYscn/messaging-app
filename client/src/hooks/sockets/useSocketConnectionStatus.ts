@@ -3,8 +3,8 @@ import toast from "react-hot-toast";
 import { Socket } from "socket.io-client";
 import { useTranslation } from "react-i18next";
 
-import { socket } from "../services/socket";
-import { useChat } from "./useChat";
+import { socket } from "../../services/socket";
+import { useChat } from "../useChat";
 
 type KnownDisconnectReason =
   | "io server disconnect"

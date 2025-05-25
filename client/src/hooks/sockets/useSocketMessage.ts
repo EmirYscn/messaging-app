@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { socket } from "../services/socket";
+import { socket } from "../../services/socket";
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
-import { Message } from "../types/types";
+import { Message } from "../../types/types";
 
 export function useReceiveMessage() {
   const queryClient = useQueryClient();

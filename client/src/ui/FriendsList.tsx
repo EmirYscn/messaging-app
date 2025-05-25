@@ -6,7 +6,7 @@ import Friends from "./Friends";
 import SentFriendRequests from "./SentFriendRequests";
 import ReceivedFriendRequests from "./ReceivedFriendRequests";
 
-import { useSocketFriends } from "../hooks/useSocketFriends";
+import { useSocketFriends } from "../hooks/sockets/useSocketFriends";
 
 import { FriendsContextMenu as FriendsContextMenuType } from "./CustomContextMenus/FriendsContextMenu";
 import { User } from "../types/types";

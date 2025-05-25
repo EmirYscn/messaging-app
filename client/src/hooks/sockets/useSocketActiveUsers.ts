@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { socket } from "../services/socket";
-import { User } from "../types/types";
+import { socket } from "../../services/socket";
+import { User } from "../../types/types";
 
 export function useSocketActiveUsers() {
   const [activeUsers, setActiveUsers] = useState<User[]>([]);

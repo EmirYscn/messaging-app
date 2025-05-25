@@ -4,10 +4,12 @@ import Message from "./Message";
 
 import { useChatMessages } from "../hooks/useChatMessages";
 import { useChat } from "../hooks/useChat";
-import { useReceiveMessage } from "../hooks/useSocketMessage";
+import { useReceiveMessage } from "../hooks/sockets/useSocketMessage";
 import MessageSkeleton from "./MessageSkeleton";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
+import { CHAT_TYPE, MESSAGE_TYPE } from "../types/types";
+import SpinnerMini from "./SpinnerMini";
 
 type MessagesProps = {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -156,18 +158,8 @@ function Messages({
         </button>
       </div>
 
-      {hasNextPage && (
-        <div>
-          {isFetchingNextPage && (
-            <div className="flex flex-col gap-4 mb-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <MessageSkeleton key={i} isCurrentUser={i % 2 === 1} />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-      {chat?.type === "PUBLIC" && (
+      {hasNextPage && <div>{isFetchingNextPage && <SpinnerMini />}</div>}
+      {chat?.type === CHAT_TYPE.PUBLIC && (
         <div className="flex items-center justify-center ">
           <span className="bg-[var(--color-grey-200)] opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold">
             {messages.length > 0 ? t("messages24h") : t("noMessages24h")}
@@ -183,7 +175,7 @@ function Messages({
         </div>
       ) : (
         messages?.map((message) =>
-          message.type === "SYSTEM" ? (
+          message.type === MESSAGE_TYPE.SYSTEM ? (
             <div
               key={message.id}
               className="text-center text-xs text-[var(--color-grey-500)] my-2"
