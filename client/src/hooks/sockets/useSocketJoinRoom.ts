@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { socket } from "../services/socket";
-import { useChat } from "./useChat";
+import { socket } from "../../services/socket";
+import { useChat } from "../useChat";
 
 export function useSocketJoinRoom() {
   const { chat } = useChat();

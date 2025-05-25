@@ -16,7 +16,7 @@ import { useReceivedFriendRequests } from "../hooks/useReceivedFriendRequests";
 import { User as UserType } from "../types/types";
 import { IoMdCheckmark } from "react-icons/io";
 import { useTranslation } from "react-i18next";
-import { useSocketFriends } from "../hooks/useSocketFriends";
+import { useSocketFriends } from "../hooks/sockets/useSocketFriends";
 
 function FriendAdd() {
   const { t } = useTranslation("common");

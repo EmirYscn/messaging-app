@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getMessages } from "../services/apiChat";
-import { Message } from "../types/types";
+import { Message, MESSAGE_TYPE } from "../types/types";
 import { formatDate } from "../utils/formatDate";
 
 type MessagePage = {
@@ -12,7 +12,7 @@ type MessagePage = {
 
 type DateMessage = {
   id: string;
-  type: "SYSTEM";
+  type: MESSAGE_TYPE.SYSTEM;
   content: string;
 };
 
@@ -51,7 +51,7 @@ export const useChatMessages = () => {
       // Insert a date marker message before the first message of a new date
       messagesWithDateMarkers.push({
         id: `date-${messageDate}`, // unique id for date marker
-        type: "SYSTEM",
+        type: MESSAGE_TYPE.SYSTEM,
         content: messageDate,
       });
       lastDate = messageDate;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { useUser } from "./useUser";
+import { useUser } from "../useUser";
 
 const SOCKET_URL = process.env.SOCKET_URL || "http://localhost:3000";
 

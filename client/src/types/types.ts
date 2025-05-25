@@ -4,12 +4,17 @@ export type ChangeEvent = React.ChangeEvent<
   HTMLInputElement | HTMLSelectElement
 >;
 
-export type {
-  ROLE,
-  CHAT_TYPE,
+import {
   MESSAGE_TYPE,
   MEDIA_TYPE,
+  CHAT_TYPE,
+  ROLE,
   FRIEND_REQUEST_STATUS,
+} from "../../../shared/types";
+
+export { MESSAGE_TYPE, MEDIA_TYPE, CHAT_TYPE, ROLE, FRIEND_REQUEST_STATUS };
+
+export type {
   User,
   Profile,
   Chat,

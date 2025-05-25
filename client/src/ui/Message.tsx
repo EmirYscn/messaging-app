@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useUser } from "../hooks/useUser";
-import { Message as MessageType } from "../types/types";
+import {
+  CHAT_TYPE,
+  MESSAGE_TYPE,
+  Message as MessageType,
+} from "../types/types";
 import { formatDateToHour } from "../utils/formatDateToHour";
 import ProfileImage from "./ProfileImage";
 import { IoIosArrowDown, IoMdDownload } from "react-icons/io";
@@ -136,7 +140,7 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                   className="transition-transform duration-300 group-hover:-translate-x-2 hover:bg-transparent"
                 />
                 <Menus.List id={message.id}>
-                  {message.type === "IMAGE" && (
+                  {message.type === MESSAGE_TYPE.IMAGE && (
                     <Menus.Button
                       icon={<IoMdDownload />}
                       onClick={() => {
@@ -146,7 +150,7 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                       <span className="text-sm">{chatsT("download")}</span>
                     </Menus.Button>
                   )}
-                  {chat?.type !== "PRIVATE" && !isCurrentUser && (
+                  {chat?.type !== CHAT_TYPE.PRIVATE && !isCurrentUser && (
                     <Menus.Button
                       icon={<IoCopyOutline />}
                       onClick={() => {
@@ -157,7 +161,7 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                       <span className="text-sm">{t("sendMessage")}</span>
                     </Menus.Button>
                   )}
-                  {message.type === "TEXT" && (
+                  {message.type === MESSAGE_TYPE.TEXT && (
                     <Menus.Button
                       icon={<IoCopyOutline />}
                       onClick={() => {

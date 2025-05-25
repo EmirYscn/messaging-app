@@ -9,5 +9,6 @@
   "addFriend": "Agregar amigo",
   "receivedRequests": "Solicitudes recibidas",
   "sentRequests": "Solicitudes enviadas",
-  "pending": "Pendiente"
+  "pending": "Pendiente",
+  "photo": "Foto"
 }

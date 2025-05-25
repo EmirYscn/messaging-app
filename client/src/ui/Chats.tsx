@@ -4,7 +4,7 @@ import { useChats } from "../hooks/useChats";
 import ProfileImage from "./ProfileImage";
 
 import { TfiWorld } from "react-icons/tfi";
-import { useSocketChat } from "../hooks/useSocketChat";
+import { useSocketChat } from "../hooks/sockets/useSocketChat";
 import { formatDateToHour } from "../utils/formatDateToHour";
 import ChatSkeleton from "./ChatSkeleton";
 import { useTranslation } from "react-i18next";
@@ -16,8 +16,9 @@ import NewChat from "./NewChatPanel";
 import ChatsContextMenu, {
   ChatsContextMenu as ChatsContextMenuType,
 } from "./CustomContextMenus/ChatsContextMenu";
-import { Chat } from "../types/types";
+import { Chat, MESSAGE_TYPE } from "../types/types";
 import { ContextMenuPosition } from "./CustomContextMenus/ContextMenu";
+import { FaCamera } from "react-icons/fa";
 
 function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
   const { t } = useTranslation("common");
@@ -159,9 +160,20 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
                           </span>
                         )}
                       </div>
-                      <span className="break-words opacity-70 line-clamp-1">
-                        {chat?.lastMessage?.content}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {chat?.lastMessage?.type === MESSAGE_TYPE.IMAGE ? (
+                          <div className="flex items-center gap-2">
+                            <FaCamera className="text-md" />
+                            <span className="opacity-70 line-clamp-1 break-words">
+                              {t("photo")}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="opacity-70 line-clamp-1 break-words">
+                            {chat?.lastMessage?.content}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </NavLink>
                 ))}
