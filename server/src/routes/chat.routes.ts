@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import * as chatController from "../controllers/chat.controller";
 import { requireAuth } from "../controllers/auth.controller";
+
 import { uploadGroupImage } from "../middlewares/multer";
 import { resizePhoto } from "../middlewares/sharp";
 

@@ -1,6 +1,8 @@
 import { Router } from "express";
+
 import * as messageController from "../controllers/message.controller";
 import { requireAuth } from "../controllers/auth.controller";
+
 import { uploadMedia } from "../middlewares/multer";
 import { compressMedia } from "../middlewares/sharp";
 
@@ -14,12 +16,6 @@ router.post(
   messageController.createMedia
 );
 
-// router.post(
-//   "/:chatId/image",
-//   requireAuth,
-//   uploadImageMessage,
-//   messageController.uploadImageMessage
-// );
 router.delete("/", requireAuth, messageController.deleteMessages);
 
 export { router };

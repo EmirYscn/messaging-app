@@ -1,12 +1,14 @@
+import { MEDIA_TYPE } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
+
 import AppError from "../utils/appError";
-import { MEDIA_TYPE } from "@prisma/client";
+import config from "../config/config";
 
-export const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+const SUPABASE_URL = config.supabaseUrl;
+const SUPABASE_KEY = config.supabaseKey;
 
-export const supabase = createClient(supabaseUrl!, supabaseKey!);
+export const supabase = createClient(SUPABASE_URL!, SUPABASE_KEY!);
 
 export const uploadAvatar = async (
   file: Express.Multer.File,
@@ -102,31 +104,6 @@ export const uploadGroupAvatar = async (
   }
 };
 
-// export const uploadImage = async (
-//   file: Express.Multer.File,
-//   chatId: string,
-//   userId: string
-// ) => {
-//   const { buffer } = file;
-//   const folderPath = `chat-${chatId}`;
-//   const ext = file.mimetype.split("/")[1];
-//   const filePath = `${folderPath}/message-${userId}-${uuidv4()}.${ext}`; // Ensure only one file per user
-//   try {
-//     // Upload the new file (ensuring the same file path)
-//     const { error: uploadError } = await supabase.storage
-//       .from("messages")
-//       .upload(filePath, buffer, { contentType: "image/jpeg", upsert: true });
-//     if (uploadError) throw uploadError;
-//     // Get Public URL
-//     const { data } = supabase.storage.from("messages").getPublicUrl(filePath);
-//     const publicUrl = `${data.publicUrl}?t=${Date.now()}`;
-//     return publicUrl;
-//   } catch (error) {
-//     console.error("Error uploading message image:", error);
-//     throw new AppError("Failed to upload message image", 500);
-//   }
-// };
-
 export const uploadMediaToBucket = async (
   mediaType: MEDIA_TYPE,
   file: Express.Multer.File,
@@ -169,26 +146,3 @@ export const deleteMediasFromBucket = async (filePaths: string[]) => {
     throw new AppError("Failed to delete media", 500);
   }
 };
-
-// export const deleteFile = async (fileUrl: string) => {
-//   const { data, error } = await supabase.storage
-//     .from("files")
-//     .remove([fileUrl]);
-//   if (error) {
-//     console.log(error);
-//     throw error;
-//   }
-//   console.log("Deleted File with url: ", fileUrl);
-// };
-
-// export const downloadFile = async (fileUrl: string) => {
-//   const { data, error } = await supabase.storage
-//     .from("files")
-//     .download(fileUrl);
-//   if (error) {
-//     console.log(error);
-//     throw error;
-//   }
-//   console.log("Downloaded File with url: ", fileUrl);
-//   return data;
-// };

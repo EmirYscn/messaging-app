@@ -10,6 +10,8 @@ import * as userQueries from "../db/user.queries";
 
 import passport, { generateToken } from "../strategies/passport";
 
+const CLIENT_URL = process.env.CLIENT_URL;
+
 export const getCurrentUser = (
   req: Request,
   res: Response,
@@ -159,4 +161,95 @@ export const restrictTo = (...roles: ROLE[]) => {
 
     next();
   };
+};
+
+export const googleCallback = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  passport.authenticate(
+    "google",
+    { session: false },
+    (err: any, user: User) => {
+      if (err) return next(err);
+
+      if (!user) return res.redirect(`${CLIENT_URL}/login?error=auth_failed`);
+
+      // Generate a JWT token
+      const token = generateToken(user);
+
+      res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+      });
+
+      // Include user data
+      const userData = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        avatar: user.avatar,
+        role: user.role,
+      };
+
+      // Encode as base64 to avoid URL issues
+      const payload = Buffer.from(
+        JSON.stringify({
+          user: userData,
+          provider: "Google",
+        })
+      ).toString("base64");
+      // Redirect to frontend with token
+      return res.redirect(`${CLIENT_URL}/auth-success?data=${payload}`);
+    }
+  )(req, res, next);
+};
+
+export const githubCallback = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  passport.authenticate(
+    "github",
+    { session: false },
+    (err: any, user: User) => {
+      if (err) return next(err);
+
+      if (!user) return res.redirect(`${CLIENT_URL}/login?error=auth_failed`);
+
+      // Generate a JWT token
+      const token = generateToken(user);
+
+      res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+      });
+
+      // Include user data
+      const userData = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        avatar: user.avatar,
+        role: user.role,
+      };
+
+      // Encode as base64 to avoid URL issues
+      const payload = Buffer.from(
+        JSON.stringify({
+          user: userData,
+          provider: "GitHub",
+        })
+      ).toString("base64");
+
+      // Redirect to frontend with token
+      return res.redirect(`${CLIENT_URL}/auth-success?data=${payload}`);
+    }
+  )(req, res, next);
 };

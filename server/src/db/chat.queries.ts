@@ -1,6 +1,7 @@
-import AppError from "../utils/appError";
-import { decryptMessageContent, decryptText } from "../utils/crypto";
 import { prisma } from "./prismaClient";
+
+import AppError from "../utils/appError";
+import { decryptMessageContent } from "../utils/crypto";
 
 export const getChats = async (userId: string) => {
   const chats = await prisma.chat.findMany({

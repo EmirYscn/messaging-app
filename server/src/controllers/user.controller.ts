@@ -1,9 +1,12 @@
+import { User } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
-import * as userQueries from "../db/user.queries";
+
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
+
 import { uploadAvatar } from "../middlewares/supabase";
-import { User } from "@prisma/client";
+
+import * as userQueries from "../db/user.queries";
 
 export const getProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -35,9 +38,6 @@ export const updateUserAvatar = catchAsync(
       return next(new AppError("No file uploaded", 400));
     }
 
-    console.log(file);
-
-    // const updatedUser = await userQueries.updateUser(id, body);
     const publicUrl = await uploadAvatar(file, id);
     const user = await userQueries.updateUser(id, {
       avatar: publicUrl,

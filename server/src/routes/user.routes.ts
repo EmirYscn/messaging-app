@@ -1,9 +1,9 @@
 import { Router } from "express";
 
 import * as userController from "../controllers/user.controller";
+
 import { uploadUserAvatar } from "../middlewares/multer";
 import { resizePhoto } from "../middlewares/sharp";
-import { requireAuth } from "../controllers/auth.controller";
 
 const router = Router();
 

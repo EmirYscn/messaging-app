@@ -1,4 +1,5 @@
-import { CHAT_TYPE, Message, User } from "@prisma/client";
+import { CHAT_TYPE, User } from "@prisma/client";
+
 import * as messageQueries from "../db/message.queries";
 import {
   catchAsyncSocket,

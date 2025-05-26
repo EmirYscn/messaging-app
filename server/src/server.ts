@@ -10,7 +10,7 @@ const server = createServer(app);
 
 export const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "https://admin.socket.io"],
+    origin: [config.clientUrl!, config.socketAdminIoUrl!],
     credentials: true,
   },
 });
@@ -18,10 +18,10 @@ export const io = new Server(server, {
 instrument(io, {
   auth: {
     type: "basic",
-    username: process.env.SOCKET_ADMIN_USERNAME!,
-    password: process.env.SOCKET_ADMIN_PASSWORD!,
+    username: config.socketAdminUsername!,
+    password: config.socketAdminPassword!,
   },
-  mode: process.env.NODE_ENV === "production" ? "production" : "development",
+  mode: config.nodeEnv === "production" ? "production" : "development",
 });
 
 app.locals.io = io; // Make io available in app locals

@@ -1,6 +1,8 @@
-import { Prisma, Profile, User } from "@prisma/client";
 import { prisma } from "./prismaClient";
+import { Prisma, Profile, User } from "@prisma/client";
+
 import { UserQuery } from "../controllers/user.controller";
+
 import AppError from "../utils/appError";
 
 export const getUsers = async (query?: UserQuery) => {

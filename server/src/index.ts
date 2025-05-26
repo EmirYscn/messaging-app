@@ -20,7 +20,7 @@ import { globalErrorHandler } from "./controllers/error.controller";
 
 const app: Application = express();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: config.clientUrl, credentials: true }));
 
 app.use(cookieParser());
 // Set security HTTP headers

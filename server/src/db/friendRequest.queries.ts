@@ -1,5 +1,6 @@
-import AppError from "../utils/appError";
 import { prisma } from "./prismaClient";
+
+import AppError from "../utils/appError";
 
 export const sendFriendRequest = async (
   senderId: string,
