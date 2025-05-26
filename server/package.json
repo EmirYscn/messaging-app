@@ -43,7 +43,8 @@
     "prisma": "^6.6.0",
     "sharp": "^0.34.1",
     "socket.io": "^4.8.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^3.25.28"
   },
   "devDependencies": {
     "@types/cookie": "^0.6.0",

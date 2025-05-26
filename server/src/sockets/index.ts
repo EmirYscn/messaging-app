@@ -8,11 +8,9 @@ import * as socketController from "../controllers/socket.controller";
 
 import { userSocketMap } from "./socketRegistry";
 
-if (!process.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET environment variable is not defined.");
-}
+import config from "../config/config";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = config.jwtSecret!;
 
 type SocketNextFunction = (err?: Error) => void;
 

@@ -1,7 +1,10 @@
-import { Media, Message, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "./prismaClient";
+
 import { decryptMessageContent } from "../utils/crypto";
+
 import { SocketMessageType } from "../sockets/types";
+
 import { deleteMediasFromBucket } from "../middlewares/supabase";
 
 const TAKE = 20;

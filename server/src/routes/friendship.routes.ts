@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import * as friendshipController from "../controllers/friendship.controller";
 import { requireAuth } from "../controllers/auth.controller";
 

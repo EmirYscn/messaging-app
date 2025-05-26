@@ -1,20 +1,28 @@
+import { Request } from "express";
 import { User } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Profile as GoogleProfile } from "passport-google-oauth20";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { Profile as GithubProfile } from "passport-github2";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { Strategy as JwtStrategy } from "passport-jwt";
 
 import * as db from "../db/user.queries";
 import { prisma } from "../db/prismaClient";
-import { Request } from "express";
 
-const SERVER_URL = process.env.SERVER_URL;
-const JWT_SECRET = process.env.JWT_SECRET;
+import config from "../config/config";
+
+const SERVER_URL = config.serverUrl;
+const JWT_SECRET = config.jwtSecret;
+
+const GOOGLE_CLIENT_ID = config.googleClientId;
+const GOOGLE_CLIENT_SECRET = config.googleClientSecret;
+const GITHUB_CLIENT_ID = config.githubClientId;
+const GITHUB_CLIENT_SECRET = config.githubClientSecret;
 
 export const generateToken = (user: User) => {
   const payload = {
@@ -48,8 +56,8 @@ const localStrategy = new LocalStrategy(
 
 const googleStrategy = new GoogleStrategy(
   {
-    clientID: process.env.GOOGLE_CLIENT_ID!,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    clientID: GOOGLE_CLIENT_ID!,
+    clientSecret: GOOGLE_CLIENT_SECRET!,
     callbackURL: `${SERVER_URL}/api/v1/auth/google/callback`,
   },
   async function (
@@ -96,8 +104,8 @@ const googleStrategy = new GoogleStrategy(
 
 const githubStrategy = new GithubStrategy(
   {
-    clientID: process.env.GITHUB_CLIENT_ID!,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    clientID: GITHUB_CLIENT_ID!,
+    clientSecret: GITHUB_CLIENT_SECRET!,
     callbackURL: `${SERVER_URL}/api/v1/auth/github/callback`,
     scope: ["user:email"],
   },
@@ -150,13 +158,8 @@ const cookieExtractor = (req: Request): string | null => {
 
 const jwtOptions = {
   jwtFromRequest: cookieExtractor,
-  secretOrKey: process.env.JWT_SECRET!,
+  secretOrKey: JWT_SECRET!,
 };
-
-// const jwtOptions = {
-//   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-//   secretOrKey: JWT_SECRET!,
-// };
 
 const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {

@@ -2,14 +2,16 @@ import { NextFunction, Request, Response } from "express";
 import { User } from "@prisma/client";
 
 import catchAsync from "../utils/catchAsync";
+import AppError from "../utils/appError";
 
 import * as chatQueries from "../db/chat.queries";
 import * as messageQueries from "../db/message.queries";
+
 import { TypedIO } from "../sockets/types";
 import { userSocketMap } from "../sockets/socketRegistry";
-import AppError from "../utils/appError";
-import { uploadAvatar, uploadGroupAvatar } from "../middlewares/supabase";
 import { notifyUsers } from "../sockets/socketNotifier";
+
+import { uploadGroupAvatar } from "../middlewares/supabase";
 
 export const getChats = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

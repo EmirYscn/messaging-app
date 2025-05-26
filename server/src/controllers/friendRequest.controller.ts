@@ -1,7 +1,10 @@
-import { NextFunction, Request, Response } from "express";
-import * as friendRequestQueries from "../db/friendRequest.queries";
 import { User } from "@prisma/client";
+import { NextFunction, Request, Response } from "express";
+
+import * as friendRequestQueries from "../db/friendRequest.queries";
+
 import catchAsync from "../utils/catchAsync";
+
 import { notifyUsers } from "../sockets/socketNotifier";
 
 export const sendFriendRequest = catchAsync(

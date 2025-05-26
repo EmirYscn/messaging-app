@@ -1,5 +1,5 @@
-// socket/types.ts
 import { CHAT_TYPE, Media, Message, User } from "@prisma/client";
+
 import { Server, Socket } from "socket.io";
 
 export interface ServerToClientEvents {

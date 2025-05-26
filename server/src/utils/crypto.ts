@@ -1,7 +1,8 @@
-import crypto from "crypto";
 import { Message } from "@prisma/client";
+import crypto from "crypto";
+import config from "../config/config";
 
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+const ENCRYPTION_KEY = config.encryptKey;
 
 if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length !== 32) {
   throw new Error("ENCRYPTION_KEY must be a 32-character string.");
