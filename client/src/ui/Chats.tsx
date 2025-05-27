@@ -6,7 +6,7 @@ import ProfileImage from "./ProfileImage";
 import { TfiWorld } from "react-icons/tfi";
 import { useSocketChat } from "../hooks/sockets/useSocketChat";
 import { formatDateToHour } from "../utils/formatDateToHour";
-import ChatSkeleton from "./ChatSkeleton";
+import ChatSkeleton from "./skeletons/ChatSkeleton";
 import { useTranslation } from "react-i18next";
 import Menus from "./Menus";
 import { BiSelectMultiple } from "react-icons/bi";
@@ -15,9 +15,9 @@ import Button from "./Button";
 import NewChat from "./NewChatPanel";
 import ChatsContextMenu, {
   ChatsContextMenu as ChatsContextMenuType,
-} from "./CustomContextMenus/ChatsContextMenu";
+} from "./custom-context-menus/ChatsContextMenu";
 import { Chat, MESSAGE_TYPE } from "../types/types";
-import { ContextMenuPosition } from "./CustomContextMenus/ContextMenu";
+import { ContextMenuPosition } from "./custom-context-menus/ContextMenu";
 import { FaCamera } from "react-icons/fa";
 
 function Chats({ onToggleChats }: { onToggleChats?: () => void }) {

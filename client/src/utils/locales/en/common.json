@@ -10,5 +10,7 @@
   "receivedRequests": "Received Requests",
   "sentRequests": "Sent Requests",
   "pending": "Pending",
-  "photo": "Photo"
+  "photo": "Photo",
+  "userInfo": "User Info",
+  "noBio": "No bio available"
 }

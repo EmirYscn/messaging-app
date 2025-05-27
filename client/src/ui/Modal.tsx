@@ -76,7 +76,7 @@ function Window({ children, name, className }: WindowProps) {
   if (name !== openName) return null;
 
   return createPortal(
-    <div className="fixed top-0 left-0 w-full h-full bg-[var(--backdrop-color)] backdrop-blur-[4px] z-[1000] ">
+    <div className="fixed top-0 left-0 w-full h-full bg-[var(--backdrop-color)] backdrop-blur-[4px] z-[1000]  ">
       <div
         ref={ref}
         className={`fixed top-[50%] left-[50%] translate-[-50%] bg-[var(--color-grey-800)] text-[var(--color-grey-100)] rounded-[var(--border-radius-lg)] shadow-[var(--shadow-md)] py-[2rem] px-[2.2rem] md:py-[3.2rem] md:px-[4rem] transition-all duration-500 ${className}`}

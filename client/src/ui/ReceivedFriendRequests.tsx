@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useReceivedFriendRequests } from "../hooks/useReceivedFriendRequests";
-import FriendSkeleton from "./FriendSkeleton";
+import FriendSkeleton from "./skeletons/FriendSkeleton";
 import ProfileImage from "./ProfileImage";
 import Button from "./Button";
 import { IoMdCheckmark, IoMdClose } from "react-icons/io";

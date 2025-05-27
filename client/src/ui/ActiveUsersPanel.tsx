@@ -1,4 +1,4 @@
-import { RiRadioButtonLine } from "react-icons/ri";
+import { RiInfoCardFill, RiRadioButtonLine } from "react-icons/ri";
 import { User as UserType } from "../types/types";
 
 import Menus from "./Menus";
@@ -11,6 +11,8 @@ import { useFriends } from "../hooks/useFriends";
 import { useSendFriendRequest } from "../hooks/useSendFriendRequest";
 import { useRemoveFriend } from "../hooks/useRemoveFriend";
 import { useTranslation } from "react-i18next";
+import Modal from "./Modal";
+import UserProfileModal from "./UserProfileModal";
 
 function ActiveUsersPanel() {
   const { t } = useTranslation("chats");
@@ -38,6 +40,7 @@ export default ActiveUsersPanel;
 
 function User({ user }: { user: UserType }) {
   const { t } = useTranslation("menus");
+  const { t: tCommon } = useTranslation("common");
   const { user: loggedUser } = useUser();
   const { friends } = useFriends();
   const { createChat } = useCreateChat();
@@ -49,51 +52,63 @@ function User({ user }: { user: UserType }) {
   const isFriend = friends?.some((friend) => friend.id === user.id);
 
   return (
-    <Menus>
-      <Menus.Menu>
-        <Menus.Toggle id={user?.id}>
-          <div
-            key={user.id}
-            className={`flex items-center gap-2 text-sm font-semibold mb-2 ${
-              user.id !== currentUser
-                ? "text-[var(--color-blue-700)]"
-                : "text-[var(--color-grey-300)]"
-            }`}
-          >
-            <div className="text-green-400">
-              <RiRadioButtonLine />
-            </div>
-            <span>{user.username}</span>
-          </div>
-        </Menus.Toggle>
-        {user.id !== currentUser && (
-          <Menus.List id={user?.id}>
-            {isFriend ? (
-              <Menus.Button
-                icon={<IoPersonAdd />}
-                onClick={() => removeFriend(user?.id)}
-                disabled={isRemovingFriend}
-              >
-                {t("removeFriend")}
-              </Menus.Button>
-            ) : (
-              <Menus.Button
-                icon={<IoPersonAdd />}
-                onClick={() => sendRequest(user?.id)}
-                disabled={isSendingRequest}
-              >
-                {t("addFriend")}
-              </Menus.Button>
-            )}
-            <Menus.Button
-              icon={<BiSolidMessageSquareAdd />}
-              onClick={() => createChat(user.id)}
+    <Modal>
+      <Menus>
+        <Menus.Menu>
+          <Menus.Toggle id={user?.id}>
+            <div
+              key={user.id}
+              className={`flex items-center gap-2 text-sm font-semibold mb-2 ${
+                user.id !== currentUser
+                  ? "text-[var(--color-blue-700)]"
+                  : "text-[var(--color-grey-300)]"
+              }`}
             >
-              {t("sendMessage")}
-            </Menus.Button>
-          </Menus.List>
-        )}
-      </Menus.Menu>
-    </Menus>
+              <div className="text-green-400">
+                <RiRadioButtonLine />
+              </div>
+              <span>{user.username}</span>
+            </div>
+          </Menus.Toggle>
+          {user.id !== currentUser && (
+            <>
+              <Menus.List id={user?.id}>
+                <Modal.Open opens="userInfo">
+                  <Menus.Button icon={<RiInfoCardFill />}>
+                    <span className="text-sm">{tCommon("userInfo")}</span>
+                  </Menus.Button>
+                </Modal.Open>
+                {isFriend ? (
+                  <Menus.Button
+                    icon={<IoPersonAdd />}
+                    onClick={() => removeFriend(user?.id)}
+                    disabled={isRemovingFriend}
+                  >
+                    {t("removeFriend")}
+                  </Menus.Button>
+                ) : (
+                  <Menus.Button
+                    icon={<IoPersonAdd />}
+                    onClick={() => sendRequest(user?.id)}
+                    disabled={isSendingRequest}
+                  >
+                    {t("addFriend")}
+                  </Menus.Button>
+                )}
+                <Menus.Button
+                  icon={<BiSolidMessageSquareAdd />}
+                  onClick={() => createChat(user.id)}
+                >
+                  {t("sendMessage")}
+                </Menus.Button>
+              </Menus.List>
+              <Modal.Window name="userInfo" className="!p-0">
+                <UserProfileModal userId={user.id} />
+              </Modal.Window>
+            </>
+          )}
+        </Menus.Menu>
+      </Menus>
+    </Modal>
   );
 }

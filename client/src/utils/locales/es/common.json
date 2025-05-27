@@ -10,5 +10,7 @@
   "receivedRequests": "Solicitudes recibidas",
   "sentRequests": "Solicitudes enviadas",
   "pending": "Pendiente",
-  "photo": "Foto"
+  "photo": "Foto",
+  "userInfo": "Información del usuario",
+  "noBio": "No hay biografía disponible"
 }
