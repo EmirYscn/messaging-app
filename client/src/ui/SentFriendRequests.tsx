@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { useSentFriendRequests } from "../hooks/useSentFriendRequests";
-import FriendSkeleton from "./FriendSkeleton";
 import ProfileImage from "./ProfileImage";
 import Button from "./Button";
 import { IoMdClose } from "react-icons/io";
 import { useDeleteFriendRequest } from "../hooks/useDeleteFriendRequest";
+import FriendSkeleton from "./skeletons/FriendSkeleton";
 
 function SentFriendRequests({ searchbarValue }: { searchbarValue: string }) {
   const { t } = useTranslation("common");

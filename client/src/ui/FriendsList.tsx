@@ -8,9 +8,9 @@ import ReceivedFriendRequests from "./ReceivedFriendRequests";
 
 import { useSocketFriends } from "../hooks/sockets/useSocketFriends";
 
-import { FriendsContextMenu as FriendsContextMenuType } from "./CustomContextMenus/FriendsContextMenu";
+import { FriendsContextMenu as FriendsContextMenuType } from "./custom-context-menus/FriendsContextMenu";
 import { User } from "../types/types";
-import { ContextMenuPosition } from "./CustomContextMenus/ContextMenu";
+import { ContextMenuPosition } from "./custom-context-menus/ContextMenu";
 
 function FriendsList() {
   const { t } = useTranslation("common");

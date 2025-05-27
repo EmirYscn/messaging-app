@@ -5,11 +5,11 @@ import Message from "./Message";
 import { useChatMessages } from "../hooks/useChatMessages";
 import { useChat } from "../hooks/useChat";
 import { useReceiveMessage } from "../hooks/sockets/useSocketMessage";
-import MessageSkeleton from "./MessageSkeleton";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { CHAT_TYPE, MESSAGE_TYPE } from "../types/types";
 import SpinnerMini from "./SpinnerMini";
+import MessageSkeleton from "./skeletons/MessageSkeleton";
 
 type MessagesProps = {
   containerRef: React.RefObject<HTMLDivElement | null>;

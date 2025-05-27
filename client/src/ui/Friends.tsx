@@ -2,13 +2,13 @@ import { useFriends } from "../hooks/useFriends";
 
 import ProfileImage from "./ProfileImage";
 
-import FriendSkeleton from "./FriendSkeleton";
 import { MouseEvent, User } from "../types/types";
 import { useRef } from "react";
 import FriendsContextMenu, {
   FriendsContextMenu as FriendsContextMenuType,
-} from "./CustomContextMenus/FriendsContextMenu";
-import { ContextMenuPosition } from "./CustomContextMenus/ContextMenu";
+} from "./custom-context-menus/FriendsContextMenu";
+import { ContextMenuPosition } from "./custom-context-menus/ContextMenu";
+import FriendSkeleton from "./skeletons/FriendSkeleton";
 
 function Friends({
   filterList,
@@ -69,7 +69,7 @@ function Friends({
         : filteredFriends?.map((friend) => (
             <div
               key={friend.id}
-              className="hover:bg-[var(--color-grey-700)] px-4"
+              className="hover:bg-[var(--color-brand-100)] hover:text-white px-4"
               ref={friendsListRef}
               onContextMenu={(e) => onContextMenu?.(e, friend)}
             >

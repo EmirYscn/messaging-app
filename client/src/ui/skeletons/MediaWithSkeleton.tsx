@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Modal from "./Modal";
-import MediaPreviewModal from "./MediaPreviewModal";
+import MediaPreviewModal from "../MediaPreviewModal";
+import Modal from "../Modal";
 
 export function MediaWithSkeleton({ src }: { src: string }) {
   const [isLoaded, setIsLoaded] = useState(false);

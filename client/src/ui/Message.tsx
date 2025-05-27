@@ -15,8 +15,8 @@ import { useChat } from "../hooks/useChat";
 import { useTranslation } from "react-i18next";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useDeleteMessages } from "../hooks/useDeleteMessages";
-import { MediaWithSkeleton } from "./MediaWithSkeleton";
 import { useDownloadFile } from "../hooks/useDownloadFile";
+import { MediaWithSkeleton } from "./skeletons/MediaWithSkeleton";
 
 type MessageProps = {
   message: MessageType;

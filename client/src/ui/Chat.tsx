@@ -23,9 +23,11 @@ import Modal from "./Modal";
 import AddUserModal from "./AddUserModal";
 import { useAddToGroup } from "../hooks/useAddToGroup";
 import { CHAT_TYPE } from "../types/types";
+import UserProfileModal from "./UserProfileModal";
 
 function Chat() {
   const { t } = useTranslation("chats");
+  const { t: tCommon } = useTranslation("common");
   const { chat } = useChat();
   const { isConnected, errorMessage } = useSocketConnectionStatus();
 
@@ -109,9 +111,13 @@ function Chat() {
                     <Menus.Toggle id={chat.id} />
                     <Menus.List id={chat.id}>
                       {chat?.type === CHAT_TYPE.PRIVATE && (
-                        <Menus.Button icon={<RiInfoCardFill />}>
-                          <span className="text-sm">User info</span>
-                        </Menus.Button>
+                        <Modal.Open opens="userInfo">
+                          <Menus.Button icon={<RiInfoCardFill />}>
+                            <span className="text-sm">
+                              {tCommon("userInfo")}
+                            </span>
+                          </Menus.Button>
+                        </Modal.Open>
                       )}
                       {chat?.type === CHAT_TYPE.GROUP && (
                         <Modal.Open opens="addUser">
@@ -143,6 +149,9 @@ function Chat() {
                       <AddUserModal
                         onConfirm={(userIds: string[]) => addToGroup(userIds)}
                       />
+                    </Modal.Window>
+                    <Modal.Window name="userInfo" className="!p-0">
+                      <UserProfileModal />
                     </Modal.Window>
                   </Menus.Menu>
                 </Menus>
