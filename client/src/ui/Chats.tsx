@@ -8,8 +8,7 @@ import { useSocketChat } from "../hooks/sockets/useSocketChat";
 import { formatDateToHour } from "../utils/formatDateToHour";
 import ChatSkeleton from "./skeletons/ChatSkeleton";
 import { useTranslation } from "react-i18next";
-import Menus from "./Menus";
-import { BiSelectMultiple } from "react-icons/bi";
+
 import { useRef, useState } from "react";
 import Button from "./Button";
 import NewChat from "./NewChatPanel";
@@ -22,7 +21,7 @@ import { FaCamera } from "react-icons/fa";
 
 function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
   const { t } = useTranslation("common");
-  const { t: tChat } = useTranslation("chats");
+
   const { chats, isLoading } = useChats();
   useSocketChat();
   const [isCreatingChat, setIsCreatingChat] = useState(false);
@@ -94,20 +93,6 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
                   </svg>
                 }
               />
-
-              <Menus>
-                <Menus.Menu>
-                  <Menus.Toggle id={"options"} className="!p-1" />
-                  <Menus.List id={"options"}>
-                    <Menus.Button
-                      icon={<BiSelectMultiple />}
-                      className="text-[1rem]"
-                    >
-                      {tChat("selectChats")}
-                    </Menus.Button>
-                  </Menus.List>
-                </Menus.Menu>
-              </Menus>
             </div>
           </div>
           <Searchbar />
