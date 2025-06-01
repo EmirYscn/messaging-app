@@ -91,8 +91,8 @@ export const login = async (
 
       res.cookie("jwt", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // use HTTPS in prod
-        sameSite: "lax", // or "strict" if appropriate
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
       });
 
@@ -182,7 +182,7 @@ export const googleCallback = (
       res.cookie("jwt", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
       });
 
@@ -227,7 +227,7 @@ export const githubCallback = (
       res.cookie("jwt", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
       });
 
