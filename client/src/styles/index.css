@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin 'tailwind-scrollbar';
 
 :root,
 :root.light-mode {
@@ -97,6 +98,14 @@
 * {
   /* Creating animations for dark mode */
   transition: all 0.15s, background-color 0.3s ease-in-out;
+}
+
+/* .scrollable {
+  @apply scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent;
+} */
+
+* {
+  @apply scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent;
 }
 
 html body {
