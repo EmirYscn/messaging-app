@@ -164,6 +164,7 @@ const jwtOptions = {
 const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
     const user = await db.findUserById(payload.id);
+    console.log("JWT Strategy user:", user);
     if (user) {
       return done(null, user);
     }
