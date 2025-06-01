@@ -56,7 +56,7 @@ function LoginForm() {
         />
       </FormRowVertical>
 
-      <Link to="/forgotPassword">{t("forgotPassword")}</Link>
+      {/* <Link to="/forgotPassword">{t("forgotPassword")}</Link> */}
 
       <FormRowVertical>
         <GoogleButton />
