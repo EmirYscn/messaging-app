@@ -8,6 +8,7 @@ A full-stack real-time messaging application with support for private, group, an
 - **Real-time Messaging**: Private, group, and public chat rooms with instant updates via WebSockets.
 - **Media Sharing**: Upload and share images in chats.
 - **User Profiles**: Editable profiles with avatars and bios.
+- **Message Encryption**: Messages are encrypted before storage and decrypted when retrieved, ensuring privacy and security.
 - **Friend System**: Send, accept, and manage friend requests.
 - **Responsive UI**: Modern, mobile-friendly interface with dark mode support.
 - **Admin Features**: Role-based access (admin, user, author).
