@@ -24,9 +24,7 @@ export const deleteMessages = catchAsync(
       messageIds
     );
 
-    const notifiedUserIds = chatUsers
-      ?.map((user) => user.id)
-      .filter((id) => id !== userId);
+    const notifiedUserIds = chatUsers?.map((user) => user.id);
     if (notifiedUserIds)
       notifyUsers(notifiedUserIds, "messages_updated", { chatId });
 
