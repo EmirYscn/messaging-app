@@ -72,6 +72,6 @@ shared/            # Shared types
      cd client && npm run dev
      ```
 
-4. **Access the app** at [http://localhost:5173](http://localhost:5173) .
+4. **Access the app** at [Messaging App](https://messaging-app-neon-alpha.vercel.app/) .
 
 _This project uses modern full-stack TypeScript, real-time communication, and cloud storage for a robust chat experience._
