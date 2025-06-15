@@ -48,7 +48,7 @@ function FriendsList() {
 
   return (
     <div className="flex flex-col h-full gap-4">
-      <div className="flex flex-col flex-1 gap-4">
+      <div className="flex flex-col flex-1 gap-4 h-full">
         <h1 className="px-4 py-6 text-4xl font-semibold">{t("friends")}</h1>
         <div className="px-4 ">
           <Searchbar

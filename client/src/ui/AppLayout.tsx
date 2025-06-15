@@ -33,12 +33,6 @@ function AppLayout() {
     setShowChats((prev) => !prev);
   };
 
-  // const handleSetContext = (newContext) => {
-  //   setContext(newContext);
-  // };
-
-  //
-
   return (
     // Container for centering with padding
     <div className="flex justify-center h-screen overflow-hidden lg:p-8 lg:opacity-95">

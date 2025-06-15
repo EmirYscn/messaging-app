@@ -37,8 +37,6 @@ function Friends({
 
   const friendsListRef = useRef<HTMLDivElement>(null);
 
-  // const [contextMenu, setContextMenu] = useState<FriendsContextMenuType>(null);
-
   let filteredFriends = friends;
 
   filteredFriends = filteredFriends?.filter((friend) => {

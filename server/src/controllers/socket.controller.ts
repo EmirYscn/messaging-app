@@ -72,16 +72,6 @@ export const joinRoom = async (
   const roomSockets = await io.in(data.chatId).fetchSockets(); // gets all sockets in the room
   // Map each socket to its user data
   const activeUsers = roomSockets.map((s) => s.data.user);
-  // Deduplicate active users based on user.id
-  // const userMap = new Map<string, User>();
-  // roomSockets.forEach((s) => {
-  //   const socketUser = s.data.user as User;
-  //   if (!userMap.has(socketUser.id)) {
-  //     userMap.set(socketUser.id, socketUser);
-  //   }
-  // });
-
-  // const activeUsers = Array.from(userMap.values());
 
   if (data.chatType === "GROUP" || data.chatType === "PUBLIC") {
     // Send active users to the newly joined user
@@ -125,11 +115,7 @@ export const disconnect = async (
 
   // 👇 Clean up from all rooms
   const sockets = userSocketMap.get(userId);
-  // if (sockets) {
-  //   sockets.forEach((socket) => {
-  //     await leaveRoom(socket, io, room);
-  //   });
-  // }
+
   // Leave all joined rooms
   const joinedRooms = socket.data.joinedRooms || [];
 
