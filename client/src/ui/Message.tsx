@@ -17,16 +17,25 @@ import { BsFillTrashFill } from "react-icons/bs";
 import { useDeleteMessages } from "../hooks/useDeleteMessages";
 import { useDownloadFile } from "../hooks/useDownloadFile";
 import { MediaWithSkeleton } from "./skeletons/MediaWithSkeleton";
+import { RiReplyFill } from "react-icons/ri";
+import { FaCamera } from "react-icons/fa";
 
 type MessageProps = {
   message: MessageType;
   setSelectedMessages: React.Dispatch<React.SetStateAction<string[]>>;
   isSelecting: boolean;
+  onReply?: (msg: MessageType) => void;
 };
 
-function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
+function Message({
+  message,
+  setSelectedMessages,
+  isSelecting,
+  onReply,
+}: MessageProps) {
   const { t } = useTranslation("menus");
   const { t: chatsT } = useTranslation("chats");
+  const { t: commonT } = useTranslation("common");
 
   const { chat } = useChat();
   const { user } = useUser();
@@ -129,7 +138,42 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
               ))}
             </div>
           )}
-          {message.content && <span>{content}</span>}
+          {message.content && (
+            <>
+              {message.replyTo && (
+                <div className="flex rounded-lg bg-gray-600/50 border-l-4 border-l-blue-300">
+                  <div className="flex flex-col p-2 mb-2 flex-1">
+                    <span className="text-sm font-semibold">
+                      {user?.id === message.replyTo.senderId
+                        ? commonT("you")
+                        : message.replyTo?.sender?.username}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {message.replyTo.type === MESSAGE_TYPE.IMAGE && (
+                        <span>
+                          <FaCamera />
+                        </span>
+                      )}
+                      <span className="line-clamp-1 break-all">
+                        {message.replyTo.content}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-20 h-full">
+                    {message.replyTo.media &&
+                      message.replyTo.media.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                          {message.replyTo.media.map((media) => (
+                            <MediaWithSkeleton key={media.id} src={media.url} />
+                          ))}
+                        </div>
+                      )}
+                  </div>
+                </div>
+              )}
+              <span>{content}</span>
+            </>
+          )}
 
           {isHovering && (
             <Menus>
@@ -161,6 +205,12 @@ function Message({ message, setSelectedMessages, isSelecting }: MessageProps) {
                       <span className="text-sm">{t("sendMessage")}</span>
                     </Menus.Button>
                   )}
+                  <Menus.Button
+                    icon={<RiReplyFill />}
+                    onClick={() => onReply?.(message)}
+                  >
+                    <span className="text-sm">{chatsT("reply")}</span>
+                  </Menus.Button>
                   {message.type === MESSAGE_TYPE.TEXT && (
                     <Menus.Button
                       icon={<IoCopyOutline />}

@@ -90,6 +90,9 @@ export type Message = {
   chatId: string;
   chat?: Chat;
 
+  replyToId?: string | null;
+  replyTo?: Message | null;
+
   media?: Media[];
 };
 
@@ -160,6 +163,7 @@ export type SocketMessageType = {
   content: string;
   chatId: string;
   media?: Media;
+  replyToId?: string | null;
 };
 
 export interface ServerToClientEvents {

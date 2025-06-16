@@ -1,9 +1,49 @@
-import { CHAT_TYPE, Media, Message, User } from "@prisma/client";
+import { CHAT_TYPE, Media, Message, Prisma, User } from "@prisma/client";
 
 import { Server, Socket } from "socket.io";
 
 export interface ServerToClientEvents {
-  receive_message: (data: Message) => void;
+  receive_message: (
+    data: Prisma.MessageGetPayload<{
+      select: {
+        id: true;
+        content: true;
+        type: true;
+        createdAt: true;
+        updatedAt: true;
+        deletedAt: true;
+        sender: {
+          select: {
+            id: true;
+            username: true;
+            avatar: true;
+            role: true;
+          };
+        };
+        media: {
+          select: {
+            id: true;
+            url: true;
+            type: true;
+          };
+        };
+        replyTo: {
+          select: {
+            id: true;
+            content: true;
+            senderId: true;
+            sender: {
+              select: {
+                id: true;
+                username: true;
+                avatar: true;
+              };
+            };
+          };
+        };
+      };
+    }>
+  ) => void;
   add_to_active_users: (data: User) => void;
   remove_from_active_users: (data: User) => void;
   active_users_list: (users: User[]) => void;
@@ -23,6 +63,7 @@ export type SocketMessageType = {
   content: string;
   chatId: string;
   media?: Media;
+  replyToId?: string | null;
 };
 
 export interface ClientToServerEvents {

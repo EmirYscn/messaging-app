@@ -22,12 +22,20 @@ import { IoPersonAdd } from "react-icons/io5";
 import Modal from "./Modal";
 import AddUserModal from "./AddUserModal";
 import { useAddToGroup } from "../hooks/useAddToGroup";
-import { CHAT_TYPE } from "../types/types";
+import {
+  CHAT_TYPE,
+  MESSAGE_TYPE,
+  Message as MessageType,
+} from "../types/types";
 import UserProfileModal from "./UserProfileModal";
+import { useUser } from "../hooks/useUser";
+import { MediaWithSkeleton } from "./skeletons/MediaWithSkeleton";
+import { FaCamera } from "react-icons/fa";
 
 function Chat() {
   const { t } = useTranslation("chats");
   const { t: tCommon } = useTranslation("common");
+  const { user } = useUser();
   const { chat } = useChat();
   const { isConnected, errorMessage } = useSocketConnectionStatus();
 
@@ -36,6 +44,8 @@ function Chat() {
   const { deleteMessages, isLoading: isDeleting } = useDeleteMessages();
   const { leaveGroup, isPending: isLeavingGroup } = useLeaveGroup();
   const { addToGroup } = useAddToGroup();
+
+  const [replyingTo, setReplyingTo] = useState<MessageType | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -166,14 +176,55 @@ function Chat() {
             bottomRef={bottomRef}
             isSelecting={isSelecting}
             setSelectedMessages={setSelectedMessages}
+            onReply={setReplyingTo}
           />
         </div>
+
+        {/* Reply preview */}
+        {replyingTo && (
+          <div className=" px-6 lg:px-12 py-2 bg-[var(--color-blue-100)] border-l-4 border-blue-400 flex items-center gap-2">
+            <div className="flex flex-col flex-1">
+              <span className="font-semibold text-blue-700">
+                {user?.id === replyingTo.senderId
+                  ? tCommon("you")
+                  : replyingTo.sender?.username || "Unknown"}
+              </span>
+              <div className="flex items-center gap-2">
+                {replyingTo.type === MESSAGE_TYPE.IMAGE && (
+                  <span>
+                    <FaCamera />
+                  </span>
+                )}
+                <span className="text-[var(--color-grey-800)] line-clamp-1 break-all">
+                  {replyingTo.content}
+                </span>
+              </div>
+            </div>
+            <div className="w-20 h-full">
+              {replyingTo.media && replyingTo.media.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  {replyingTo.media.map((media) => (
+                    <MediaWithSkeleton key={media.id} src={media.url} />
+                  ))}
+                </div>
+              )}
+            </div>
+            <button
+              className="ml-auto text-blue-500 hover:text-blue-700"
+              onClick={() => setReplyingTo(null)}
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {chat && (
           <MessageInput
             chat={chat}
             isConnected={isConnected}
             bottomRef={bottomRef}
+            replyingTo={replyingTo}
+            clearReplyingTo={() => setReplyingTo(null)}
           />
         )}
       </div>

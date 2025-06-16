@@ -1,8 +1,48 @@
-import { Message } from "@prisma/client";
+import { Message, Prisma } from "@prisma/client";
 import crypto from "crypto";
 import config from "../config/config";
 
 const ENCRYPTION_KEY = config.encryptKey;
+
+export type MessageWithRelations = Prisma.MessageGetPayload<{
+  select: {
+    id: true;
+    content: true;
+    type: true;
+    createdAt: true;
+    updatedAt: true;
+    deletedAt: true;
+    sender: {
+      select: {
+        id: true;
+        username: true;
+        avatar: true;
+        role: true;
+      };
+    };
+    media: {
+      select: {
+        id: true;
+        url: true;
+        type: true;
+      };
+    };
+    replyTo: {
+      select: {
+        id: true;
+        content: true;
+        senderId: true;
+        sender: {
+          select: {
+            id: true;
+            username: true;
+            avatar: true;
+          };
+        };
+      };
+    };
+  };
+}>;
 
 if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length !== 32) {
   throw new Error("ENCRYPTION_KEY must be a 32-character string.");
@@ -40,7 +80,6 @@ export const decryptText = (encryptedText: string): string => {
 
 export function decryptMessageContent(message: Message | null): Message | null {
   if (!message || !message.content) return message;
-
   try {
     return {
       ...message,
@@ -51,6 +90,38 @@ export function decryptMessageContent(message: Message | null): Message | null {
     return {
       ...message,
       content: "[Error decrypting message]",
+    };
+  }
+}
+
+export function decryptMessageContentWithRelations(
+  message: MessageWithRelations | null
+): MessageWithRelations | null {
+  if (!message || !message.content) return message;
+  try {
+    return {
+      ...message,
+      content: decryptText(message.content),
+      replyTo: message.replyTo
+        ? {
+            ...message.replyTo,
+            content: message.replyTo.content
+              ? decryptText(message.replyTo.content)
+              : message.replyTo.content,
+          }
+        : message.replyTo,
+    };
+  } catch (error) {
+    console.error("Failed to decrypt message content:", error);
+    return {
+      ...message,
+      content: "[Error decrypting message]",
+      replyTo: message.replyTo
+        ? {
+            ...message.replyTo,
+            content: "[Error decrypting message]",
+          }
+        : message.replyTo,
     };
   }
 }

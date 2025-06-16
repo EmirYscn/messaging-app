@@ -26,5 +26,6 @@
   "download": "Descargar",
   "loading": "Cargando",
   "loadMore": "Cargar más",
-  "noMoreMessagesFromThisPoint": "No hay más mensajes desde este punto"
+  "noMoreMessagesFromThisPoint": "No hay más mensajes desde este punto",
+  "reply": "Responder"
 }

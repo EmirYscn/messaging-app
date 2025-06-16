@@ -3,7 +3,11 @@ import { socket } from "../services/socket";
 import { useUser } from "../hooks/useUser";
 import { FaPlus } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
-import { Chat, SocketMessageType } from "../types/types";
+import {
+  Chat,
+  Message as MessageType,
+  SocketMessageType,
+} from "../types/types";
 import { useTranslation } from "react-i18next";
 import Menus from "./Menus";
 import { MdPhotoLibrary } from "react-icons/md";
@@ -14,9 +18,17 @@ type MessageInputProps = {
   bottomRef: React.RefObject<HTMLDivElement | null>;
   chat: Chat;
   isConnected: boolean;
+  replyingTo?: MessageType | null;
+  clearReplyingTo?: () => void;
 };
 
-function MessageInput({ bottomRef, chat, isConnected }: MessageInputProps) {
+function MessageInput({
+  bottomRef,
+  chat,
+  isConnected,
+  replyingTo,
+  clearReplyingTo,
+}: MessageInputProps) {
   const { t } = useTranslation("chats");
   const { user } = useUser();
   const { sendMedia, isLoading: isMediaLoading } = useUploadMedia();
@@ -27,6 +39,12 @@ function MessageInput({ bottomRef, chat, isConnected }: MessageInputProps) {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (replyingTo && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [replyingTo]);
 
   function handlePhotoClick() {
     fileInputRef.current?.click();
@@ -56,6 +74,7 @@ function MessageInput({ bottomRef, chat, isConnected }: MessageInputProps) {
     const socketData: SocketMessageType = {
       content: message,
       chatId: chat?.id,
+      replyToId: replyingTo?.id || null,
     };
 
     try {
@@ -69,6 +88,7 @@ function MessageInput({ bottomRef, chat, isConnected }: MessageInputProps) {
       setMessage("");
       setMediaPreview("");
       setMediaFile(null);
+      clearReplyingTo?.();
 
       // Scroll to the bottom after sending a message
       setTimeout(() => {

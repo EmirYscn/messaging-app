@@ -26,5 +26,6 @@
   "download": "Download",
   "loading": "Loading",
   "loadMore": "Load more",
-  "noMoreMessagesFromThisPoint": "No more messages from this point"
+  "noMoreMessagesFromThisPoint": "No more messages from this point",
+  "reply": "Reply"
 }

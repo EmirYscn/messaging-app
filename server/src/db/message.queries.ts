@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "./prismaClient";
 
-import { decryptMessageContent } from "../utils/crypto";
+import { decryptMessageContentWithRelations } from "../utils/crypto";
 
 import { SocketMessageType } from "../sockets/types";
 
@@ -37,6 +37,18 @@ export const getMessages = async (chatId: string, cursor?: string) => {
       media: {
         select: { id: true, url: true, type: true },
       },
+      replyTo: {
+        select: {
+          id: true,
+          content: true,
+          senderId: true,
+          type: true,
+          media: { select: { id: true, url: true, type: true } },
+          sender: {
+            select: { id: true, username: true, avatar: true },
+          },
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
     take: TAKE + 1,
@@ -55,7 +67,7 @@ export const getMessages = async (chatId: string, cursor?: string) => {
   const orderedMessages = trimmedMessages.reverse();
 
   const decryptedMessages = orderedMessages.map((msg) =>
-    decryptMessageContent(msg)
+    decryptMessageContentWithRelations(msg)
   );
 
   return { messages: decryptedMessages, count: totalCount, nextCursor };
@@ -75,6 +87,7 @@ export const createMessage = async (
         senderId,
         content,
         type: messageType,
+        replyToId: data.replyToId,
       },
       include: {
         sender: {
@@ -82,6 +95,17 @@ export const createMessage = async (
         },
         media: {
           select: { id: true, url: true, type: true },
+        },
+        replyTo: {
+          select: {
+            id: true,
+            content: true,
+            senderId: true,
+            sender: {
+              select: { id: true, username: true, avatar: true },
+            },
+            media: { select: { id: true, url: true, type: true } },
+          },
         },
       },
     });
@@ -118,13 +142,24 @@ export const createMessage = async (
         media: {
           select: { id: true, url: true, type: true },
         },
+        replyTo: {
+          select: {
+            id: true,
+            content: true,
+            senderId: true,
+            sender: {
+              select: { id: true, username: true, avatar: true },
+            },
+            media: { select: { id: true, url: true, type: true } },
+          },
+        },
       },
     });
 
     return [fullMessage, updatedChat];
   });
 
-  const decryptedContent = decryptMessageContent(newMsg);
+  const decryptedContent = decryptMessageContentWithRelations(newMsg);
 
   return {
     newMsg: decryptedContent,

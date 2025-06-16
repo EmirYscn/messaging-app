@@ -7,7 +7,11 @@ import { useChat } from "../hooks/useChat";
 import { useReceiveMessage } from "../hooks/sockets/useSocketMessage";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
-import { CHAT_TYPE, MESSAGE_TYPE } from "../types/types";
+import {
+  CHAT_TYPE,
+  Message as MessageType,
+  MESSAGE_TYPE,
+} from "../types/types";
 import SpinnerMini from "./SpinnerMini";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 
@@ -16,6 +20,7 @@ type MessagesProps = {
   bottomRef: React.RefObject<HTMLDivElement | null>;
   isSelecting: boolean;
   setSelectedMessages: React.Dispatch<React.SetStateAction<string[]>>;
+  onReply: (msg: MessageType) => void;
 };
 
 function Messages({
@@ -23,6 +28,7 @@ function Messages({
   bottomRef,
   isSelecting,
   setSelectedMessages,
+  onReply,
 }: MessagesProps) {
   const { t } = useTranslation("chats");
   const { chat } = useChat();
@@ -186,6 +192,7 @@ function Messages({
               message={message}
               isSelecting={isSelecting}
               setSelectedMessages={setSelectedMessages}
+              onReply={onReply}
             />
           )
         )

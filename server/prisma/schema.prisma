@@ -29,6 +29,7 @@ enum MESSAGE_STATUS {
   DELIVERED
   READ
 }
+
 enum MESSAGE_TYPE {
   TEXT
   IMAGE
@@ -46,8 +47,8 @@ model Profile {
   id  String  @id @default(uuid())
   bio String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? // Soft delete timestamp
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -62,30 +63,30 @@ model User {
   role     ROLE    @default(USER)
   avatar   String? // Direct URL to avatar image
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? // Soft delete timestamp
 
   resetPasswordToken   String?   @unique // Token for password reset
   resetPasswordExpires DateTime? // Expiration date for the token
 
-  profile  Profile?
-  chats    Chat[]
-  messages Message[]
-  friends Friendship[] @relation("Friend1")
-  friendOf Friendship[] @relation("Friend2")
-  sentRequests   FriendRequest[] @relation("Sender")
+  profile          Profile?
+  chats            Chat[]
+  messages         Message[]
+  friends          Friendship[]    @relation("Friend1")
+  friendOf         Friendship[]    @relation("Friend2")
+  sentRequests     FriendRequest[] @relation("Sender")
   receivedRequests FriendRequest[] @relation("Receiver")
 }
 
 model Chat {
-  id   String  @id @default(uuid())
-  name String? 
+  id     String    @id @default(uuid())
+  name   String?
   avatar String? // Direct URL to chat avatar image
-  type CHAT_TYPE // Type of chat (e.g., group, private)
+  type   CHAT_TYPE // Type of chat (e.g., group, private)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? // Soft delete timestamp
 
   lastMessage   Message? @relation("ChatLastMessage", fields: [lastMessageId], references: [id], onDelete: SetNull)
@@ -96,12 +97,12 @@ model Chat {
 }
 
 model Message {
-  id      String @id @default(uuid())
+  id      String       @id @default(uuid())
   content String
-  type MESSAGE_TYPE @default(TEXT)
+  type    MESSAGE_TYPE @default(TEXT)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? // Soft delete timestamp
 
   sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
@@ -110,8 +111,12 @@ model Message {
   chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
   chatId String
 
-  chatAsLastMessage Chat? @relation("ChatLastMessage")
-  media Media[] // List of media files associated with the message
+  replyTo   Message?  @relation("MessageReply", fields: [replyToId], references: [id])
+  replyToId String? // ID of the message being replied to
+  replies   Message[] @relation("MessageReply")
+
+  chatAsLastMessage Chat?   @relation("ChatLastMessage")
+  media             Media[] // List of media files associated with the message
 }
 
 model Friendship {
@@ -128,29 +133,29 @@ model Friendship {
 }
 
 model FriendRequest {
-  id        String  @id @default(uuid())
-  status    FRIEND_REQUEST_STATUS @default(PENDING)  // e.g., "pending", "accepted", "declined"
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String                @id @default(uuid())
+  status    FRIEND_REQUEST_STATUS @default(PENDING) // e.g., "pending", "accepted", "declined"
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
 
   sender   User   @relation("Sender", fields: [senderId], references: [id], onDelete: Cascade)
   senderId String
 
-  receiver User   @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiver   User   @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
   receiverId String
 
-  @@index([senderId])
-  @@index([receiverId]) 
   @@unique([senderId, receiverId]) // Unique constraint to prevent duplicate friend requests
+  @@index([senderId])
+  @@index([receiverId])
 }
 
 model Media {
-  id        String @id @default(uuid())
+  id        String     @id @default(uuid())
   url       String // URL to the media file
   filePath  String // Local file path to the media file
   type      MEDIA_TYPE // Type of media (e.g., image, video, audio)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   message   Message? @relation(fields: [messageId], references: [id], onDelete: Cascade)
   messageId String?
