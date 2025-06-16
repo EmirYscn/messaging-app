@@ -7,10 +7,15 @@ import Settings from "./Settings";
 import Profile from "./Profile";
 import Friends from "./FriendsList";
 import FriendAdd from "./FriendAdd";
+import { useDarkMode } from "../contexts/DarkMode/ThemeContextProvider";
+import NewChat from "./NewChatPanel";
+import NewGroupPanel from "./NewGroupPanel";
+import NewGroupPanelFinal from "./NewGroupPanelFinal";
 
 function AppLayout() {
   const [showChats, setShowChats] = useState(false);
-  const { context } = useAsideContext();
+  const { context, setContext } = useAsideContext();
+  const { isDarkMode } = useDarkMode();
 
   const renderAsideContent = () => {
     switch (context) {
@@ -24,6 +29,14 @@ function AppLayout() {
         return <Friends />;
       case "friend-add":
         return <FriendAdd />;
+      case "new-chat":
+        return <NewChat onBack={() => setContext("chats")} />;
+      case "new-group-chat":
+        return <NewGroupPanel onBack={() => setContext("new-chat")} />;
+      case "new-group-chat-final":
+        return (
+          <NewGroupPanelFinal onBack={() => setContext("new-group-chat")} />
+        );
       default:
         return null;
     }
@@ -35,9 +48,15 @@ function AppLayout() {
 
   return (
     // Container for centering with padding
-    <div className="flex justify-center h-screen overflow-hidden lg:p-8 lg:opacity-95">
+    <div className="flex justify-center h-screen overflow-hidden lg:p-8">
       {/* App container with max-width and rounded corners */}
-      <div className="w-full lg:max-w-99/100 lg:rounded-2xl overflow-hidden grid grid-rows-[1fr_auto] lg:grid-rows-none lg:grid lg:grid-cols-[auto_25rem_1fr] relative bg-[var(--color-grey-50)] text-[var(--color-grey-700)] shadow-2xl">
+      <div
+        className={`w-full lg:max-w-99/100 lg:rounded-2xl overflow-hidden grid grid-rows-[1fr_auto] lg:grid-rows-none lg:grid lg:grid-cols-[auto_25rem_1fr] relative ${
+          isDarkMode
+            ? "bg-[var(--color-grey-50)]/85"
+            : "bg-[var(--color-grey-50)]/60"
+        }  backdrop-blur-sm text-[var(--color-grey-700)] shadow-2xl`}
+      >
         <div className="w-full lg:w-auto h-full rounded-xl lg:rounded-none lg:rounded-l-2xl overflow-hidden order-last lg:order-first border-t-2 border-[var(--color-grey-100)] lg:border-t-0 lg:border-r-2 ">
           <Sidebar onToggleChats={handleToggleChats} showChats={showChats} />
         </div>

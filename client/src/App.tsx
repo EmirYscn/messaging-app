@@ -16,6 +16,7 @@ import Signup from "./pages/Signup";
 import { AsideContextProvider } from "./contexts/Aside/AsideContextProvider";
 import { useEffect } from "react";
 import { connectSocket } from "./services/socket";
+import { GroupChatContextProvider } from "./contexts/Aside/GroupChatContextProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,48 +37,50 @@ function App() {
   return (
     <ThemeContextProvider>
       <AsideContextProvider>
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <BrowserRouter>
-            <Routes>
-              <Route
-                element={
-                  <ProtectedRoute>
-                    <AppLayout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route path="/" element={<Home />} />
-                <Route path="/chat/:chatId" element={<Chat />} />
-              </Route>
+        <GroupChatContextProvider>
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <BrowserRouter>
+              <Routes>
+                <Route
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="/" element={<Home />} />
+                  <Route path="/chat/:chatId" element={<Chat />} />
+                </Route>
 
-              <Route path="signup" element={<Signup />} />
-              <Route path="login" element={<Login />} />
-              <Route path="auth-success" element={<AuthSuccess />} />
-              <Route path="*" element={<PageNotFound />} />
-            </Routes>
-          </BrowserRouter>
-          <Toaster
-            position="top-center"
-            gutter={12}
-            containerStyle={{ margin: "8px" }}
-            toastOptions={{
-              success: {
-                duration: 3000,
-              },
-              error: {
-                duration: 5000,
-              },
-              style: {
-                fontSize: "16px",
-                maxWidth: "500px",
-                padding: "16px 24px",
-                backgroundColor: "var(--color-grey-0)",
-                color: "var(--color-grey-700)",
-              },
-            }}
-          />
-        </QueryClientProvider>
+                <Route path="signup" element={<Signup />} />
+                <Route path="login" element={<Login />} />
+                <Route path="auth-success" element={<AuthSuccess />} />
+                <Route path="*" element={<PageNotFound />} />
+              </Routes>
+            </BrowserRouter>
+            <Toaster
+              position="top-center"
+              gutter={12}
+              containerStyle={{ margin: "8px" }}
+              toastOptions={{
+                success: {
+                  duration: 3000,
+                },
+                error: {
+                  duration: 5000,
+                },
+                style: {
+                  fontSize: "16px",
+                  maxWidth: "500px",
+                  padding: "16px 24px",
+                  backgroundColor: "var(--color-grey-0)",
+                  color: "var(--color-grey-700)",
+                },
+              }}
+            />
+          </QueryClientProvider>
+        </GroupChatContextProvider>
       </AsideContextProvider>
     </ThemeContextProvider>
   );

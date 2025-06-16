@@ -7,71 +7,51 @@ import Friends from "./Friends";
 import { useState } from "react";
 import { User } from "../types/types";
 import ProfileImage from "./ProfileImage";
-import NewGroupPanelFinal from "./NewGroupPanelFinal";
+import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
+import { useGroupChatContext } from "../contexts/Aside/GroupChatContextProvider";
 
 type NewGroupProps = {
   onBack: () => void;
-  onSuccess: () => void;
 };
 
-function NewGroupPanel({ onBack, onSuccess }: NewGroupProps) {
+function NewGroupPanel({ onBack }: NewGroupProps) {
   const { t } = useTranslation("chats");
   const { t: tCommon } = useTranslation("common");
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const { selectedUsers, setSelectedUsers, handleUserSelection } =
+    useGroupChatContext();
   const [searchbarValue, setSearchbarValue] = useState("");
 
-  const [isCreatingGroupFinal, setIsCreatingGroupFinal] = useState(false);
-
-  function handleUserSelection(user: User) {
-    setSelectedUsers((prev) =>
-      prev.some((u) => u.id === user.id)
-        ? prev.filter((u) => u.id !== user.id)
-        : [...prev, user]
-    );
-  }
+  const { setContext } = useAsideContext();
 
   return (
     <div className="relative h-full overflow-hidden">
-      <div
-        className={`absolute top-0 left-0 w-full h-full z-20 bg-[var(--color-grey-50)] transition-transform duration-1000 ease-in-out ${
-          isCreatingGroupFinal ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <NewGroupPanelFinal
-          onBack={() => setIsCreatingGroupFinal(false)}
-          selectedUsers={selectedUsers}
-          handleUserSelection={handleUserSelection}
-          onSuccess={() => {
-            setSelectedUsers([]);
-            setIsCreatingGroupFinal(false);
-            onSuccess();
-          }}
-        />
-      </div>
       <div className="flex flex-col w-full h-full gap-4">
         <div className="flex items-center gap-2 px-4 py-4">
           <Button
             icon={<IoMdArrowRoundBack />}
             size="large"
             className="!p-2"
-            onClick={onBack}
+            onClick={() => {
+              setSelectedUsers([]);
+              onBack();
+            }}
           />
           <h1 className="text-lg font-semibold">{t("addMembersToGroup")}</h1>
         </div>
 
-        {selectedUsers.length > 0 && (
+        {selectedUsers?.length > 0 && (
           <div className="flex flex-wrap gap-2 px-4">
             {selectedUsers.map((user) => (
               <div
                 key={user.id}
-                className="flex items-center gap-2 pr-4 py-2 bg-[var(--color-grey-100)] rounded-full"
+                className="flex items-center gap-2 pr-4 py-2 rounded-full"
               >
                 <ProfileImage imgSrc={user.avatar} size="xs" />
                 <span className="text-sm font-semibold">{user.username}</span>
                 <Button
                   icon={<IoMdArrowRoundBack />}
                   size="small"
-                  className="!p-1"
+                  className="!p-1 hover:text-red-500"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleUserSelection(user);
@@ -98,13 +78,13 @@ function NewGroupPanel({ onBack, onSuccess }: NewGroupProps) {
             searchbarValue={searchbarValue}
           />
         </div>
-        {selectedUsers.length > 0 && (
+        {selectedUsers?.length > 0 && (
           <div className="flex items-center justify-center p-6">
             <Button
               icon={<IoMdArrowRoundForward />}
               size="large"
               className="!p-2 bg-[var(--color-brand-100)] !rounded-full text-white"
-              onClick={() => setIsCreatingGroupFinal(true)}
+              onClick={() => setContext("new-group-chat-final")}
             />
           </div>
         )}

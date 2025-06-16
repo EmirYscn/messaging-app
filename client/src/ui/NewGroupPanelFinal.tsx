@@ -1,5 +1,4 @@
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { User } from "../types/types";
 import Button from "./Button";
 import Input from "./Input";
 import ProfileImage from "./ProfileImage";
@@ -7,26 +6,23 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdOutlineDone } from "react-icons/md";
 import { useCreateGroup } from "../hooks/useCreateGroup";
+import { useGroupChatContext } from "../contexts/Aside/GroupChatContextProvider";
+import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
 
 type NewGroupPanelFinalProps = {
   onBack: () => void;
-  selectedUsers: User[];
-  handleUserSelection: (user: User) => void;
-  onSuccess: () => void;
 };
 
-function NewGroupPanelFinal({
-  onBack,
-  selectedUsers,
-  handleUserSelection,
-  onSuccess,
-}: NewGroupPanelFinalProps) {
+function NewGroupPanelFinal({ onBack }: NewGroupPanelFinalProps) {
   const { t } = useTranslation("chats");
   const [groupName, setGroupName] = useState("");
   const [groupImage, setGroupImage] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const { createGroup, isCreatingGroup } = useCreateGroup();
+  const { selectedUsers, setSelectedUsers, handleUserSelection } =
+    useGroupChatContext();
+  const { setContext } = useAsideContext();
 
   useEffect(() => {
     return () => {
@@ -57,7 +53,8 @@ function NewGroupPanelFinal({
           setGroupName("");
           setGroupImage("");
           setImageFile(null);
-          onSuccess();
+          setContext("chats");
+          setSelectedUsers([]);
         },
       }
     );
@@ -99,14 +96,14 @@ function NewGroupPanelFinal({
           {selectedUsers.map((user) => (
             <div
               key={user.id}
-              className="flex items-center gap-2 pr-4 py-2 bg-[var(--color-grey-100)] rounded-full"
+              className="flex items-center gap-2 pr-4 py-2 rounded-full"
             >
               <ProfileImage imgSrc={user.avatar} size="xs" />
               <span className="text-sm font-semibold">{user.username}</span>
               <Button
                 icon={<IoMdArrowRoundBack />}
                 size="small"
-                className="!p-1"
+                className="!p-1 hover:text-red-500"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleUserSelection(user);

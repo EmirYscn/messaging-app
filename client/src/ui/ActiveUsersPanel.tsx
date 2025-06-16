@@ -19,7 +19,7 @@ function ActiveUsersPanel() {
   const { activeUsers } = useSocketActiveUsers();
 
   return (
-    <div className="hidden lg:block w-1/4 border-l-1 border-[var(--color-grey-100)] bg-[var(--color-grey-50)]">
+    <div className="hidden lg:block w-1/4 border-l-1 border-[var(--color-grey-100)]">
       <h1 className="p-4 mb-4 text-xl font-semibold">{t("activeUsers")}</h1>
       {activeUsers && activeUsers.length > 0 ? (
         <>

@@ -5,7 +5,10 @@ export type ContextTypes =
   | "settings"
   | "profile"
   | "friends"
-  | "friend-add";
+  | "friend-add"
+  | "new-chat"
+  | "new-group-chat"
+  | "new-group-chat-final";
 
 export type AsideContextType = {
   context: ContextTypes;

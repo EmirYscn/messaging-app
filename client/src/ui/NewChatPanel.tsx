@@ -8,8 +8,6 @@ import Searchbar from "./Searchbar";
 import Friends from "./Friends";
 
 import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
-import { useState } from "react";
-import NewGroupPanel from "./NewGroupPanel";
 
 type NewChatProps = {
   onBack: () => void;
@@ -19,22 +17,9 @@ function NewChat({ onBack }: NewChatProps) {
   const { t } = useTranslation("chats");
   const { t: tCommon } = useTranslation("common");
   const { setContext } = useAsideContext();
-  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
 
   return (
     <div className="relative h-full overflow-hidden">
-      <div
-        className={`absolute top-0 left-0 w-full h-full z-20 bg-[var(--color-grey-50)] transition-transform duration-1000 ease-in-out ${
-          isCreatingGroup ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <NewGroupPanel
-          onBack={() => setIsCreatingGroup(false)}
-          onSuccess={() => {
-            setIsCreatingGroup(false);
-          }}
-        />
-      </div>
       <div className="flex flex-col w-full h-full gap-4">
         <div className="flex items-center gap-2 px-4 py-4">
           <Button
@@ -51,7 +36,7 @@ function NewChat({ onBack }: NewChatProps) {
         <div className="flex flex-col">
           <div
             className="flex items-center gap-4 px-4 py-2 hover:bg-[var(--color-grey-100)] cursor-pointer"
-            onClick={() => setIsCreatingGroup(true)}
+            onClick={() => setContext("new-group-chat")}
           >
             <Button
               icon={<FaUserGroup className="text-[var(--color-grey-50)]" />}

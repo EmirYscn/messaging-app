@@ -142,13 +142,11 @@ function Messages({
   }, [messages, isLoading, isFetchingNextPage, containerRef, bottomRef]);
 
   return (
-    <div
-      className={`flex flex-col gap-4 bg-[var(--color-grey-50)] text-gray-900 p-4`}
-    >
+    <div className={`flex flex-col gap-4 text-gray-900 p-4`}>
       <div className="flex items-center justify-center" ref={topRef}>
         <button
           onClick={() => fetchNextPage()}
-          className="bg-[var(--color-grey-200)] opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold"
+          className=" opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold"
         >
           {isFetchingNextPage
             ? t("loading")
@@ -161,7 +159,7 @@ function Messages({
       {hasNextPage && <div>{isFetchingNextPage && <SpinnerMini />}</div>}
       {chat?.type === CHAT_TYPE.PUBLIC && (
         <div className="flex items-center justify-center ">
-          <span className="bg-[var(--color-grey-200)] opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold">
+          <span className="opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold">
             {messages.length > 0 ? t("messages24h") : t("noMessages24h")}
           </span>
         </div>

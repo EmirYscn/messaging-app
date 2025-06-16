@@ -33,14 +33,14 @@ function Settings() {
         <div className="px-4 ">
           <Searchbar placeholder={t("searchInTheSettings")} />
         </div>
-        <div className="px-4 py-2 flex gap-4 items-center hover:bg-[var(--color-grey-100)]">
+        <div className="px-4 py-2 flex gap-4 items-center hover:bg-[var(--color-grey-100)]/40">
           <ProfileImage imgSrc={user?.avatar} size="md" />
           <h2 className="text-xl">{user?.username}</h2>
         </div>
         <div className="flex flex-col gap-3">
           <button
             onClick={() => setContext("profile")}
-            className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)] "
+            className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)]/40"
           >
             <div className="px-6 py-4">
               <span className="text-2xl">
@@ -51,7 +51,7 @@ function Settings() {
               <span>{t("account")}</span>
             </div>
           </button>
-          <button className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)]">
+          <button className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)]/40">
             <div className="px-6 py-4">
               <span className="text-2xl">
                 <BsBellFill />
@@ -62,7 +62,7 @@ function Settings() {
             </div>
           </button>
           <button
-            className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)]"
+            className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)]/40"
             onClick={() =>
               i18n.language === "es" ? switchToEnglish() : switchToSpanish()
             }
@@ -79,7 +79,7 @@ function Settings() {
               </span>
             </div>
           </button>
-          <button className="grid grid-cols-[auto_1fr] text-left gap-1 items-center text-red-400 hover:bg-[var(--color-grey-100)]">
+          <button className="grid grid-cols-[auto_1fr] text-left gap-1 items-center text-red-400 hover:bg-[var(--color-grey-100)]/40">
             <div className="px-6 py-4">
               <span className="text-2xl">
                 <PiSignOutBold />

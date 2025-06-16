@@ -137,3 +137,6 @@ dist
 
 
 generated/prisma/
+
+# Mac system files
+.DS_Store

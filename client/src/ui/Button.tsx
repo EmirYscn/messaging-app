@@ -34,7 +34,8 @@ const variationClasses: Record<
   danger: "bg-red-700 text-red-100 hover:bg-red-800",
   create: "bg-brand-600 text-white rounded-full [&>svg]:h-4 [&>svg]:w-auto",
   icon: "p-4 focus:outline-none",
-  login: "rounded-md bg-[var(--color-brand-100)] hover:text-brand-600",
+  login:
+    "rounded-md bg-[var(--color-brand-100)] hover:text-brand-600 text-white",
   logout: "rounded-md hover:text-brand-600",
   accept: "rounded-md bg-[var(--color-brand-100)] hover:text-brand-600",
   search: "border-none p-2 focus:outline-none hover:text-red-500",

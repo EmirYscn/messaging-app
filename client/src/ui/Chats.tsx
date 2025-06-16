@@ -11,20 +11,20 @@ import { useTranslation } from "react-i18next";
 
 import { useRef, useState } from "react";
 import Button from "./Button";
-import NewChat from "./NewChatPanel";
 import ChatsContextMenu, {
   ChatsContextMenu as ChatsContextMenuType,
 } from "./custom-context-menus/ChatsContextMenu";
 import { Chat, MESSAGE_TYPE } from "../types/types";
 import { ContextMenuPosition } from "./custom-context-menus/ContextMenu";
 import { FaCamera } from "react-icons/fa";
+import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
 
 function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
   const { t } = useTranslation("common");
+  const { setContext } = useAsideContext();
 
   const { chats, isLoading } = useChats();
   useSocketChat();
-  const [isCreatingChat, setIsCreatingChat] = useState(false);
 
   const chatListRef = useRef<HTMLDivElement>(null);
   const [contextMenu, setContextMenu] = useState<ChatsContextMenuType>(null);
@@ -56,13 +56,6 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
 
   return (
     <div className="relative h-full overflow-hidden">
-      <div
-        className={`absolute top-0 left-0 w-full h-full z-20 bg-[var(--color-grey-50)] transition-transform duration-1000 ease-in-out ${
-          isCreatingChat ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <NewChat onBack={() => setIsCreatingChat(false)} />
-      </div>
       <div className="absolute top-0 left-0 z-10 w-full h-full">
         <div className="flex flex-col h-full gap-4 p-4">
           <div className="flex items-center justify-between">
@@ -70,7 +63,7 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
             <div className="flex items-center gap-2">
               <Button
                 className="!p-2"
-                onClick={() => setIsCreatingChat(true)}
+                onClick={() => setContext("new-chat")}
                 icon={
                   <svg
                     viewBox="0 0 24 24"
@@ -129,7 +122,7 @@ function Chats({ onToggleChats }: { onToggleChats?: () => void }) {
                     onContextMenu={(e) => handleContextMenu(e, chat)}
                     className={({ isActive }) =>
                       `text-md px-2 py-3 flex items-center gap-4 !transition-none rounded-md  ${
-                        isActive ? "bg-[var(--color-grey-100)]" : ""
+                        isActive ? "bg-[var(--color-grey-100)]/30" : ""
                       }`
                     }
                   >
