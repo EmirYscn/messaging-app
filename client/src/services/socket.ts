@@ -13,7 +13,5 @@ export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 );
 
 export const connectSocket = () => {
-  // const token = localStorage.getItem("jwt");
-  // socket.auth = { token };
   socket.connect();
 };

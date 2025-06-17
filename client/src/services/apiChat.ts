@@ -61,7 +61,6 @@ export const getMessages = async (
     const res = await api.get(`/api/v1/chats/${chatId}/messages`, {
       params: cursor ? { cursor } : {},
     });
-    console.log(res.data);
     return {
       messages: res.data.messages,
       count: res.data.count,
