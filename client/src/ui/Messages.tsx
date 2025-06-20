@@ -14,6 +14,7 @@ import {
 } from "../types/types";
 import SpinnerMini from "./SpinnerMini";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
+import { formatDate } from "../utils/formatDate";
 
 type MessagesProps = {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -32,6 +33,7 @@ function Messages({
 }: MessagesProps) {
   const { t } = useTranslation("chats");
   const { chat } = useChat();
+  const today = formatDate(new Date().toISOString());
   const {
     messages,
     hasNextPage,
@@ -186,10 +188,17 @@ function Messages({
             >
               {message.content}
             </div>
+          ) : message.type === MESSAGE_TYPE.SYSTEM_DATE ? (
+            <div
+              key={message.id}
+              className="text-center text-xs text-[var(--color-grey-500)] my-2"
+            >
+              {message.content === today ? t("today") : message.content}
+            </div>
           ) : (
             <Message
               key={message.id}
-              message={message}
+              message={message as MessageType}
               isSelecting={isSelecting}
               setSelectedMessages={setSelectedMessages}
               onReply={onReply}

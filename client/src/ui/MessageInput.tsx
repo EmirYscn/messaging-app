@@ -168,7 +168,7 @@ function MessageInput({
                   icon={<MdPhotoLibrary className="text-blue-400" />}
                   onClick={handlePhotoClick}
                 >
-                  Photos
+                  {t("photos")}
                 </Menus.Button>
               </Menus.List>
             </Menus.Menu>

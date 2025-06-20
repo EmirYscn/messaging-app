@@ -27,5 +27,7 @@
   "loading": "Cargando",
   "loadMore": "Cargar más",
   "noMoreMessagesFromThisPoint": "No hay más mensajes desde este punto",
-  "reply": "Responder"
+  "reply": "Responder",
+  "photos": "Fotos",
+  "today": "Hoy"
 }

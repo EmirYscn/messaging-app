@@ -17,6 +17,7 @@ export enum MESSAGE_TYPE {
   VIDEO = "VIDEO",
   AUDIO = "AUDIO",
   SYSTEM = "SYSTEM",
+  SYSTEM_DATE = "SYSTEM_DATE",
 }
 
 export enum FRIEND_REQUEST_STATUS {

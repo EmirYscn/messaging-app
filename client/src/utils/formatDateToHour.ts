@@ -1,19 +1,8 @@
-// export function formatPostDate(date: Date | string): string {
-//   const formattedDate = formatDistance(new Date(), date);
-
-//   return formattedDate + " ago";
-// }
-
-// export function formatDate(date: Date | string): string {
-//   const formattedDate = format(date, "PP");
-
-//   return formattedDate;
-// }
-
 export function formatDateToHour(date: Date | string): string {
   const formattedDate = new Date(date).toLocaleTimeString([], {
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
+    hour12: true,
   });
 
   return formattedDate;

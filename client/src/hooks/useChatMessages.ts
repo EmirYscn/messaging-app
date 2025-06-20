@@ -12,7 +12,7 @@ type MessagePage = {
 
 type DateMessage = {
   id: string;
-  type: MESSAGE_TYPE.SYSTEM;
+  type: MESSAGE_TYPE.SYSTEM_DATE;
   content: string;
 };
 
@@ -51,7 +51,7 @@ export const useChatMessages = () => {
       // Insert a date marker message before the first message of a new date
       messagesWithDateMarkers.push({
         id: `date-${messageDate}`, // unique id for date marker
-        type: MESSAGE_TYPE.SYSTEM,
+        type: MESSAGE_TYPE.SYSTEM_DATE,
         content: messageDate,
       });
       lastDate = messageDate;

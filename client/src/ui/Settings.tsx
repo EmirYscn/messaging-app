@@ -3,7 +3,7 @@ import ProfileImage from "./ProfileImage";
 import Searchbar from "./Searchbar";
 import { FaUserCircle } from "react-icons/fa";
 import { PiSignOutBold } from "react-icons/pi";
-import { BsBellFill } from "react-icons/bs";
+// import { BsBellFill } from "react-icons/bs";
 import DarkModeToggle from "./DarkModeToggle";
 import { useLogout } from "../hooks/useLogout";
 import { useAsideContext } from "../contexts/Aside/AsideContextProvider";
@@ -51,7 +51,7 @@ function Settings() {
               <span>{t("account")}</span>
             </div>
           </button>
-          <button className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)]/40">
+          {/* <button className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)]/40">
             <div className="px-6 py-4">
               <span className="text-2xl">
                 <BsBellFill />
@@ -60,7 +60,7 @@ function Settings() {
             <div className="py-4 border-b-1 border-b-[var(--color-grey-200)]">
               <span>{t("notifications")}</span>
             </div>
-          </button>
+          </button> */}
           <button
             className="grid grid-cols-[auto_1fr] text-left gap-1 items-center hover:bg-[var(--color-grey-100)]/40"
             onClick={() =>
