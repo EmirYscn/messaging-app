@@ -12,6 +12,8 @@ import NewChat from "./NewChatPanel";
 import NewGroupPanel from "./NewGroupPanel";
 import NewGroupPanelFinal from "./NewGroupPanelFinal";
 
+import { AnimatePresence, motion } from "framer-motion";
+
 function AppLayout() {
   const [showChats, setShowChats] = useState(false);
   const { context, setContext } = useAsideContext();
@@ -69,7 +71,18 @@ function AppLayout() {
               lg:border-[var(--color-grey-100)] lg:border-r-2
             `}
         >
-          {renderAsideContent()}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={context}
+              initial={{ opacity: 0, x: 0 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.25 }}
+              className="h-full"
+            >
+              {renderAsideContent()}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         <main
