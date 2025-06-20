@@ -67,7 +67,7 @@ function Chat() {
   useSocketJoinRoom();
 
   return (
-    <div className="flex h-full" key={chat?.id}>
+    <div className="flex h-full">
       <div className="flex flex-col w-full h-full">
         <div className="px-8 py-4 border-b-2 border-[var(--color-grey-100)] flex justify-between items-center gap-4">
           {isConnected ? (
