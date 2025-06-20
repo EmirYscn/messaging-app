@@ -67,12 +67,12 @@ function Chat() {
   useSocketJoinRoom();
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full" key={chat?.id}>
       <div className="flex flex-col w-full h-full">
         <div className="px-8 py-4 border-b-2 border-[var(--color-grey-100)] flex justify-between items-center gap-4">
           {isConnected ? (
             <div className="flex items-center gap-5">
-              <ProfileImage imgSrc={chat?.avatar} size="sm" />
+              <ProfileImage key={chat?.id} imgSrc={chat?.avatar} size="sm" />
               <div>
                 <h2 className="text-2xl font-semibold">
                   {chat?.type === CHAT_TYPE.PUBLIC
