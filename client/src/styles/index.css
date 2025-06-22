@@ -100,10 +100,6 @@
   transition: all 0.15s, background-color 0.3s ease-in-out;
 }
 
-/* .scrollable {
-  @apply scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent;
-} */
-
 * {
   @apply scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent;
 }
@@ -143,16 +139,3 @@ html.dark-mode body {
     mask-image: radial-gradient(farthest-side, #0000 calc(100% - 10px), #000 0);
   }
 }
-
-/* .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2); 
-  border-radius: 4px;
-} */

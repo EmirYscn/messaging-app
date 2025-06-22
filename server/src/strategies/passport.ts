@@ -1,4 +1,3 @@
-import { Request } from "express";
 import { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -9,7 +8,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Profile as GoogleProfile } from "passport-google-oauth20";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { Profile as GithubProfile } from "passport-github2";
-import { Strategy as JwtStrategy } from "passport-jwt";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 
 import * as db from "../db/user.queries";
 import { prisma } from "../db/prismaClient";
@@ -151,13 +150,8 @@ const githubStrategy = new GithubStrategy(
   }
 );
 
-// JWT Strategy configuration
-const cookieExtractor = (req: Request): string | null => {
-  return req.cookies?.jwt || null;
-};
-
 const jwtOptions = {
-  jwtFromRequest: cookieExtractor,
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: JWT_SECRET!,
 };
 

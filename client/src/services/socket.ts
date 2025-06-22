@@ -7,11 +7,14 @@ export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   API_BASE_URL,
   {
     autoConnect: false,
-    withCredentials: true,
     transports: ["websocket"],
   }
 );
 
 export const connectSocket = () => {
+  const token = localStorage.getItem("jwt");
+  if (token) {
+    socket.auth = { token };
+  }
   socket.connect();
 };

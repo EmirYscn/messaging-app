@@ -89,13 +89,6 @@ export const login = async (
       // Generate a JWT token
       const token = generateToken(user);
 
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-      });
-
       // Simply return the user info
       return res.json({
         user: {
@@ -105,6 +98,7 @@ export const login = async (
           avatar: user.avatar,
           role: user.role,
         },
+        token,
       });
     }
   )(req, res, next);
@@ -179,13 +173,6 @@ export const googleCallback = (
       // Generate a JWT token
       const token = generateToken(user);
 
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-      });
-
       // Include user data
       const userData = {
         id: user.id,
@@ -200,6 +187,7 @@ export const googleCallback = (
         JSON.stringify({
           user: userData,
           provider: "Google",
+          token,
         })
       ).toString("base64");
       // Redirect to frontend with token
@@ -224,13 +212,6 @@ export const githubCallback = (
       // Generate a JWT token
       const token = generateToken(user);
 
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-      });
-
       // Include user data
       const userData = {
         id: user.id,
@@ -245,6 +226,7 @@ export const githubCallback = (
         JSON.stringify({
           user: userData,
           provider: "GitHub",
+          token,
         })
       ).toString("base64");
 

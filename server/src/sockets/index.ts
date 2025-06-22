@@ -18,10 +18,7 @@ export const handleVerifyToken = (
   socket: TypedSocket,
   next: SocketNextFunction
 ) => {
-  const cookieHeader = socket.handshake.headers.cookie;
-  if (!cookieHeader) return next(new Error("No cookie header found"));
-
-  const { jwt: token } = cookie.parse(cookieHeader);
+  const token = socket.handshake.auth.token;
 
   if (!token) {
     console.log("❌ No token provided");
