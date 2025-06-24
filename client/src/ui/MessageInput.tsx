@@ -13,6 +13,7 @@ import Menus from "./Menus";
 import { MdPhotoLibrary } from "react-icons/md";
 import { useUploadMedia } from "../hooks/useUploadMedia";
 import toast from "react-hot-toast";
+import TextareaAutosize from "react-textarea-autosize";
 
 type MessageInputProps = {
   bottomRef: React.RefObject<HTMLDivElement | null>;
@@ -182,13 +183,13 @@ function MessageInput({
             className="hidden"
           />
 
-          <textarea
+          <TextareaAutosize
             placeholder={t("typeMessage")}
             ref={textareaRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            rows={1}
+            minRows={1}
             className="w-full resize-none h-max focus:outline-none bg-[var(--color-grey-100)] px-6 py-2 shadow-sm rounded-lg max-h-[200px] overflow-y-auto"
           />
           <button
