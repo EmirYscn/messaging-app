@@ -26,7 +26,6 @@ export function useCreateGroup() {
       toast.success("Group created successfully");
     },
     onError: (err: Error) => {
-      console.log(err);
       toast.error(err.message);
     },
   });

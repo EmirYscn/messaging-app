@@ -25,8 +25,6 @@ let isRefreshing = false;
 let failedQueue: FailedQueueItem[] = [];
 
 const processQueue = (error: unknown, token: string | null = null) => {
-  console.log("Processing queue with error:", error, "and token:", token);
-  console.log("Failed queue length:", failedQueue.length);
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -60,16 +58,14 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log("Refreshing token...");
         const data = await refreshToken();
-        console.log(data);
+
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
         originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
         processQueue(null, data.accessToken);
         return api(originalRequest);
       } catch (err) {
-        console.log("Refresh token failed, logging out...");
         processQueue(err, null);
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");

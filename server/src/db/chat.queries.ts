@@ -152,10 +152,6 @@ export const createGroupchat = async (
 ) => {
   const sortedIds = userIds.sort();
 
-  console.log("NAME: ", groupName);
-  console.log("USERIDS: ", userIds);
-  console.log("AVATAR: ", avatar);
-
   const newChat = await prisma.chat.create({
     data: {
       type: "GROUP",

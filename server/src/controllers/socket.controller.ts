@@ -13,9 +13,6 @@ import { encryptText } from "../utils/crypto";
 export const sendMessage = catchAsyncSocket(
   async (socket: TypedSocket, io: TypedIO, data: SocketMessageType) => {
     const user = socket.data.user as User;
-    console.log(
-      `User with DBID: ${user.id} sent message: ${data.content} to chat: ${data.chatId}`
-    );
     // 0.5) Encrypt message content
     if (typeof data.content !== "string") {
       throw new Error("Invalid message content: must be a string");
@@ -64,8 +61,6 @@ export const joinRoom = async (
     chatType: data.chatType,
   });
 
-  console.log(`User with DBID: ${user.id} joined room: ${data.chatId}`);
-
   socket.join(data.chatId);
   socket.emit("room_joined", { chatId: data.chatId });
   // Fetch all sockets in the room
@@ -88,7 +83,6 @@ export const leaveRoom = async (
   data: { chatId: string; chatType: CHAT_TYPE }
 ) => {
   const user = socket.data.user as User;
-  console.log(`User with DBID: ${user.id} left room: ${data.chatId}`);
 
   socket.leave(data.chatId);
   if (data.chatType === "GROUP" || data.chatType === "PUBLIC") {
@@ -132,5 +126,4 @@ export const disconnect = async (
       userSocketMap.delete(userId);
     }
   }
-  console.log(`User ${user.username} disconnected from socket ID ${socket.id}`);
 };

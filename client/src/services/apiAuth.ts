@@ -30,7 +30,6 @@ export const signup = async (data: SignupType) => {
     const res = await api.post("/api/v1/auth/signup", data);
     return res.data;
   } catch (error: unknown) {
-    console.log();
     // Extract error message from response
     if (axios.isAxiosError(error)) {
       const serverMessage =
@@ -74,14 +73,10 @@ export const login = async (data: LoginCredentials): Promise<User> => {
 };
 
 export const logout = async (): Promise<void> => {
-  try {
-    await api.post("/api/v1/auth/logout"); // This should clear the cookie on the server
-    localStorage.removeItem("accessToken"); // Clear access token from localStorage
-    localStorage.removeItem("refreshToken"); // Clear refresh token from localStorage
-    socket.disconnect();
-  } catch (error) {
-    console.error("Logout failed", error);
-  }
+  await api.post("/api/v1/auth/logout"); // This should clear the cookie on the server
+  localStorage.removeItem("accessToken"); // Clear access token from localStorage
+  localStorage.removeItem("refreshToken"); // Clear refresh token from localStorage
+  socket.disconnect();
 };
 
 // Create axios instance with base URL
@@ -93,14 +88,9 @@ export const refreshToken = async (): Promise<{
   accessToken: string;
   refreshToken: string;
 }> => {
-  try {
-    const res = await bareApi.post("/api/v1/auth/refresh-token", {
-      refreshToken: localStorage.getItem("refreshToken"),
-    });
+  const res = await bareApi.post("/api/v1/auth/refresh-token", {
+    refreshToken: localStorage.getItem("refreshToken"),
+  });
 
-    return res.data;
-  } catch (error) {
-    console.log("Error refreshing token:", error);
-    throw error;
-  }
+  return res.data;
 };

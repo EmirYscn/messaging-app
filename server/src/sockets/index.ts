@@ -21,7 +21,6 @@ export const handleVerifyToken = (
   const token = socket.handshake.auth.token;
 
   if (!token) {
-    console.log("❌ No token provided");
     return next(new Error("Unauthorized, please re-login."));
   }
 
@@ -41,11 +40,6 @@ export const handleUserSocketMapping = (socket: TypedSocket, user: User) => {
     userSocketMap.set(user.id, new Set());
   }
   userSocketMap.get(user.id)?.add(socket.id);
-  console.log("Current socket map:", Array.from(userSocketMap.entries()));
-  console.log("Connected User: ", user);
-  console.log(
-    `User with DBID: ${user.id} connected with socket ID ${socket.id}`
-  );
 };
 
 export const registerSocketHandlers = (io: TypedIO) => {

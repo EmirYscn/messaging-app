@@ -20,7 +20,6 @@ export const resizePhoto = async (
 
     next();
   } catch (error) {
-    console.log("Error resizing image: ", error);
     res.status(500).json({ message: "Error processing image", error });
   }
 };
@@ -40,7 +39,6 @@ export const compressImage = async (
     req.file.mimetype = "image/jpeg";
     next();
   } catch (error) {
-    console.log("Error compressing image: ", error);
     res.status(500).json({ message: "Error processing image", error });
   }
 };
