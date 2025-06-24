@@ -1,6 +1,7 @@
 import axios from "axios";
-import { api } from "./apiAuth";
+
 import { FriendRequest } from "../types/types";
+import { api } from "./axios";
 
 export const sendFriendRequest = async (receiverId: string) => {
   try {

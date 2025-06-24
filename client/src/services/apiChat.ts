@@ -1,6 +1,6 @@
 import axios from "axios";
-import { api } from "./apiAuth";
 import { Chat, Message } from "../types/types";
+import { api } from "./axios";
 
 export const getChats = async (): Promise<{ chats: Chat[]; count: number }> => {
   try {

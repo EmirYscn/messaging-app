@@ -16,6 +16,7 @@ router.get(
   authController.requireAuth,
   authController.getCurrentUser
 );
+router.post("/refresh-token", authController.refreshToken);
 
 router.get(
   "/google",

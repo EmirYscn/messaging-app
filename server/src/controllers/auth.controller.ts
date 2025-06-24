@@ -9,8 +9,11 @@ import AppError from "../utils/appError";
 import * as userQueries from "../db/user.queries";
 
 import passport, { generateToken } from "../strategies/passport";
+import jwt from "jsonwebtoken";
+import config from "../config/config";
 
-const CLIENT_URL = process.env.CLIENT_URL;
+const CLIENT_URL = config.clientUrl;
+const JWT_SECRET = config.jwtSecret;
 
 export const getCurrentUser = (
   req: Request,
@@ -79,7 +82,11 @@ export const login = async (
   passport.authenticate(
     "local",
     { session: false },
-    (err: Error | null, user: User | false, info: { message: string }) => {
+    async (
+      err: Error | null,
+      user: User | false,
+      info: { message: string }
+    ) => {
       if (err) {
         return res.status(500).json({ error: "Internal server error" });
       }
@@ -87,9 +94,8 @@ export const login = async (
         return next(new AppError("Invalid email or password", 401));
       }
       // Generate a JWT token
-      const token = generateToken(user);
+      const { accessToken, refreshToken } = await generateToken(user);
 
-      // Simply return the user info
       return res.json({
         user: {
           id: user.id,
@@ -98,7 +104,8 @@ export const login = async (
           avatar: user.avatar,
           role: user.role,
         },
-        token,
+        accessToken,
+        refreshToken,
       });
     }
   )(req, res, next);
@@ -143,6 +150,37 @@ export const requireAuth = (
   )(req, res, next);
 };
 
+export const refreshToken = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res.status(400).json({ message: "Refresh token is required" });
+    }
+
+    // Verify the refresh token
+    jwt.verify(refreshToken, JWT_SECRET, async (err: any, decoded: any) => {
+      if (err || !decoded) {
+        return res.status(401).json({ message: "Invalid refresh token" });
+      }
+
+      // Find the user by ID from the decoded token
+      const user = await userQueries.findUserById(decoded.id);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      // Generate new tokens
+      const { accessToken, refreshToken: newRefreshToken } =
+        await generateToken(user);
+
+      res.status(200).json({
+        accessToken,
+        refreshToken: newRefreshToken,
+      });
+    });
+  }
+);
+
 export const restrictTo = (...roles: ROLE[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as User;
@@ -165,13 +203,13 @@ export const googleCallback = (
   passport.authenticate(
     "google",
     { session: false },
-    (err: any, user: User) => {
+    async (err: any, user: User) => {
       if (err) return next(err);
 
       if (!user) return res.redirect(`${CLIENT_URL}/login?error=auth_failed`);
 
       // Generate a JWT token
-      const token = generateToken(user);
+      const { accessToken, refreshToken } = await generateToken(user);
 
       // Include user data
       const userData = {
@@ -187,7 +225,8 @@ export const googleCallback = (
         JSON.stringify({
           user: userData,
           provider: "Google",
-          token,
+          accessToken,
+          refreshToken,
         })
       ).toString("base64");
       // Redirect to frontend with token
@@ -204,13 +243,13 @@ export const githubCallback = (
   passport.authenticate(
     "github",
     { session: false },
-    (err: any, user: User) => {
+    async (err: any, user: User) => {
       if (err) return next(err);
 
       if (!user) return res.redirect(`${CLIENT_URL}/login?error=auth_failed`);
 
       // Generate a JWT token
-      const token = generateToken(user);
+      const { accessToken, refreshToken } = await generateToken(user);
 
       // Include user data
       const userData = {
@@ -226,7 +265,8 @@ export const githubCallback = (
         JSON.stringify({
           user: userData,
           provider: "GitHub",
-          token,
+          accessToken,
+          refreshToken,
         })
       ).toString("base64");
 

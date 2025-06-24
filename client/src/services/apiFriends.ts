@@ -1,6 +1,7 @@
 import axios from "axios";
-import { api } from "./apiAuth";
+
 import { User } from "../types/types";
+import { api } from "./axios";
 
 export const getFriends = async (): Promise<User[]> => {
   try {

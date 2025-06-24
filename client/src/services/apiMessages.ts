@@ -1,5 +1,5 @@
 import axios from "axios";
-import { api } from "./apiAuth";
+import { api } from "./axios";
 
 export const deleteMessages = async (messageIds: string[]) => {
   try {

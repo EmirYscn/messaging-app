@@ -1,21 +1,9 @@
 import axios from "axios";
 import { User } from "../types/types";
 import { connectSocket, socket } from "./socket";
+import { api } from "./axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
-
-// Create axios instance with base URL
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("jwt");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const getCurrentUser = async (): Promise<User> => {
   try {
@@ -64,8 +52,9 @@ export type LoginCredentials = {
 export const login = async (data: LoginCredentials): Promise<User> => {
   try {
     const res = await api.post("/api/v1/auth/login", data);
-    // Save JWT token to localStorage
-    localStorage.setItem("jwt", res.data.token);
+    // Save JWT tokens to localStorage
+    localStorage.setItem("accessToken", res.data.accessToken);
+    localStorage.setItem("refreshToken", res.data.refreshToken);
     // connect socket
     connectSocket();
 
@@ -87,9 +76,31 @@ export const login = async (data: LoginCredentials): Promise<User> => {
 export const logout = async (): Promise<void> => {
   try {
     await api.post("/api/v1/auth/logout"); // This should clear the cookie on the server
-    localStorage.removeItem("jwt"); // Clear JWT from localStorage
+    localStorage.removeItem("accessToken"); // Clear access token from localStorage
+    localStorage.removeItem("refreshToken"); // Clear refresh token from localStorage
     socket.disconnect();
   } catch (error) {
     console.error("Logout failed", error);
+  }
+};
+
+// Create axios instance with base URL
+export const bareApi = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+export const refreshToken = async (): Promise<{
+  accessToken: string;
+  refreshToken: string;
+}> => {
+  try {
+    const res = await bareApi.post("/api/v1/auth/refresh-token", {
+      refreshToken: localStorage.getItem("refreshToken"),
+    });
+
+    return res.data;
+  } catch (error) {
+    console.log("Error refreshing token:", error);
+    throw error;
   }
 };

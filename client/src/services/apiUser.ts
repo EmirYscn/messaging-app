@@ -1,6 +1,6 @@
 import axios from "axios";
-import { api } from "./apiAuth";
 import { Profile, UpdateUserDTO, User } from "../types/types";
+import { api } from "./axios";
 
 export const getProfile = async (userId: string): Promise<Profile> => {
   try {

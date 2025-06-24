@@ -17,20 +17,56 @@ import config from "../config/config";
 
 const SERVER_URL = config.serverUrl;
 const JWT_SECRET = config.jwtSecret;
+const JWT_ACCESS_TOKEN_EXPIRESIN = config.jwtAccessTokenExpiresIn;
+const JWT_REFRESH_TOKEN_EXPIRESIN = config.jwtRefreshTokenExpiresIn;
+const JWT_AUDIENCE = config.jwtAudience;
+const JWT_ISSUER = config.jwtIssuer;
 
 const GOOGLE_CLIENT_ID = config.googleClientId;
 const GOOGLE_CLIENT_SECRET = config.googleClientSecret;
 const GITHUB_CLIENT_ID = config.githubClientId;
 const GITHUB_CLIENT_SECRET = config.githubClientSecret;
 
-export const generateToken = (user: User) => {
-  const payload = {
-    id: user.id,
-    email: user.email,
-    username: user.username,
-  };
+export interface JwtObject {
+  id: string; // User ID
+  email: string; // User email
+  username: string; // User username
+}
 
-  return jwt.sign(payload, JWT_SECRET!, { expiresIn: "1d" });
+export interface RefreshTokenDto {
+  refreshToken: string;
+}
+
+export const signToken = async <T>(
+  userId: string,
+  expiresIn: number,
+  payload?: T
+) => {
+  return jwt.sign({ id: userId, ...payload }, JWT_SECRET, {
+    expiresIn: expiresIn,
+    audience: JWT_AUDIENCE,
+    issuer: JWT_ISSUER,
+  });
+};
+
+export const generateToken = async (user: User) => {
+  const accessToken = await signToken<Partial<JwtObject>>(
+    user.id,
+    JWT_ACCESS_TOKEN_EXPIRESIN,
+    {
+      email: user.email,
+      username: user.username ?? "",
+    }
+  );
+  const refreshToken = await signToken<Partial<JwtObject>>(
+    user.id,
+    JWT_REFRESH_TOKEN_EXPIRESIN
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
 
 const verifyCallback = async (email: string, password: string, done: any) => {
@@ -152,7 +188,7 @@ const githubStrategy = new GithubStrategy(
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: JWT_SECRET!,
+  secretOrKey: JWT_SECRET,
 };
 
 const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {

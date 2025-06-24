@@ -15,6 +15,10 @@ const envSchema = z.object({
   SOCKET_ADMIN_IO_URL: z.string().url(),
 
   JWT_SECRET: z.string(),
+  JWT_ACCESS_TOKEN_EXPIRESIN: z.string().default("3600"), // 1 hour in seconds
+  JWT_REFRESH_TOKEN_EXPIRESIN: z.string().default("604800"), // 7 days in seconds
+  JWT_AUDIENCE: z.string().default("chat-app"),
+  JWT_ISSUER: z.string().default("chat-app"),
 
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
@@ -53,6 +57,10 @@ const config = {
   socketAdminIoUrl: env.SOCKET_ADMIN_IO_URL,
 
   jwtSecret: env.JWT_SECRET,
+  jwtAccessTokenExpiresIn: parseInt(env.JWT_ACCESS_TOKEN_EXPIRESIN, 10),
+  jwtRefreshTokenExpiresIn: parseInt(env.JWT_REFRESH_TOKEN_EXPIRESIN, 10),
+  jwtAudience: env.JWT_AUDIENCE,
+  jwtIssuer: env.JWT_ISSUER,
 
   googleClientId: env.GOOGLE_CLIENT_ID,
   googleClientSecret: env.GOOGLE_CLIENT_SECRET,
