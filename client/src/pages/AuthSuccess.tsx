@@ -21,11 +21,12 @@ function AuthSuccess() {
       if (encodedData) {
         try {
           const decodedData = JSON.parse(atob(encodedData));
-          const { user, provider } = decodedData;
+          const { user, provider, accessToken, refreshToken } = decodedData;
 
           queryClient.setQueryData(["user"], user);
-          // Store token in localStorage
-          localStorage.setItem("jwt", decodedData.token);
+          // Store tokens in localStorage
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
 
           connectSocket();
 
