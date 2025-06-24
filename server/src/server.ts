@@ -29,7 +29,7 @@ app.locals.io = io; // Make io available in app locals
 registerSocketHandlers(io);
 
 server.listen(config.port, () => {
-  console.log(`Server is Fire at http://${config.serverUrl}:${config.port}`);
+  console.log(`Server is Fire at ${config.serverUrl}:${config.port}`);
 });
 
 // Handle unexpected crashes
