@@ -430,8 +430,16 @@ export const githubCallback = (
         })
       ).toString("base64");
 
-      // Redirect to frontend with token
-      return res.redirect(`${CLIENT_URL}/auth-success?data=${payload}`);
+      // Build redirect URL
+      let redirectUrl = `${CLIENT_URL}/auth-success?data=${payload}`;
+      if (req.query.state) {
+        const redirectParam = decodeURIComponent(req.query.state as string);
+        redirectUrl = `${CLIENT_URL}/auth-success?redirect=${encodeURIComponent(
+          redirectParam
+        )}&data=${payload}`;
+      }
+
+      return res.redirect(redirectUrl);
     }
   )(req, res, next);
 };

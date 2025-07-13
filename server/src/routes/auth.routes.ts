@@ -30,10 +30,15 @@ router.get("/google", (req, res, next) => {
 
 router.get("/google/callback", authController.googleCallback);
 
-router.get(
-  "/github",
-  passport.authenticate("github", { scope: ["user:email"] })
-);
+router.get("/github", (req, res, next) => {
+  const { redirect } = req.query;
+  // Save redirect in session or pass as state param
+  const authenticator = passport.authenticate("github", {
+    scope: ["user:email"],
+    state: redirect ? encodeURIComponent(redirect as string) : undefined,
+  });
+  authenticator(req, res, next);
+});
 
 router.get("/github/callback", authController.githubCallback);
 
