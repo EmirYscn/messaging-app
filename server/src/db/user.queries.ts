@@ -4,6 +4,7 @@ import { Prisma, Profile, User } from "@prisma/client";
 import { UserQuery } from "../controllers/user.controller";
 
 import AppError from "../utils/appError";
+import { DecodedJwt } from "../controllers/auth.controller";
 
 export const getUsers = async (query?: UserQuery) => {
   const where: Prisma.UserWhereInput = {};
@@ -40,6 +41,22 @@ export const findUserById = async (id: string) => {
 export const createUser = async (body: User) => {
   return await prisma.$transaction(async (prisma) => {
     const user = await prisma.user.create({ data: body });
+    await prisma.profile.create({
+      data: {
+        userId: user.id,
+      },
+    });
+
+    return user;
+  });
+};
+
+export const createUserAndLink = async (body: User) => {
+  console.log("inside query: ", body);
+  return await prisma.$transaction(async (prisma) => {
+    const user = await prisma.user.create({
+      data: body,
+    });
     await prisma.profile.create({
       data: {
         userId: user.id,
@@ -196,4 +213,22 @@ export const addUser = async (senderId: string, receiverId: string) => {
       receiverId,
     },
   });
+};
+
+export const linkAccounts = async (
+  externalUser: DecodedJwt,
+  internalUser: User
+) => {
+  return await prisma.user.update({
+    where: { id: internalUser.id },
+    data: {
+      mainAppUserId: externalUser.userId,
+      mainAppUserProfileId: externalUser.profileId,
+    },
+  });
+};
+
+// In user.queries.ts
+export const findUserByMainAppUserId = async (mainAppUserId: string) => {
+  return prisma.user.findUnique({ where: { mainAppUserId } });
 };

@@ -13,15 +13,20 @@ router.post("/login", authController.login);
 router.post("/logout", authController.logout);
 router.get(
   "/getCurrentUser",
-  authController.requireAuth,
+  authController.requireAuth(),
   authController.getCurrentUser
 );
 router.post("/refresh-token", authController.refreshToken);
 
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+router.get("/google", (req, res, next) => {
+  const { redirect } = req.query;
+  // Save redirect in session or pass as state param
+  const authenticator = passport.authenticate("google", {
+    scope: ["profile", "email"],
+    state: redirect ? encodeURIComponent(redirect as string) : undefined,
+  });
+  authenticator(req, res, next);
+});
 
 router.get("/google/callback", authController.googleCallback);
 
@@ -31,5 +36,16 @@ router.get(
 );
 
 router.get("/github/callback", authController.githubCallback);
+
+router.post("/checkAccountStatus", authController.checkAccountStatus);
+router.post(
+  "/link-accounts",
+  authController.requireAuth({
+    message: "You must be logged in to link accounts",
+  }),
+  authController.linkAccounts
+);
+router.post("/get-tokens", authController.getTokens);
+router.post("/create-and-continue", authController.createAndContinue);
 
 export { router };

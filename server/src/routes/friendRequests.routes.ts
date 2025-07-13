@@ -7,30 +7,34 @@ const router = Router();
 
 router.post(
   "/:receiverId",
-  requireAuth,
+  requireAuth(),
   friendRequestController.sendFriendRequest
 );
 
 router.patch(
   "/:requestId/accept",
-  requireAuth,
+  requireAuth(),
   friendRequestController.acceptFriendRequest
 );
 router.patch(
   "/:requestId/decline",
-  requireAuth,
+  requireAuth(),
   friendRequestController.declineFriendRequest
 );
 router.delete(
   "/:requestId",
-  requireAuth,
+  requireAuth(),
   friendRequestController.deleteFriendRequest
 );
 
-router.get("/sent", requireAuth, friendRequestController.getSentFriendRequests);
+router.get(
+  "/sent",
+  requireAuth(),
+  friendRequestController.getSentFriendRequests
+);
 router.get(
   "/received",
-  requireAuth,
+  requireAuth(),
   friendRequestController.getReceivedFriendRequests
 );
 

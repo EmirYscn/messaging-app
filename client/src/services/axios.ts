@@ -16,6 +16,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Create axios instance with base URL
+export const bareApi = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+bareApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 interface FailedQueueItem {
   resolve: (token: string | null) => void;
   reject: (error: unknown) => void;
@@ -40,7 +53,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      window.location.pathname !== "/checkLinkedAccount" &&
+      !originalRequest._retry
+    ) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });

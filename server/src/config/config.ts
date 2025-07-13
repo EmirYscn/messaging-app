@@ -20,6 +20,9 @@ const envSchema = z.object({
   JWT_AUDIENCE: z.string().default("chat-app"),
   JWT_ISSUER: z.string().default("chat-app"),
 
+  SERVER_JWT_SECRET: z.string(),
+  SERVER_JWT_EXPIRESIN: z.string().default("3600"), // 1 hour in seconds
+
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
 
@@ -61,6 +64,11 @@ const config = {
   jwtRefreshTokenExpiresIn: parseInt(env.JWT_REFRESH_TOKEN_EXPIRESIN, 10),
   jwtAudience: env.JWT_AUDIENCE,
   jwtIssuer: env.JWT_ISSUER,
+
+  server: {
+    jwtSecret: env.SERVER_JWT_SECRET,
+    jwtExpiresIn: parseInt(env.SERVER_JWT_EXPIRESIN, 10), // 1 hour
+  },
 
   googleClientId: env.GOOGLE_CLIENT_ID,
   googleClientSecret: env.GOOGLE_CLIENT_SECRET,

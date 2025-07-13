@@ -55,6 +55,9 @@ export type User = {
   readonly updatedAt: Date | string;
   readonly deletedAt?: Date | string | null;
 
+  mainAppUserId?: string;
+  mainAppUserProfileId?: string;
+
   profile?: Profile | null;
   chats?: Chat[];
   messages?: Message[];

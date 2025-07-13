@@ -17,6 +17,7 @@ import { AsideContextProvider } from "./contexts/Aside/AsideContextProvider";
 import { useEffect } from "react";
 import { connectSocket } from "./services/socket";
 import { GroupChatContextProvider } from "./contexts/Aside/GroupChatContextProvider";
+import CheckAccountStatus from "./pages/CheckAccountStatus";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,6 +57,10 @@ function App() {
                 <Route path="signup" element={<Signup />} />
                 <Route path="login" element={<Login />} />
                 <Route path="auth-success" element={<AuthSuccess />} />
+                <Route
+                  path="checkAccountStatus"
+                  element={<CheckAccountStatus />}
+                />
                 <Route path="*" element={<PageNotFound />} />
               </Routes>
             </BrowserRouter>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 import GoogleButton from "./GoogleButton";
 import GitHubButton from "./GithubButton";
@@ -15,8 +15,9 @@ function LoginForm() {
   const { t } = useTranslation("auth");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isPending } = useLogin();
-  // const { isDarkMode } = useDarkMode();
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get("redirect");
+  const { login, isPending } = useLogin(redirectUrl, true);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -59,8 +60,8 @@ function LoginForm() {
       {/* <Link to="/forgotPassword">{t("forgotPassword")}</Link> */}
 
       <FormRowVertical>
-        <GoogleButton />
-        <GitHubButton />
+        <GoogleButton redirectUrl={redirectUrl} />
+        <GitHubButton redirectUrl={redirectUrl} />
       </FormRowVertical>
 
       <Link to="/signup">{t("dontHaveAnAccount")}</Link>

@@ -70,6 +70,9 @@ model User {
   resetPasswordToken   String?   @unique // Token for password reset
   resetPasswordExpires DateTime? // Expiration date for the token
 
+  mainAppUserId String? @unique// ID of the user in the main app
+  mainAppUserProfileId String? // ID of the user's profile in the main app
+
   profile          Profile?
   chats            Chat[]
   messages         Message[]

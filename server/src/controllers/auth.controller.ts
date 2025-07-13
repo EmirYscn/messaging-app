@@ -9,11 +9,166 @@ import AppError from "../utils/appError";
 import * as userQueries from "../db/user.queries";
 
 import passport, { generateToken } from "../strategies/passport";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config/config";
 
 const CLIENT_URL = config.clientUrl;
 const JWT_SECRET = config.jwtSecret;
+const SERVER_JWT_SECRET = config.server.jwtSecret;
+const SERVER_JWT_EXPIRESIN = config.server.jwtExpiresIn;
+
+export interface DecodedJwt {
+  sub: string;
+  userId: string;
+  email: string;
+  username: string;
+  displayName: string;
+  profileId: string;
+  avatar: string;
+  iat: number;
+  exp: number;
+  aud: string;
+  iss: string;
+}
+
+export const checkAccountStatus = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { data: token } = req.body;
+    if (!token) {
+      return res.status(400).json({ message: "Encoded data is required" });
+    }
+
+    let data: DecodedJwt;
+    try {
+      data = jwt.verify(token, SERVER_JWT_SECRET) as DecodedJwt;
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid token" });
+    }
+
+    // 1. Check if already linked by mainAppUserId
+    const linkedUser = await userQueries.findUserByMainAppUserId(data.userId);
+
+    if (linkedUser) {
+      return res.json({
+        status: "linked",
+        accounts: {
+          externalUser: data,
+          internalUser: linkedUser,
+        },
+      });
+    }
+    // 2. Optionally, check if a user exists with the same email (not yet linked)
+    const userByEmail = await userQueries.findUserByEmail(data.email);
+
+    if (userByEmail) {
+      return res.json({
+        status: "not_linked",
+        accounts: {
+          externalUser: data,
+          internalUser: userByEmail,
+        },
+      });
+    }
+
+    return res.json({
+      status: "not_found",
+      accounts: {
+        externalUser: data,
+      },
+    });
+  }
+);
+
+export const linkAccounts = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { externalUser, internalUser } = req.body;
+
+    const authenticatedUser = req.user as User;
+
+    if (!authenticatedUser) {
+      return res.status(401).json({
+        message: "Please log in to your messaging app account to link",
+      });
+    }
+
+    if (internalUser.id !== authenticatedUser.id) {
+      return res.status(403).json({
+        message: "Cannot link another user's account",
+      });
+    }
+
+    // link accounts
+    const updatedInternalUser = await userQueries.linkAccounts(
+      externalUser,
+      internalUser
+    );
+    // Generate a JWT token
+    const { accessToken, refreshToken } = await generateToken(
+      updatedInternalUser
+    );
+
+    return res.json({
+      user: {
+        id: updatedInternalUser.id,
+        email: updatedInternalUser.email,
+        username: updatedInternalUser.username,
+        avatar: updatedInternalUser.avatar,
+        role: updatedInternalUser.role,
+      },
+      accessToken,
+      refreshToken,
+    });
+  }
+);
+
+export const getTokens = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { user } = req.body;
+
+    // Generate a JWT token
+    const { accessToken, refreshToken } = await generateToken(user);
+
+    return res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        avatar: user.avatar,
+        role: user.role,
+      },
+      accessToken,
+      refreshToken,
+    });
+  }
+);
+
+export const createAndContinue = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { user } = req.body;
+    const { password } = user;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const userData = { ...user, password: hashedPassword };
+
+    const newUser = await userQueries.createUserAndLink(userData);
+
+    // Generate a JWT token
+    const { accessToken, refreshToken } = await generateToken(newUser);
+
+    return res.json({
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        username: newUser.username,
+        avatar: newUser.avatar,
+        role: newUser.role,
+      },
+      accessToken,
+      refreshToken,
+    });
+  }
+);
 
 export const getCurrentUser = (
   req: Request,
@@ -124,31 +279,27 @@ export const logout = (req: Request, res: Response) => {
 };
 
 // Middleware to protect routes with JWT authentication
-export const requireAuth = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  passport.authenticate(
-    "jwt",
-    { session: false },
-    (err: any, user: any, info: any) => {
-      if (err) {
-        return next(err);
-      }
+export const requireAuth =
+  (options?: { message?: string }) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    passport.authenticate(
+      "jwt",
+      { session: false },
+      (err: any, user: any, info: any) => {
+        if (err) return next(err);
 
-      if (!user) {
-        return res.status(401).json({
-          message: "Unauthorized",
-          details: info ? info.message : "JWT authentication failed",
-        });
-      }
+        if (!user) {
+          return res.status(401).json({
+            message: options?.message || "Unauthorized",
+            details: info ? info.message : "JWT authentication failed",
+          });
+        }
 
-      req.user = user;
-      return next();
-    }
-  )(req, res, next);
-};
+        req.user = user;
+        return next();
+      }
+    )(req, res, next);
+  };
 
 export const refreshToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -229,8 +380,17 @@ export const googleCallback = (
           refreshToken,
         })
       ).toString("base64");
-      // Redirect to frontend with token
-      return res.redirect(`${CLIENT_URL}/auth-success?data=${payload}`);
+
+      // Build redirect URL
+      let redirectUrl = `${CLIENT_URL}/auth-success?data=${payload}`;
+      if (req.query.state) {
+        const redirectParam = decodeURIComponent(req.query.state as string);
+        redirectUrl = `${CLIENT_URL}/auth-success?redirect=${encodeURIComponent(
+          redirectParam
+        )}&data=${payload}`;
+      }
+
+      return res.redirect(redirectUrl);
     }
   )(req, res, next);
 };

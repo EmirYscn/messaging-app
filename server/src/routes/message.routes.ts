@@ -10,12 +10,12 @@ const router = Router();
 
 router.post(
   "/media",
-  requireAuth,
+  requireAuth(),
   uploadMedia,
   compressMedia,
   messageController.createMedia
 );
 
-router.delete("/", requireAuth, messageController.deleteMessages);
+router.delete("/", requireAuth(), messageController.deleteMessages);
 
 export { router };

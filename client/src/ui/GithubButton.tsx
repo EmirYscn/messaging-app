@@ -16,12 +16,12 @@ const GitHubIcon = () => (
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
-function GitHubButton() {
+function GitHubButton({ redirectUrl }: { redirectUrl?: string | null }) {
   const { t } = useTranslation("auth");
   const handleGitHubLogin = () => {
-    const currentUrl = window.location.origin;
-    const redirectUrl = encodeURIComponent(currentUrl);
-    window.location.href = `${API_BASE_URL}/api/v1/auth/github/?redirect=${redirectUrl}`;
+    const targetUrl = redirectUrl || window.location.origin;
+    const encodedRedirect = encodeURIComponent(targetUrl);
+    window.location.href = `${API_BASE_URL}/api/v1/auth/github/?redirect=${encodedRedirect}`;
   };
 
   return (

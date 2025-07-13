@@ -18,6 +18,7 @@ function AuthSuccess() {
 
     const fetchUser = async () => {
       const encodedData = searchParams.get("data");
+      const encodedRedirect = searchParams.get("redirect");
       if (encodedData) {
         try {
           const decodedData = JSON.parse(atob(encodedData));
@@ -33,6 +34,11 @@ function AuthSuccess() {
           toast.success(
             `Successfully logged in ${provider ? `with ${provider}` : ""}`
           );
+          // If a redirect URL is provided, navigate to it
+          if (encodedRedirect) {
+            const redirectUrl = decodeURIComponent(encodedRedirect);
+            return navigate(redirectUrl, { replace: true });
+          }
 
           setTimeout(() => {
             navigate("/", { replace: true });
