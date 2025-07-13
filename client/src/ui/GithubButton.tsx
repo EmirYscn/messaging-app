@@ -19,7 +19,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 function GitHubButton({ redirectUrl }: { redirectUrl?: string | null }) {
   const { t } = useTranslation("auth");
   const handleGitHubLogin = () => {
-    const targetUrl = redirectUrl || window.location.origin;
+    const targetUrl = redirectUrl || "";
     const encodedRedirect = encodeURIComponent(targetUrl);
     window.location.href = `${API_BASE_URL}/api/v1/auth/github/?redirect=${encodedRedirect}`;
   };
