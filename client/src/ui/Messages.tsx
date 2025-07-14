@@ -3,12 +3,12 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import Message from "./Message";
 
 import { useChatMessages } from "../hooks/useChatMessages";
-import { useChat } from "../hooks/useChat";
+// import { useChat } from "../hooks/useChat";
 import { useReceiveMessage } from "../hooks/sockets/useSocketMessage";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import {
-  CHAT_TYPE,
+  // CHAT_TYPE,
   Message as MessageType,
   MESSAGE_TYPE,
 } from "../types/types";
@@ -32,7 +32,7 @@ function Messages({
   onReply,
 }: MessagesProps) {
   const { t } = useTranslation("chats");
-  const { chat } = useChat();
+  // const { chat } = useChat();
   const today = formatDate(new Date().toISOString());
   const {
     messages,
@@ -165,13 +165,13 @@ function Messages({
       </div>
 
       {hasNextPage && <div>{isFetchingNextPage && <SpinnerMini />}</div>}
-      {chat?.type === CHAT_TYPE.PUBLIC && (
+      {/* {chat?.type === CHAT_TYPE.PUBLIC && (
         <div className="flex items-center justify-center ">
           <span className="opacity-50 px-4 py-2 rounded-3xl text-[var(--color-grey-900)] text-sm font-semibold">
             {messages.length > 0 ? t("messages24h") : t("noMessages24h")}
           </span>
         </div>
-      )}
+      )} */}
 
       {isLoading ? (
         <div className="flex flex-col gap-4 px-4 py-2">

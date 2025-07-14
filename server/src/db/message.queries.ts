@@ -22,9 +22,9 @@ export const getMessages = async (chatId: string, cursor?: string) => {
   }
   const where: Prisma.MessageWhereInput = { chatId };
 
-  if (chat.type === "PUBLIC") {
-    where.createdAt = { gte: twentyFourHoursAgo };
-  }
+  // if (chat.type === "PUBLIC") {
+  //   where.createdAt = { gte: twentyFourHoursAgo };
+  // }
 
   const totalCount = await prisma.message.count({ where: { chatId } });
 
