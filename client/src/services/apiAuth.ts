@@ -33,7 +33,7 @@ export const checkAccountStatus = async (
     const res = await bareApi.post("/api/v1/auth/checkAccountStatus", {
       data: decodedData,
     });
-    console.log({ status: res.data.status, accounts: res.data.accounts });
+
     return { status: res.data.status, accounts: res.data.accounts };
   } catch (error: unknown) {
     // Handle error if needed
@@ -59,6 +59,7 @@ export const linkAccounts = async (
     // Save JWT tokens to localStorage
     localStorage.setItem("accessToken", res.data.accessToken);
     localStorage.setItem("refreshToken", res.data.refreshToken);
+    socket.disconnect();
     // connect socket
     connectSocket();
 
@@ -84,6 +85,7 @@ export const continueWithThisAccount = async (user: Partial<User>) => {
     localStorage.setItem("accessToken", res.data.accessToken);
     localStorage.setItem("refreshToken", res.data.refreshToken);
 
+    socket.disconnect();
     // connect socket
     connectSocket();
 
@@ -111,6 +113,7 @@ export const createAndContinueWithThisAccount = async (user: Partial<User>) => {
     localStorage.setItem("accessToken", res.data.accessToken);
     localStorage.setItem("refreshToken", res.data.refreshToken);
 
+    socket.disconnect();
     // connect socket
     connectSocket();
 
